@@ -1,6 +1,3 @@
 module.exports = {
-  questions: [
-    "type",
-    "subject",
-  ],
+  questions: ["type", "subject"],
 };
