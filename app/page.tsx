@@ -1,5 +1,12 @@
+import Section from '@app/components/section';
+import { Text } from '@chakra-ui/react';
+
 export default function Home() {
   return (
-    <h1>tomokisun.com</h1>
+    <>
+      <Section>
+        <Text fontSize='xxx-large' fontWeight='bold'>tomokisun.com</Text>
+      </Section>
+    </>
   );
 }
