@@ -1,5 +1,5 @@
-import { SectionTitle } from './SectionTitle';
-import { ProjectItem } from './ProjectItem';
+import { SectionTitle } from './section-title';
+import { ProjectItem } from './project-item';
 
 export function DevSection() {
   const projects = [

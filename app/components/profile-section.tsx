@@ -1,4 +1,4 @@
-import { SectionTitle } from './SectionTitle';
+import { SectionTitle } from './section-title';
 
 export function ProfileSection() {
   return (

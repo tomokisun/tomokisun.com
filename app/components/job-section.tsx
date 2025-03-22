@@ -1,5 +1,5 @@
-import { SectionTitle } from './SectionTitle';
-import { JobExperience } from './JobExperience';
+import { SectionTitle } from './section-title';
+import { JobExperience } from './job-experience';
 
 export function JobSection() {
   return (

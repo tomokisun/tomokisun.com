@@ -1,10 +1,10 @@
 import { createRoute } from 'honox/factory'
-import { Header } from '../components/Header'
-import { ProfileSection } from '../components/ProfileSection'
-import { JobSection } from '../components/JobSection'
-import { DevSection } from '../components/DevSection'
-import { ContactSection } from '../components/ContactSection'
-import { Footer } from '../components/Footer'
+import { Header } from '../components/header'
+import { ProfileSection } from '../components/profile-section'
+import { JobSection } from '../components/job-section'
+import { DevSection } from '../components/dev-section'
+import { ContactSection } from '../components/contact-section'
+import { Footer } from '../components/footer'
 
 export default createRoute((c) => {
   return c.render(
