@@ -1,6 +1,6 @@
-import SectionTitle from './section-title';
+import { SectionTitle } from './section-title';
 
-export default function ContactSection() {
+export function ContactSection() {
   return (
     <section>
       <SectionTitle emoji="📫" title="Contact" />

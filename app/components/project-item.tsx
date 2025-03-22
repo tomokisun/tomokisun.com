@@ -4,7 +4,7 @@ interface ProjectItemProps {
   description: string;
 }
 
-export default function ProjectItem({ name, url, description }: ProjectItemProps) {
+export function ProjectItem({ name, url, description }: ProjectItemProps) {
   return (
     <li className="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
       <a 

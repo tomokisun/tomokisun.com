@@ -1,7 +1,7 @@
-import JobExperience from './job-experience';
-import SectionTitle from './section-title';
+import { JobExperience } from './job-experience';
+import { SectionTitle } from './section-title';
 
-export default function JobSection() {
+export function JobSection() {
   return (
     <section className="mb-12">
       <SectionTitle emoji="🚀" title="Job" />

@@ -1,4 +1,4 @@
-export default function Header() {
+export function Header() {
   return (
     <header className="flex justify-between items-center mb-8">
       <title>tomokisun - Personal Website</title>

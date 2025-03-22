@@ -1,7 +1,7 @@
-import ProjectItem from './project-item';
-import SectionTitle from './section-title';
+import { ProjectItem } from './project-item';
+import { SectionTitle } from './section-title';
 
-export default function DevSection() {
+export function DevSection() {
   const projects = [
     {
       name: "0x1company/ios-monorepo",
