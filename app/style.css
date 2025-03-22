@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1a202c;
+  --link-color: #3182ce;
+  --link-hover-color: #2c5282;
+  --card-bg: #f7fafc;
+  --card-hover-bg: #edf2f7;
+  --border-color: #e2e8f0;
+  --twitter-bg: #3b82f6;
+  --twitter-hover-bg: #2563eb;
+  --linkedin-bg: #1e40af;
+  --linkedin-hover-bg: #1e3a8a;
+}
+
+.dark-mode {
+  --bg-color: #1a202c;
+  --text-color: #f7fafc;
+  --link-color: #63b3ed;
+  --link-hover-color: #90cdf4;
+  --card-bg: #2d3748;
+  --card-hover-bg: #4a5568;
+  --border-color: #4a5568;
+  --twitter-bg: #2563eb;
+  --twitter-hover-bg: #3b82f6;
+  --linkedin-bg: #1e3a8a;
+  --linkedin-hover-bg: #1e40af;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+a {
+  color: var(--link-color);
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: var(--link-hover-color);
+}
