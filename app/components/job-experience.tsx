@@ -6,7 +6,7 @@ interface JobExperienceProps {
   children?: any;
 }
 
-export function JobExperience({ 
+export default function JobExperience({ 
   company, 
   url, 
   status, 

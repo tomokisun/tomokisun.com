@@ -1,6 +1,6 @@
-import { SectionTitle } from './section-title';
+import SectionTitle from './section-title';
 
-export function ProfileSection() {
+export default function ProfileSection() {
   return (
     <section className="mb-12">
       <SectionTitle emoji="😺" title="tomokisun" />
