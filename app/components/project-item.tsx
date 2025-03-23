@@ -4,18 +4,18 @@ interface ProjectItemProps {
   description: string;
 }
 
-export function ProjectItem({ name, url, description }: ProjectItemProps) {
+export const ProjectItem = (props: ProjectItemProps) => {
   return (
     <li className="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
       <a 
-        href={url} 
+        href={props.url} 
         className="font-medium underline"
         target="_blank" 
         rel="noopener noreferrer"
       >
-        {name}
+        {props.name}
       </a>
-      <p className="mt-1">{description}</p>
+      <p className="mt-1">{props.description}</p>
     </li>
   );
 }

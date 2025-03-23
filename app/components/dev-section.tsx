@@ -1,7 +1,7 @@
 import { ProjectItem } from './project-item';
 import { SectionTitle } from './section-title';
 
-export function DevSection() {
+export const DevSection = () => {
   const projects = [
     {
       name: "0x1company/ios-monorepo",

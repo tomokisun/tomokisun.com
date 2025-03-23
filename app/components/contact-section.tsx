@@ -1,6 +1,6 @@
 import { SectionTitle } from './section-title';
 
-export function ContactSection() {
+export const ContactSection = () => {
   return (
     <section>
       <SectionTitle emoji="📫" title="Contact" />

@@ -1,32 +1,28 @@
+import type { JSX } from "hono/jsx/jsx-runtime";
+
 interface JobExperienceProps {
   company: string;
   url: string;
   status: string;
   description?: string;
-  children?: any;
+  children: JSX.Element;
 }
 
-export function JobExperience({ 
-  company, 
-  url, 
-  status, 
-  description, 
-  children 
-}: JobExperienceProps) {
+export const JobExperience = (props: JobExperienceProps) => {
   return (
     <div className="mb-8">
       <h3 className="text-xl font-semibold mb-2">
         <a 
-          href={url} 
+          href={props.url} 
           className="underline"
           target="_blank" 
           rel="noopener noreferrer"
         >
-          {company}
-        </a> - {status}
+          {props.company}
+        </a> - {props.status}
       </h3>
-      {description && <p className="mb-2">{description}</p>}
-      {children}
+      {props.description && <p className="mb-2">{props.description}</p>}
+      {props.children}
     </div>
   );
 }
