@@ -5,6 +5,7 @@ import { drizzle } from 'drizzle-orm/d1';
 import { GuestBooks } from '../database/schema';
 import { zValidator } from '@hono/zod-validator';
 import { createGuestBookSchema, transformGuestBookEntity } from '../types/guest-books';
+import { desc } from 'drizzle-orm';
 
 export const POST = createRoute(zValidator('form', createGuestBookSchema), async (c) => {
   const { username, body } = c.req.valid('form');
@@ -17,7 +18,7 @@ export default createRoute(async (c) => {
   await incrementVisitorsCount(c);
 
   const db = drizzle(c.env.DB);
-  const res = await db.select().from(GuestBooks).orderBy(GuestBooks.createdAt).limit(5);
+  const res = await db.select().from(GuestBooks).orderBy(desc(GuestBooks.createdAt)).limit(5);
   const guestBooks = res.map(transformGuestBookEntity);
   return c.render(<HomePage c={c} guestBooks={guestBooks} />)
 })
