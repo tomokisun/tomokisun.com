@@ -87,6 +87,79 @@ body {
 
 .container {
   margin: 0 auto;
+  max-width: 100%;
+  overflow-x: hidden;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  body {
+    padding: 10px 0;
+  }
+  
+  .container table {
+    width: 100% !important;
+  }
+  
+  .container td {
+    display: block;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  .sidebar {
+    margin-bottom: 15px;
+  }
+  
+  .menu-item {
+    padding: 10px 5px;
+    margin: 8px 0;
+  }
+  
+  .section-header, .guestbook-header {
+    padding: 8px 5px;
+  }
+  
+  .form-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 8px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    border-radius: 0; /* Prevents iOS from adding rounded corners */
+    -webkit-appearance: none; /* Removes default iOS styling */
+  }
+  
+  textarea.form-input {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .submit-button {
+    padding: 10px;
+    width: 100%;
+    margin: 15px 0 5px;
+  }
+  
+  h1 {
+    font-size: 1.5em;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  body {
+    padding: 5px 0;
+  }
+  
+  h1 {
+    font-size: 1.2em;
+  }
+  
+  .section-content, .guestbook-content {
+    padding: 8px;
+  }
 }
 
 /* Blinking text effect */
@@ -265,6 +338,8 @@ h1 {
   margin: 5px 0;
   border: 2px inset #CCCCCC;
   background-color: #FFFFCC; /* Light yellow */
+  padding: 8px;
+  box-sizing: border-box;
 }
 
 .submit-button {
@@ -274,6 +349,7 @@ h1 {
   font-weight: bold;
   cursor: pointer;
   margin-top: 10px;
+  min-height: 44px; /* Minimum touch target size for mobile */
 }
 
 .submit-button:hover {

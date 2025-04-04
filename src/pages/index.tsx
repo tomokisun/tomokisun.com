@@ -3,7 +3,7 @@ import { JSX } from 'hono/jsx/jsx-runtime';
 export function Home(): JSX.Element {
   return (
     <div className="container">
-      <table width={750} border={1} cellSpacing={0} cellPadding={5} align="center" bgcolor="#FFFFFF">
+      <table border={1} cellSpacing={0} cellPadding={5} align="center" bgcolor="#FFFFFF">
         <tr>
           <td colSpan={2} align="center" bgcolor="#000000">
             <h1 className="blink">Welcome to tomokisun's Homepage</h1>
@@ -23,7 +23,7 @@ export function Home(): JSX.Element {
               <div className="counter-number">00001337</div>
             </div>
           </td>
-          <td valign="top">
+          <td width={600} valign="top">
             <div className="content">
               <a name="about"></a>
               <div className="section">
@@ -35,7 +35,7 @@ export function Home(): JSX.Element {
                   <p>I'm originally an iOS engineer, but now I do everything mobile, web, backend, blockchain, etc.</p>
                   <p>Not good at infrastructure layer though lol.</p>
                   <div className="marquee-container">
-                    <marquee scrollamount="3" behavior="alternate">✨ personal web site 👀 ✨</marquee>
+                    <marquee scrollamount="3" behavior="alternate">personal web site 👀</marquee>
                   </div>
                 </div>
               </div>
