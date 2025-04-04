@@ -2,13 +2,16 @@
   "name": "basic",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build --mode client && vite build",
     "preview": "wrangler dev",
-    "deploy": "bun run build && wrangler deploy"
+    "deploy": "bun run build && wrangler deploy",
+    "migration": "drizzle-kit migrate",
+    "migration:generate": "drizzle-kit generate"
   },
   "private": true,
   "dependencies": {
+    "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
     "hono": "^4.7.5",
     "honox": "^0.1.39"
