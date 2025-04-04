@@ -1,7 +1,7 @@
 import { jsxRenderer } from 'hono/jsx-renderer'
 import { Link, Script } from 'honox/server'
 
-export const renderer = jsxRenderer(({ children }) => {
+export default jsxRenderer(({ children }) => {
   return (
     <html>
       <head>
