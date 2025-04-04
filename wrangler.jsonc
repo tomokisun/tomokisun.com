@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tomokisun-com",
   "compatibility_date": "2024-04-01",
-  "main": "./src/index.tsx",
+  "main": "./dist/index.js",
   "keep_vars": true,
   "assets": {
     "directory": "./dist"
