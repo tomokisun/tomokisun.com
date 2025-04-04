@@ -1,6 +1,8 @@
+import { JSX } from 'hono/jsx/jsx-runtime'
+
 type LinkProps = {
   href: string
-  children: any
+  children: JSX.Element | string
   className?: string
   target?: string
   rel?: string

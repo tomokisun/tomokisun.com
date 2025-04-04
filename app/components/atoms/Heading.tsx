@@ -1,8 +1,9 @@
 import { createElement } from 'hono/jsx'
+import { JSX } from 'hono/jsx/jsx-runtime'
 
 type HeadingProps = {
   level?: 1 | 2 | 3 | 4 | 5 | 6
-  children: any
+  children: JSX.Element
   className?: string
   blink?: boolean
 }

@@ -3,11 +3,12 @@ import { Env } from 'hono'
 import Header from '../organisms/Header'
 import Menu from '../organisms/Menu'
 import Footer from '../organisms/Footer'
+import { JSX } from 'hono/jsx/jsx-runtime'
 
 type PageLayoutProps = {
   c: Context<Env, any, {}>
   title: string
-  children: any
+  children: JSX.Element | JSX.Element[]
   className?: string
 }
 

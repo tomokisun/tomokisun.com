@@ -1,8 +1,9 @@
+import { JSX } from 'hono/jsx/jsx-runtime'
 import Link from '../atoms/Link'
 
 type MenuItemProps = {
   href: string
-  children: any
+  children: JSX.Element | string
   className?: string
 }
 

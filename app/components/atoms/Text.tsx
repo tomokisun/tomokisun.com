@@ -1,5 +1,7 @@
+import { JSX } from 'hono/jsx/jsx-runtime'
+
 type TextProps = {
-  children: any
+  children: string | JSX.Element
   className?: string
   as?: 'p' | 'span' | 'div'
   blink?: boolean
