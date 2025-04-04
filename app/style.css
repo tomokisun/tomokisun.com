@@ -92,8 +92,7 @@ body {
   max-width: 850px; /* Set a specific max-width */
   width: 100%; /* Take full width up to max-width */
   overflow-x: hidden;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding: 24px;
   display: flex;
   justify-content: center; /* Center content horizontally */
 }
