@@ -4,12 +4,14 @@ import PageLayout from '../templates/PageLayout'
 import Section from '../organisms/Section'
 import Text from '../atoms/Text'
 import Guestbook from '../../islands/Guestbook'
+import { GuestBookEntity } from '../../types/guest-books'
 
 type HomePageProps = {
   c: Context<Env, any, {}>
+  guestBooks: GuestBookEntity[]
 }
 
-export default function HomePage({ c }: HomePageProps) {
+export default function HomePage({ c, guestBooks }: HomePageProps) {
   return (
     <PageLayout c={c} title="tomokisunのホームページへようこそ">
       <a name="about"></a>
@@ -38,7 +40,7 @@ export default function HomePage({ c }: HomePageProps) {
       
       <hr className="rainbow" />
       
-      <Guestbook />
+      <Guestbook guestBooks={guestBooks} />
     </PageLayout>
   )
 }

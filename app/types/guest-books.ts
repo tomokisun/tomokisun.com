@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createInsertSchema } from 'drizzle-zod';
 import { GuestBooks } from '../database/schema';
+import { formatDate } from '../utils/format-date';
 
 const insertGuestBookSchema = createInsertSchema(GuestBooks, {
   id: z.number(),
@@ -13,8 +14,21 @@ export const createGuestBookSchema = insertGuestBookSchema.pick({
   body: true,
 });
 
-export type GuestbookEntity = {
+export type GuestBookEntity = {
   name: string
   date: string
   content: string
+}
+
+export function transformGuestBookEntity(d: {
+  id: number
+  username: string
+  body: string
+  createdAt: string
+}): GuestBookEntity {
+  return {
+    name: d.username,
+    date: formatDate(d.createdAt),
+    content: d.body,
+  }
 }

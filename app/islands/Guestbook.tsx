@@ -2,12 +2,14 @@ import { useState } from 'hono/jsx'
 import Tab from '../components/molecules/Tab'
 import GuestbookForm from './GuestbookForm'
 import GuestbookList from '../components/organisms/GuestbookList'
+import { GuestBookEntity } from '../types/guest-books'
 
 type GuestbookProps = {
+  guestBooks: GuestBookEntity[]
   className?: string
 }
 
-export default function Guestbook({ className = '' }: GuestbookProps) {
+export default function Guestbook({ guestBooks, className = '' }: GuestbookProps) {
   const [activeTab, setActiveTab] = useState(0)
 
   // タブをクリックしたときの処理
@@ -40,7 +42,7 @@ export default function Guestbook({ className = '' }: GuestbookProps) {
         {activeTab === 0 ? (
           <GuestbookForm />
         ) : (
-          <GuestbookList />
+          <GuestbookList guestBooks={guestBooks} />
         )}
       </div>
     </div>
