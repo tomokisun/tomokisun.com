@@ -1,6 +1,13 @@
-# tomokisun.comの90年代スタイルリデザイン
+# tomokisun.com - 90年代スタイルのウェブサイト
 
-このプロジェクトはtomokisun.comの90年代スタイルのリデザインで、1990年代のウェブデザイン要素を特徴としています。
+このプロジェクトはtomokisun.comの90年代スタイルのリデザインで、1990年代のウェブデザイン要素を特徴としています。Hono、Vite、Bunを使用して構築され、Cloudflare Workersにデプロイされています。
+
+## 技術スタック
+
+- **Bun**: JavaScriptランタイムおよびパッケージマネージャー
+- **Vite**: ビルドツールおよび開発サーバー
+- **Hono**: Webフレームワーク（JSXレンダリングを使用）
+- **Cloudflare Workers**: デプロイメントプラットフォーム
 
 ## 特徴
 
@@ -15,16 +22,71 @@
 - ウェブリングリンク
 - テクスチャ背景
 - ベベル加工されたボタンと3D効果
+- カスタムマウスカーソルとトレイルエフェクト
 
 ## プロジェクトの実行
 
 ローカルでプロジェクトを実行するには：
 
 ```bash
+# 依存関係のインストール
+bun install
+
+# 開発サーバーの起動
 bun run dev
 ```
 
 その後、ブラウザでhttp://localhost:5173/を開きます
+
+## プロジェクト構造
+
+```
+tomokisun.com/
+├── docs/                  # プロジェクトドキュメント
+│   └── tone-and-manner.md # デザインガイドライン
+├── public/                # 静的アセット
+│   └── favicon.ico        # ファビコン
+├── src/                   # ソースコード
+│   ├── index.tsx          # アプリケーションのエントリーポイント
+│   ├── renderer.tsx       # JSXレンダラー設定
+│   ├── style.css          # グローバルスタイル
+│   └── pages/             # ページコンポーネント
+│       └── index.tsx      # ホームページ
+├── vite.config.ts         # Vite設定
+└── wrangler.jsonc         # Cloudflare Workers設定
+```
+
+## 開発ワークフロー
+
+### 依存関係の管理
+
+```bash
+# パッケージのインストール
+bun install
+
+# 新しいパッケージの追加
+bun add [パッケージ名]
+
+# 開発用パッケージの追加
+bun add -D [パッケージ名]
+```
+
+### ビルドとプレビュー
+
+```bash
+# プロジェクトのビルド
+bun run build
+
+# ビルド後のプレビュー（Wranglerを使用）
+bun run preview
+```
+
+### デプロイ
+
+```bash
+# Cloudflare Workersへのデプロイ
+bun run deploy
+```
 
 ## プレースホルダー画像
 
@@ -95,13 +157,45 @@ bun run dev
 
 究極の90年代体験のために、`src/renderer.tsx`のオーディオ要素のコメントを解除し、`/public/audio/midi-background.mid`にMIDIファイルを追加できます。
 
-## デプロイ
+```tsx
+{/* 90s websites often had background music */}
+<audio autoplay loop>
+  <source src="/audio/midi-background.mid" type="audio/midi" />
+</audio>
+```
 
-プロジェクトをビルドしてデプロイするには：
+## 特殊機能
 
-```bash
-bun run build
-bun run deploy
+### マウストレイルエフェクト
+
+サイトには90年代風のマウストレイルエフェクトが実装されています。このエフェクトは`renderer.tsx`内のJavaScriptで実装されており、マウスの動きに合わせて小さな光の粒子が表示されます。
+
+```javascript
+// マウストレイルエフェクト
+document.addEventListener('mousemove', function(e) {
+  // マウスの動きに合わせてトレイル要素を作成
+  if (!isInsideContainer(e)) {
+    createTrailElement(e.clientX, e.clientY);
+  }
+});
+```
+
+### レスポンシブデザイン
+
+90年代のウェブサイトはレスポンシブではありませんでしたが、このプロジェクトではモバイルデバイスでの表示も考慮しています。CSSメディアクエリを使用して、小さな画面サイズでもコンテンツが適切に表示されるようにしています。
+
+```css
+/* レスポンシブスタイル */
+@media (max-width: 768px) {
+  .container table {
+    width: 100% !important;
+  }
+  
+  .container td {
+    display: block;
+    width: 100% !important;
+  }
+}
 ```
 
 ## 90年代ウェブデザイン要素
@@ -119,3 +213,8 @@ bun run deploy
 9. **マーキーテキスト**：スクロールするテキストは人気のある効果でした
 10. **テクスチャ背景**：タイル状の背景パターン
 11. **3Dボタン**：3D効果を作り出すためのベベル加工されたエッジ
+12. **点滅するテキスト**：重要な情報を強調するための点滅効果
+
+## トーンアンドマナー
+
+プロジェクトには`docs/tone-and-manner.md`ファイルが含まれており、サイトのデザイン哲学、ビジュアル要素、コンテンツトーン、ユーザー体験に関する詳細なガイドラインが記載されています。このドキュメントは、サイトの一貫性を保ちながら開発を進めるための参考資料として使用できます。
