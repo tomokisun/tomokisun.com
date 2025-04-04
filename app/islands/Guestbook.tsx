@@ -10,7 +10,7 @@ type GuestbookProps = {
 }
 
 export default async function Guestbook({ entities, className = '' }: GuestbookProps) {
-  const [activeTab, setActiveTab] = useState(1)
+  const [activeTab, setActiveTab] = useState(0)
 
   // タブをクリックしたときの処理
   const handleTabClick = (index: number) => {
