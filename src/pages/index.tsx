@@ -3,7 +3,7 @@ import { JSX } from 'hono/jsx/jsx-runtime';
 export function Home(): JSX.Element {
   return (
     <div className="container">
-      <table width={750} border={1} cellSpacing={0} cellPadding={5} align="center" bgcolor="#FFFFFF">
+      <table border={1} cellSpacing={0} cellPadding={5} align="center" bgcolor="#FFFFFF">
         <tr>
           <td colSpan={2} align="center" bgcolor="#000000">
             <h1 className="blink">Welcome to tomokisun's Homepage</h1>
@@ -13,7 +13,7 @@ export function Home(): JSX.Element {
           </td>
         </tr>
         <tr>
-          <td width={200} valign="top" bgcolor="#CCCCFF" className="sidebar">
+          <td valign="top" bgcolor="#CCCCFF" className="sidebar">
             <div className="menu-header">MENU</div>
             <div className="menu-item"><a href="#about">About Me</a></div>
             <div className="menu-item"><a href="#job">My Job</a></div>
