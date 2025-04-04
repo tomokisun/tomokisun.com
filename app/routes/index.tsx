@@ -26,9 +26,9 @@ export default createRoute(async (c) => {
         <tr>
           <td width={200} valign="top" bgcolor="#CCCCFF" className="sidebar">
             <div className="menu-header">メニュー</div>
-            <div className="menu-item"><a href="#about">自己紹介</a></div>
-            <div className="menu-item"><a href="#job">職歴</a></div>
-            <div className="menu-item"><a href="mailto:example@example.com">メールする</a></div>
+            <div className="menu-item"><a href="/">ホームページ</a></div>
+            <div className="menu-item"><a href="/accounts">リンク集</a></div>
+            <div className="menu-item"><a href="/products">プロダクト</a></div>
             <div className="counter">
               <div>訪問者数:</div>
               <div className="counter-number">{visitorsCount.padStart(8, '0')}</div>
