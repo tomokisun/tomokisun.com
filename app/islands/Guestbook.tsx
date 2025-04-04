@@ -9,7 +9,7 @@ type GuestbookProps = {
   className?: string
 }
 
-export default async function Guestbook({ entities, className = '' }: GuestbookProps) {
+export default function Guestbook({ entities, className = '' }: GuestbookProps) {
   const [activeTab, setActiveTab] = useState(0)
 
   // タブをクリックしたときの処理

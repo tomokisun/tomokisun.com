@@ -6,7 +6,7 @@ type GuestbookListProps = {
   className?: string
 }
 
-export default async function GuestbookList({
+export default function GuestbookList({
   entities,
   className = ''
 }: GuestbookListProps) {
