@@ -50,7 +50,7 @@ export default function Guestbook() {
           className={`guestbook-tab ${activeTab === 0 ? 'guestbook-tab-active' : ''}`}
           onClick={() => handleTabClick(0)}
         >
-          署名する
+          カキコする
         </div>
         <div 
           className={`guestbook-tab ${activeTab === 1 ? 'guestbook-tab-active' : ''}`}
