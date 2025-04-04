@@ -10,7 +10,7 @@ export default jsxRenderer(({ children }) => {
         <link rel="icon" href="/favicon.ico" />
         <Link href="/app/style.css" rel="stylesheet" />
         <Script src="/app/client.ts" async />
-        <title>Welcome to tomokisun's Homepage</title>
+        <title>tomokisun's homepage</title>
         <meta name="description" content="Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0." />
         <meta name="keywords" content="tomokisun, personal, homepage, web, mobile, iOS, engineer, 90s, retro" />
       </head>
