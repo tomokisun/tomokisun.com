@@ -18,5 +18,9 @@
       "binding": "KV",
       "id": "86c3c993939c4482a4baa954ce84e499"
     }
-  ]
+  ],
+  "route": {
+    "pattern": "tomokisun.com",
+    "custom_domain": true
+  }
 }
