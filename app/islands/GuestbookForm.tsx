@@ -28,7 +28,7 @@ export default function GuestbookForm({ onSubmit, className = '' }: GuestbookFor
     } else {
       // 実際のアプリケーションでは、ここでサーバーにデータを送信する処理を追加
       // この例では、送信成功のアラートを表示するだけ
-      alert('ゲストブックに署名しました！ありがとうございます。')
+      alert('掲示板に書き込みました！ありがとうございます。')
     }
     
     // フォームをリセット
