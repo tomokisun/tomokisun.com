@@ -1,4 +1,5 @@
 import { createRoute } from 'honox/factory'
+import Guestbook from '../islands/guestbook'
 
 export default createRoute(async (c) => {
   let visitorsCount = await c.env.KV.get('VISITORS_COUNT');
@@ -58,36 +59,27 @@ export default createRoute(async (c) => {
                   職歴
                 </div>
                 <div className="section-content">
-                  <p><blink>CAMPFIRE, Inc. - 以前</blink></p>
+                  <p><blink>ONE, Inc. - now</blink></p>
+                  <p>友人と一緒にこの会社を共同設立しました。</p>
+                  <p>現在、10代向けのソーシャルモバイルアプリを開発中です。</p>
+                </div>
+                <div className="section-content">
+                  <p><blink>CAMPFIRE, Inc. - prev</blink></p>
                   <p>日本最大級のクラウドファンディングサイトの一つです。</p>
                   <p>モバイルアプリのローンチを担当。</p>
                   <p>立ち上げ期は3人のエンジニアで担当していましたが、その後はiOS、Android、APIサーバーなど、ほぼ一人ですべての開発を担当していました。</p>
-                </div>
-                <div className="section-content">
-                  <p><blink>ONE, Inc. - 現在</blink></p>
-                  <p>友人と一緒にこの会社を共同設立しました。</p>
-                  <p>現在、10代向けのソーシャルモバイルアプリを開発中です。</p>
                 </div>
               </div>
               
               <hr className="rainbow" />
               
-              <div className="guestbook">
-                <div className="guestbook-header">ゲストブックに署名する</div>
-                <div className="guestbook-content">
-                  <form>
-                    <div>名前: <input type="text" className="form-input" /></div>
-                    <div>メッセージ: <textarea className="form-input"></textarea></div>
-                    <div><button type="button" className="submit-button">送信</button></div>
-                  </form>
-                </div>
-              </div>
+              <Guestbook />
             </div>
           </td>
         </tr>
         <tr>
           <td colSpan={2} align="center" bgcolor="#000000" className="footer">
-            <div>© 2025 tomokisunのホームページ - 最終更新日: 2025年4月4日</div>
+            <div>© 2025 tomokisun - 最終更新日: 2025年4月4日</div>
           </td>
         </tr>
       </table>
