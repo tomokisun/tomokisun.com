@@ -1,6 +1,16 @@
 import { createRoute } from 'honox/factory'
 
-export default createRoute((c) => {
+export default createRoute(async (c) => {
+  let visitorsCount = await c.env.KV.get('VISITORS_COUNT');
+  if (visitorsCount) {
+    const next = Number(visitorsCount) + 1;
+    await c.env.KV.put('VISITORS_COUNT', next.toString());
+    visitorsCount = next.toString();
+  } else {
+    visitorsCount = '1';
+    await c.env.KV.put('VISITORS_COUNT', visitorsCount);
+  }
+
   return c.render(
     <div className="container">
       <table border={1} cellSpacing={0} cellPadding={5} align="center" bgcolor="#FFFFFF">
@@ -20,7 +30,7 @@ export default createRoute((c) => {
             <div className="menu-item"><a href="mailto:example@example.com">Email Me</a></div>
             <div className="counter">
               <div>Visitors:</div>
-              <div className="counter-number">00001337</div>
+              <div className="counter-number">{visitorsCount.padStart(8, '0')}</div>
             </div>
           </td>
           <td width={600} valign="top">
