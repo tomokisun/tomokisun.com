@@ -13,7 +13,7 @@ export function Home(): JSX.Element {
           </td>
         </tr>
         <tr>
-          <td valign="top" bgcolor="#CCCCFF" className="sidebar">
+          <td width={200} valign="top" bgcolor="#CCCCFF" className="sidebar">
             <div className="menu-header">MENU</div>
             <div className="menu-item"><a href="#about">About Me</a></div>
             <div className="menu-item"><a href="#job">My Job</a></div>
@@ -23,7 +23,7 @@ export function Home(): JSX.Element {
               <div className="counter-number">00001337</div>
             </div>
           </td>
-          <td valign="top">
+          <td width={600} valign="top">
             <div className="content">
               <a name="about"></a>
               <div className="section">
@@ -35,7 +35,7 @@ export function Home(): JSX.Element {
                   <p>I'm originally an iOS engineer, but now I do everything mobile, web, backend, blockchain, etc.</p>
                   <p>Not good at infrastructure layer though lol.</p>
                   <div className="marquee-container">
-                    <marquee scrollamount="3" behavior="alternate">✨ personal web site 👀 ✨</marquee>
+                    <marquee scrollamount="3" behavior="alternate">personal web site 👀</marquee>
                   </div>
                 </div>
               </div>

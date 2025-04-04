@@ -89,6 +89,8 @@ body {
   margin: 0 auto;
   max-width: 100%;
   overflow-x: hidden;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 /* Responsive styles */
