@@ -1,6 +1,6 @@
 import { createRoute } from 'honox/factory'
 import Guestbook from '../islands/guestbook'
-import Menu from '../components/Menu'
+import Menu from '../components/menu'
 
 export default createRoute(async (c) => {
   let visitorsCount = await c.env.KV.get('VISITORS_COUNT');

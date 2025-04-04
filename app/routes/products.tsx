@@ -1,5 +1,5 @@
 import { createRoute } from 'honox/factory'
-import Menu from '../components/Menu'
+import Menu from '../components/menu'
 
 export default createRoute(async (c) => {
   return c.render(
