@@ -3,7 +3,7 @@ import Button from '../components/atoms/Button'
 import FormField from '../components/molecules/FormField'
 
 type GuestbookFormProps = {
-  onSubmit?: (name: string, message: string) => void
+  onSubmit: (name: string, message: string) => void
   className?: string
 }
 
@@ -23,14 +23,7 @@ export default function GuestbookForm({ onSubmit, className = '' }: GuestbookFor
       return
     }
     
-    if (onSubmit) {
-      onSubmit(name, message)
-    } else {
-      // 実際のアプリケーションでは、ここでサーバーにデータを送信する処理を追加
-      // この例では、送信成功のアラートを表示するだけ
-      alert('掲示板に書き込みました！ありがとうございます。')
-    }
-    
+    onSubmit(name, message)
     // フォームをリセット
     setName('')
     setMessage('')

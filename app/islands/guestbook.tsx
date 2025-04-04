@@ -2,17 +2,31 @@ import { useState } from 'hono/jsx'
 import Tab from '../components/molecules/Tab'
 import GuestbookForm from './GuestbookForm'
 import GuestbookList from '../components/organisms/GuestbookList'
+import { Context, Env } from 'hono'
+import { drizzle } from 'drizzle-orm/d1'
+import { GuestBooks } from '../database/schema'
 
 type GuestbookProps = {
+  c: Context<Env, any, {}>
   className?: string
 }
 
-export default function Guestbook({ className = '' }: GuestbookProps) {
+export default async function Guestbook({ c, className = '' }: GuestbookProps) {
   const [activeTab, setActiveTab] = useState(0)
 
   // タブをクリックしたときの処理
   const handleTabClick = (index: number) => {
     setActiveTab(index)
+  }
+
+  // フォームの送信処理
+  const handleSubmit = async (name: string, message: string) => {
+    const db = drizzle(c.env.DB);
+    await db.insert(GuestBooks).values({
+      username: name,
+      body: message,
+    });
+    alert('掲示板に書き込みました！ありがとうございます。')
   }
 
   return (
@@ -38,9 +52,9 @@ export default function Guestbook({ className = '' }: GuestbookProps) {
       
       <div className="guestbook-content">
         {activeTab === 0 ? (
-          <GuestbookForm />
+          <GuestbookForm onSubmit={handleSubmit} />
         ) : (
-          <GuestbookList />
+          <GuestbookList c={c} />
         )}
       </div>
     </div>

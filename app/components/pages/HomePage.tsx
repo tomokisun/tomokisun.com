@@ -3,7 +3,7 @@ import { Env } from 'hono'
 import PageLayout from '../templates/PageLayout'
 import Section from '../organisms/Section'
 import Text from '../atoms/Text'
-import Guestbook from '../../islands/guestbook'
+import Guestbook from '../../islands/Guestbook'
 
 type HomePageProps = {
   c: Context<Env, any, {}>
@@ -38,7 +38,7 @@ export default function HomePage({ c }: HomePageProps) {
       
       <hr className="rainbow" />
       
-      <Guestbook />
+      <Guestbook c={c} />
     </PageLayout>
   )
 }

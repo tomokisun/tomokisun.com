@@ -1,4 +1,7 @@
+import { Context, Env } from 'hono'
 import GuestbookEntry from '../molecules/GuestbookEntry'
+import { drizzle } from 'drizzle-orm/d1'
+import { GuestBooks } from '../../database/schema'
 
 type GuestbookEntry = {
   name: string
@@ -7,33 +10,25 @@ type GuestbookEntry = {
 }
 
 type GuestbookListProps = {
-  entries?: GuestbookEntry[]
+  c: Context<Env, any, {}>
   className?: string
 }
 
-// デフォルトのエントリー
-const defaultEntries = [
-  {
-    name: '田中太郎',
-    date: '2025年4月3日',
-    content: '素晴らしいウェブサイトですね！90年代のデザインが懐かしいです。'
-  },
-  {
-    name: '佐藤花子',
-    date: '2025年4月2日',
-    content: '初めまして！あなたの経歴に興味があります。またお話しましょう。'
-  },
-  {
-    name: '鈴木一郎',
-    date: '2025年4月1日',
-    content: 'このサイトのデザインが素敵です！昔のインターネットを思い出します。'
-  }
-]
-
-export default function GuestbookList({ 
-  entries = defaultEntries,
+export default async function GuestbookList({ 
+  c,
   className = ''
 }: GuestbookListProps) {
+  const db = drizzle(c.env.DB);
+  const guestBooks = await db.select().from(GuestBooks).all();
+  const entries: GuestbookEntry[] = guestBooks.map((g) => {
+    const date = new Date(g.createdAt);
+    return {
+      name: g.username,
+      date: date.toString(),
+      content: g.body,
+    };
+  });
+
   return (
     <div className={`guestbook-entries ${className}`}>
       {entries.map((entry, index) => (
