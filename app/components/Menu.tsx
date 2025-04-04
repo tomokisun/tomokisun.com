@@ -9,7 +9,7 @@ export default async function Menu({ c }: MenuProps) {
   let visitorsCount = await c.env.KV.get('VISITORS_COUNT');
 
   return (
-    <>
+    <td width={200} valign="top" bgcolor="#CCCCFF" className="sidebar">
       <div className="menu-header">メニュー</div>
       <div className="menu-item"><a href="/">ホームページ</a></div>
       <div className="menu-item"><a href="/accounts">リンク集</a></div>
@@ -21,6 +21,6 @@ export default async function Menu({ c }: MenuProps) {
           <div className="kiriban-notice">キリ番の人は掲示板にカキコして下さい！素通り禁止！！</div>
         </div>
       )}
-    </>
+    </td>
   )
 }

@@ -14,9 +14,7 @@ export default createRoute(async (c) => {
           </td>
         </tr>
         <tr>
-          <td width={200} valign="top" bgcolor="#CCCCFF" className="sidebar">
-            <Menu c={c} />
-          </td>
+          <Menu c={c} />
           <td width={600} valign="top">
             <div className="content">
               <a name="social"></a>
