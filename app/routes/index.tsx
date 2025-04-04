@@ -16,20 +16,20 @@ export default createRoute(async (c) => {
       <table border={1} cellSpacing={0} cellPadding={5} align="center" bgcolor="#FFFFFF">
         <tr>
           <td colSpan={2} align="center" bgcolor="#000000">
-            <h1 className="blink">Welcome to tomokisun's Homepage</h1>
+            <h1 className="blink">tomokisunのホームページへようこそ</h1>
             <div className="under-construction">
-              <span>Always Under Construction</span>
+              <span>常に工事中</span>
             </div>
           </td>
         </tr>
         <tr>
           <td width={200} valign="top" bgcolor="#CCCCFF" className="sidebar">
-            <div className="menu-header">MENU</div>
-            <div className="menu-item"><a href="#about">About Me</a></div>
-            <div className="menu-item"><a href="#job">My Job</a></div>
-            <div className="menu-item"><a href="mailto:example@example.com">Email Me</a></div>
+            <div className="menu-header">メニュー</div>
+            <div className="menu-item"><a href="#about">自己紹介</a></div>
+            <div className="menu-item"><a href="#job">職歴</a></div>
+            <div className="menu-item"><a href="mailto:example@example.com">メールする</a></div>
             <div className="counter">
-              <div>Visitors:</div>
+              <div>訪問者数:</div>
               <div className="counter-number">{visitorsCount.padStart(8, '0')}</div>
             </div>
           </td>
@@ -38,14 +38,14 @@ export default createRoute(async (c) => {
               <a name="about"></a>
               <div className="section">
                 <div className="section-header">
-                  ABOUT ME
+                  自己紹介
                 </div>
                 <div className="section-content">
                   <span className="name">tomokisun</span>
-                  <p>I'm originally an iOS engineer, but now I do everything mobile, web, backend, blockchain, etc.</p>
-                  <p>Not good at infrastructure layer though lol.</p>
+                  <p>元々はiOSエンジニアですが、現在はモバイル、ウェブ、バックエンド、ブロックチェーンなど、様々な分野に携わっています。</p>
+                  <p>ただ、インフラ層は得意ではないです（笑）</p>
                   <div className="marquee-container">
-                    <marquee scrollamount="3" behavior="alternate">personal web site 👀</marquee>
+                    <marquee scrollamount="3" behavior="alternate">個人ウェブサイト 👀</marquee>
                   </div>
                 </div>
               </div>
@@ -55,30 +55,30 @@ export default createRoute(async (c) => {
               <a name="job"></a>
               <div className="section">
                 <div className="section-header">
-                  JOB EXPERIENCE
+                  職歴
                 </div>
                 <div className="section-content">
-                  <p><blink>CAMPFIRE, Inc. - prev</blink></p>
-                  <p>It is one of the largest crowdfunding sites in Japan.</p>
-                  <p>Responsible for mobile app launch.</p>
-                  <p>During the startup phase, 3 engineers were in charge, but after that, I was in charge of all development including iOS, Android, API Server, etc. almost by myself.</p>
+                  <p><blink>CAMPFIRE, Inc. - 以前</blink></p>
+                  <p>日本最大級のクラウドファンディングサイトの一つです。</p>
+                  <p>モバイルアプリのローンチを担当。</p>
+                  <p>立ち上げ期は3人のエンジニアで担当していましたが、その後はiOS、Android、APIサーバーなど、ほぼ一人ですべての開発を担当していました。</p>
                 </div>
                 <div className="section-content">
-                  <p><blink>ONE, Inc. - now</blink></p>
-                  <p>I co-founded this company with a friend.</p>
-                  <p>Currently developing a social mobile app for teens.</p>
+                  <p><blink>ONE, Inc. - 現在</blink></p>
+                  <p>友人と一緒にこの会社を共同設立しました。</p>
+                  <p>現在、10代向けのソーシャルモバイルアプリを開発中です。</p>
                 </div>
               </div>
               
               <hr className="rainbow" />
               
               <div className="guestbook">
-                <div className="guestbook-header">SIGN MY GUESTBOOK</div>
+                <div className="guestbook-header">ゲストブックに署名する</div>
                 <div className="guestbook-content">
                   <form>
-                    <div>Name: <input type="text" className="form-input" /></div>
-                    <div>Message: <textarea className="form-input"></textarea></div>
-                    <div><button type="button" className="submit-button">Submit</button></div>
+                    <div>名前: <input type="text" className="form-input" /></div>
+                    <div>メッセージ: <textarea className="form-input"></textarea></div>
+                    <div><button type="button" className="submit-button">送信</button></div>
                   </form>
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default createRoute(async (c) => {
         </tr>
         <tr>
           <td colSpan={2} align="center" bgcolor="#000000" className="footer">
-            <div>© 2025 tomokisun's Homepage - Last updated: April 4, 2025</div>
+            <div>© 2025 tomokisunのホームページ - 最終更新日: 2025年4月4日</div>
           </td>
         </tr>
       </table>
