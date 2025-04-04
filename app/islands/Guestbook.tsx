@@ -2,25 +2,17 @@ import { useState } from 'hono/jsx'
 import Tab from '../components/molecules/Tab'
 import GuestbookForm from './GuestbookForm'
 import GuestbookList from '../components/organisms/GuestbookList'
-import { GuestbookEntity } from '../types/guest-books'
 
 type GuestbookProps = {
-  entities: GuestbookEntity[]
   className?: string
 }
 
-export default function Guestbook({ entities, className = '' }: GuestbookProps) {
+export default function Guestbook({ className = '' }: GuestbookProps) {
   const [activeTab, setActiveTab] = useState(0)
 
   // タブをクリックしたときの処理
   const handleTabClick = (index: number) => {
     setActiveTab(index)
-  }
-
-  // フォームの送信処理
-  const handleSubmit = async (name: string, message: string) => {
-    console.log('[Guestbook] handleSubmit', name, message);
-    alert('掲示板に書き込みました！ありがとうございます。')
   }
 
   return (
@@ -46,9 +38,9 @@ export default function Guestbook({ entities, className = '' }: GuestbookProps) 
       
       <div className="guestbook-content">
         {activeTab === 0 ? (
-          <GuestbookForm onSubmit={handleSubmit} />
+          <GuestbookForm />
         ) : (
-          <GuestbookList entities={entities} />
+          <GuestbookList />
         )}
       </div>
     </div>

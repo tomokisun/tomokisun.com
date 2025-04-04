@@ -2,14 +2,13 @@ import { GuestbookEntity } from '../../types/guest-books'
 import GuestbookEntry from '../molecules/GuestbookEntry'
 
 type GuestbookListProps = {
-  entities: GuestbookEntity[]
   className?: string
 }
 
 export default function GuestbookList({
-  entities,
   className = ''
 }: GuestbookListProps) {
+  const entities: GuestbookEntity[] = []
   return (
     <div className={`guestbook-entries ${className}`}>
       {entities.map((entry, index) => (

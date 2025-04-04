@@ -3,23 +3,16 @@ import HomePage from '../components/pages/HomePage'
 import { incrementVisitorsCount } from '../utils/visitors'
 import { drizzle } from 'drizzle-orm/d1';
 import { GuestBooks } from '../database/schema';
-import { GuestbookEntity } from '../types/guest-books';
+
+export const POST = createRoute(async (c) => {
+  const { username, body } = await c.req.parseBody<{ username: string, body: string }>();
+  const db = drizzle(c.env.DB);
+  await db.insert(GuestBooks).values({ username, body }).returning().get();
+  alert('書き込みました！');
+  return c.redirect('/')
+});
 
 export default createRoute(async (c) => {
   await incrementVisitorsCount(c);
-
-  const db = drizzle(c.env.DB);
-  const guestBooks = await db.select().from(GuestBooks).all();
-
-  const entities: GuestbookEntity[] = guestBooks.map(g => {
-    return {
-      name: g.username,
-      date: '',
-      content: g.body,
-    }
-  });
-
-  console.log('[HomePage] entities', entities);
-
-  return c.render(<HomePage c={c} entities={entities} />)
+  return c.render(<HomePage c={c} />)
 })

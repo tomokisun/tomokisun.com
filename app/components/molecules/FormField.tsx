@@ -3,6 +3,7 @@ import TextArea from '../atoms/TextArea'
 
 type FormFieldProps = {
   label: string
+  name: string
   type?: 'text' | 'textarea'
   placeholder?: string
   value?: string
@@ -14,6 +15,7 @@ type FormFieldProps = {
 
 export default function FormField({
   label,
+  name,
   type = 'text',
   placeholder = '',
   value = '',
@@ -28,6 +30,7 @@ export default function FormField({
       <td>
         {type === 'textarea' ? (
           <TextArea 
+            name={name}
             placeholder={placeholder}
             value={value}
             onChange={onChange}
@@ -35,6 +38,7 @@ export default function FormField({
           />
         ) : (
           <Input 
+            name={name}
             type={type}
             placeholder={placeholder}
             value={value}

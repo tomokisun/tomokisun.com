@@ -1,4 +1,5 @@
 type TextAreaProps = {
+  name: string
   placeholder?: string
   className?: string
   value?: string
@@ -6,6 +7,7 @@ type TextAreaProps = {
 }
 
 export default function TextArea({ 
+  name,
   placeholder = '', 
   className = '', 
   value = '',
@@ -13,6 +15,7 @@ export default function TextArea({
 }: TextAreaProps) {
   return (
     <textarea 
+      name={name}
       className={`form-input guestbook-textarea ${className}`} 
       placeholder={placeholder}
       value={value}

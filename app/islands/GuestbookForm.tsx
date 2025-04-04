@@ -1,54 +1,29 @@
-import { useState } from 'hono/jsx'
-import Button from '../components/atoms/Button'
 import FormField from '../components/molecules/FormField'
+import Submit from '../components/atoms/Submit'
 
 type GuestbookFormProps = {
-  onSubmit: (name: string, message: string) => void
   className?: string
 }
 
-export default function GuestbookForm({ onSubmit, className = '' }: GuestbookFormProps) {
-  const [name, setName] = useState('')
-  const [message, setMessage] = useState('')
-
-  const handleSubmit = () => {
-    // 簡易バリデーション
-    if (!name.trim()) {
-      alert('お名前を入力してください。')
-      return
-    }
-    
-    if (!message.trim()) {
-      alert('メッセージを入力してください。')
-      return
-    }
-    
-    onSubmit(name, message)
-    // フォームをリセット
-    setName('')
-    setMessage('')
-  }
-
+export default function GuestbookForm({ className = '' }: GuestbookFormProps) {
   return (
     <div className={`guestbook-form ${className}`}>
-      <form>
+      <form method='post'>
         <table className="guestbook-form-table">
           <FormField 
             label="お名前:"
+            name='username'
             placeholder="あなたのお名前"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
           />
           <FormField 
             label="メッセージ:"
+            name='body'
             type="textarea"
             placeholder="ここにメッセージを入力してください"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
           />
         </table>
         <div className="guestbook-submit-container">
-          <Button onClick={handleSubmit}><span>送信する</span></Button>
+          <Submit><span>送信する</span></Submit>
         </div>
       </form>
     </div>

@@ -1,4 +1,5 @@
 type InputProps = {
+  name: string
   type?: string
   placeholder?: string
   className?: string
@@ -7,6 +8,7 @@ type InputProps = {
 }
 
 export default function Input({ 
+  name,
   type = 'text', 
   placeholder = '', 
   className = '', 
@@ -16,6 +18,7 @@ export default function Input({
   return (
     <input 
       type={type} 
+      name={name}
       className={`form-input ${className}`} 
       placeholder={placeholder}
       value={value}
