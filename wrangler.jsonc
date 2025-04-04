@@ -13,14 +13,20 @@
   "observability": {
     "enabled": true
   },
+  "route": {
+    "pattern": "tomokisun.com",
+    "custom_domain": true
+  },
   "kv_namespaces": [
     {
       "binding": "KV",
       "id": "86c3c993939c4482a4baa954ce84e499"
     }
   ],
-  "route": {
-    "pattern": "tomokisun.com",
-    "custom_domain": true
-  }
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_id": "4f8a5f88-ece7-4f40-bfb5-14736d475dca",
+    }
+  ]
 }
