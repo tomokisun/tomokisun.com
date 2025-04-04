@@ -1,5 +1,6 @@
 import { createRoute } from 'honox/factory'
 import Guestbook from '../islands/guestbook'
+import Menu from '../components/Menu'
 
 export default createRoute(async (c) => {
   let visitorsCount = await c.env.KV.get('VISITORS_COUNT');
@@ -25,15 +26,7 @@ export default createRoute(async (c) => {
         </tr>
         <tr>
           <td width={200} valign="top" bgcolor="#CCCCFF" className="sidebar">
-            <div className="menu-header">メニュー</div>
-            <div className="menu-item"><a href="/">ホームページ</a></div>
-            <div className="menu-item"><a href="/accounts">リンク集</a></div>
-            <div className="menu-item"><a href="/products">プロダクト</a></div>
-            <div className="counter">
-              <div>訪問者数:</div>
-              <div className="counter-number">{visitorsCount.padStart(8, '0')}</div>
-              <div className="kiriban-notice">キリ番の人は掲示板にカキコして下さい！素通り禁止！！</div>
-            </div>
+            <Menu c={c} />
           </td>
           <td width={600} valign="top">
             <div className="content">

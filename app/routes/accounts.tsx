@@ -1,4 +1,5 @@
 import { createRoute } from 'honox/factory'
+import Menu from '../components/Menu'
 
 export default createRoute(async (c) => {
   return c.render(
@@ -14,10 +15,7 @@ export default createRoute(async (c) => {
         </tr>
         <tr>
           <td width={200} valign="top" bgcolor="#CCCCFF" className="sidebar">
-            <div className="menu-header">メニュー</div>
-            <div className="menu-item"><a href="/">ホームページ</a></div>
-            <div className="menu-item"><a href="/accounts">リンク集</a></div>
-            <div className="menu-item"><a href="/products">プロダクト</a></div>
+            <Menu c={c} />
           </td>
           <td width={600} valign="top">
             <div className="content">
