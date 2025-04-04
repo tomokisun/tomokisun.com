@@ -3,16 +3,6 @@ import Guestbook from '../islands/guestbook'
 import Menu from '../components/menu'
 
 export default createRoute(async (c) => {
-  let visitorsCount = await c.env.KV.get('VISITORS_COUNT');
-  if (visitorsCount) {
-    const next = Number(visitorsCount) + 1;
-    await c.env.KV.put('VISITORS_COUNT', next.toString());
-    visitorsCount = next.toString();
-  } else {
-    visitorsCount = '1';
-    await c.env.KV.put('VISITORS_COUNT', visitorsCount);
-  }
-
   return c.render(
     <div className="container">
       <table border={1} cellSpacing={0} cellPadding={5} align="center" bgcolor="#FFFFFF">
