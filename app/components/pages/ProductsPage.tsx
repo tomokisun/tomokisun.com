@@ -13,12 +13,34 @@ type ProductsPageProps = {
 export default function ProductsPage({ c }: ProductsPageProps) {
   return (
     <PageLayout c={c} title="tomokisunのプロダクト一覧">
-      <Section id="calculatormultiple" title={
+      <Section id="newmatch" title={
         <>
-          CalculatorMultiple
+          NewMatch
           <Blink className="new-marker">NEW!</Blink>
         </>
       }>
+        <Text>新しいマッチングアプリです。共通の趣味や興味を持つ人々をつなぐプラットフォームを提供します。</Text>
+        <Text>
+          <Link 
+            href="https://newmatch.app" 
+            target="_blank"
+          >
+            https://newmatch.app
+          </Link>
+        </Text>
+      </Section>
+      <Section id="bematch" title="BeMatch">
+        <Text>ビデオファーストのマッチングアプリです。自己紹介動画を通じて、より深い人間関係を構築できます。</Text>
+        <Text>
+          <Link 
+            href="https://bematch.app" 
+            target="_blank"
+          >
+            https://bematch.jp
+          </Link>
+        </Text>
+      </Section>
+      <Section id="calculatormultiple" title='CalculatorMultiple'>
         <Text>デバイスを横向きにすると、3つの計算機が表示されます。同時に複数の計算が必要な場合に使用できます。</Text>
         <Text>
           <Link 
@@ -76,9 +98,6 @@ export default function ProductsPage({ c }: ProductsPageProps) {
             https://twitter.com/pokerone_jp
           </Link>
         </Text>
-        <div className="marquee-container">
-          <marquee scrollamount="3" behavior="alternate">プロダクト一覧 👀</marquee>
-        </div>
       </Section>
     </PageLayout>
   )
