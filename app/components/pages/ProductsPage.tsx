@@ -19,7 +19,7 @@ export default function ProductsPage({ c }: ProductsPageProps) {
           <Blink className="new-marker">NEW!</Blink>
         </>
       }>
-        <Text>新しいマッチングアプリです。共通の趣味や興味を持つ人々をつなぐプラットフォームを提供します。</Text>
+        <Text>新しい友だちが作れるアプリ「NewMatch」は、スワイプで気になる人を見つけ、お互いにLikeを送るとマッチし、メッセージで仲良くなり、同性の友だちもどんどん作れ、共通の趣味や行きたい場所、音楽を共有できるなど、色んな探し方で気の合う人を見つけ、毎日をもっと楽しくしてくれます！</Text>
         <Text>
           <Link 
             href="https://newmatch.app" 
@@ -30,10 +30,10 @@ export default function ProductsPage({ c }: ProductsPageProps) {
         </Text>
       </Section>
       <Section id="bematch" title="BeMatch">
-        <Text>ビデオファーストのマッチングアプリです。自己紹介動画を通じて、より深い人間関係を構築できます。</Text>
+        <Text>BeRealを交換できる無料アプリです。繋がりたい人をスワイプで選ぶことができます。気になる人とマッチしてBeRealをもっと楽しもう！</Text>
         <Text>
           <Link 
-            href="https://bematch.app" 
+            href="https://bematch.jp" 
             target="_blank"
           >
             https://bematch.jp
