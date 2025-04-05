@@ -3,7 +3,7 @@ import { Env } from 'hono'
 import PageLayout from '../templates/PageLayout'
 import Section from '../organisms/Section'
 import Text from '../atoms/Text'
-import Guestbook from '../../islands/Guestbook'
+import Guestbook from '../organisms/Guestbook'
 import { GuestBookEntity } from '../../types/guest-books'
 
 type HomePageProps = {

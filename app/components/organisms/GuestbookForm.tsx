@@ -1,5 +1,5 @@
-import FormField from '../components/molecules/FormField'
-import Submit from '../components/atoms/Submit'
+import FormField from '../molecules/FormField'
+import Submit from '../atoms/Submit'
 
 type GuestbookFormProps = {
   className?: string
