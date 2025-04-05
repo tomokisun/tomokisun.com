@@ -23,7 +23,7 @@ export default function GuestbookForm({ className = '' }: GuestbookFormProps) {
           />
         </table>
         <div className="guestbook-submit-container">
-          <Submit><span>送信する</span></Submit>
+          <Submit>送信する</Submit>
         </div>
       </form>
     </div>

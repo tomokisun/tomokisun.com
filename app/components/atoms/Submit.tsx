@@ -1,17 +1,17 @@
 import { JSX } from 'hono/jsx/jsx-runtime';
 
 type SubmitProps = {
-  children: JSX.Element;
+  children: JSX.Element | string;
   className?: string
 }
 
 export default function Submit({ children, className }: SubmitProps) {
   return (
-    <input
+    <button
       type='submit'
       className={`submit-button ${className}`} 
     >
       <span className="submit-button-text">{children}</span>
-    </input>
+    </button>
   )
 }
