@@ -24,6 +24,7 @@
 - レスポンシブデザイン（モバイル対応）
 - 虹色の区切り線
 - キリ番通知機能
+- 右クリック禁止機能（通知付き）
 
 ## プロジェクトの実行
 
@@ -317,6 +318,57 @@ document.addEventListener('click', function(e) {
   }
 }
 ```
+
+### 右クリック禁止機能
+
+90年代のウェブサイトでは、コンテンツの保護やユーザー体験の一部として右クリックを無効化することが一般的でした。このサイトでも右クリック禁止機能を実装しており、ユーザーが右クリックを試みると通知が表示されます。
+
+この機能は`app/client.ts`で実装されています：
+
+```typescript
+// Function to show notification
+const showNotification = (message: string) => {
+  // Create notification element
+  const notification = document.createElement('div')
+  notification.textContent = message
+  notification.style.position = 'fixed'
+  notification.style.top = '20px'
+  notification.style.left = '50%'
+  notification.style.transform = 'translateX(-50%)'
+  notification.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'
+  notification.style.color = 'white'
+  notification.style.padding = '10px 20px'
+  notification.style.borderRadius = '5px'
+  notification.style.zIndex = '9999'
+  notification.style.fontFamily = 'sans-serif'
+  notification.style.fontSize = '16px'
+  notification.style.fontWeight = 'bold'
+  notification.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'
+  
+  // Add to document
+  document.body.appendChild(notification)
+  
+  // Remove after 3 seconds
+  setTimeout(() => {
+    document.body.removeChild(notification)
+  }, 3000)
+}
+
+// Prevent right-click context menu and show notification
+document.addEventListener('contextmenu', (event) => {
+  event.preventDefault()
+  showNotification('右クリックは無効になっています')
+  return false
+}, false)
+```
+
+この実装により：
+
+1. ユーザーが右クリックすると、デフォルトのコンテキストメニューが表示されなくなります
+2. 代わりに「右クリックは無効になっています」という通知が画面上部に表示されます
+3. 通知は3秒後に自動的に消えます
+
+この機能は90年代のウェブサイトの雰囲気を再現するとともに、当時のウェブコンテンツ保護の考え方を反映しています。
 
 ## 90年代ウェブデザイン要素
 
