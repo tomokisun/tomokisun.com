@@ -549,7 +549,11 @@ h1 {
 
 /* Marquee styling */
 .marquee-container {
-  border: 2px inset #CCCCCC;
+  background-color: #000000;
+  color: #ffff00; /* 典型的な90年代の黄色テキスト */
+  font-weight: bold;
+  border-top: 2px solid #ff00ff;
+  border-bottom: 2px solid #ff00ff;
   padding: 2px;
   margin: 10px 0;
 }
