@@ -2,7 +2,7 @@ import { JSX } from 'hono/jsx/jsx-runtime'
 
 type SectionProps = {
   id?: string
-  title: string
+  title: string | JSX.Element
   children: JSX.Element | JSX.Element[]
   className?: string
 }

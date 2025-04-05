@@ -4,6 +4,7 @@ import PageLayout from '../templates/PageLayout'
 import Section from '../organisms/Section'
 import Text from '../atoms/Text'
 import Link from '../atoms/Link'
+import { Blink } from '../atoms/Blink'
 
 type ProductsPageProps = {
   c: Context<Env, any, {}>
@@ -12,7 +13,12 @@ type ProductsPageProps = {
 export default function ProductsPage({ c }: ProductsPageProps) {
   return (
     <PageLayout c={c} title="tomokisunのプロダクト一覧">
-      <Section id="calculatormultiple" title="CalculatorMultiple">
+      <Section id="calculatormultiple" title={
+        <>
+          CalculatorMultiple
+          <Blink className="new-marker">NEW!</Blink>
+        </>
+      }>
         <Text>デバイスを横向きにすると、3つの計算機が表示されます。同時に複数の計算が必要な場合に使用できます。</Text>
         <Text>
           <Link 
