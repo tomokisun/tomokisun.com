@@ -10,6 +10,8 @@
 - **Tailwind CSS**: ユーティリティファーストのCSSフレームワーク
 - **Cloudflare Workers**: デプロイメントプラットフォーム
 - **Cloudflare KV**: 訪問者カウンターなどのデータ保存に使用
+- **Cloudflare D1**: SQLiteベースのデータベース（ゲストブック機能に使用）
+- **Drizzle ORM**: データベース操作のためのORM
 
 ## 特徴
 
@@ -19,7 +21,7 @@
 - アニメーション要素（点滅するテキスト、マーキー）
 - 訪問者カウンター（Cloudflare KVを使用）
 - 「常に工事中」の通知
-- ゲストブック機能
+- ゲストブック機能（Cloudflare D1とDrizzle ORMを使用）
 - カスタムマウスカーソルとトレイルエフェクト
 - レスポンシブデザイン（モバイル対応）
 - 虹色の区切り線
@@ -40,6 +42,18 @@ bun run dev
 
 その後、ブラウザでhttp://localhost:5173/を開きます
 
+### データベースのセットアップ
+
+ローカル開発環境でデータベースを使用するには：
+
+```bash
+# ローカルデータベースのマイグレーション実行
+bun run migration:local
+
+# Drizzle Studioの起動（データベース管理UI）
+bun run studio
+```
+
 ## プロジェクト構造
 
 ```
@@ -49,15 +63,14 @@ tomokisun.com/
 │   ├── server.ts          # サーバーサイドのエントリーポイント
 │   ├── style.css          # グローバルスタイル（Tailwind CSSを含む）
 │   ├── global.d.ts        # グローバル型定義
-│   ├── components/        # 再利用可能なコンポーネント
+│   ├── components/        # 再利用可能なコンポーネント（Atomic Design）
 │   │   ├── atoms/         # 基本的なUIコンポーネント
 │   │   ├── molecules/     # 複合的なUIコンポーネント
 │   │   ├── organisms/     # 複雑なUIコンポーネント
 │   │   ├── pages/         # ページコンポーネント
 │   │   └── templates/     # テンプレートコンポーネント
-│   ├── islands/           # インタラクティブなコンポーネント
-│   │   ├── Guestbook.tsx  # ゲストブックコンポーネント
-│   │   └── GuestbookForm.tsx # ゲストブック投稿フォーム
+│   ├── database/          # データベース関連
+│   │   └── schema.ts      # Drizzle ORMスキーマ定義
 │   ├── routes/            # ページルート
 │   │   ├── _404.tsx       # 404エラーページ
 │   │   ├── _error.tsx     # エラーページ
@@ -65,13 +78,21 @@ tomokisun.com/
 │   │   ├── accounts.tsx   # アカウント一覧ページ
 │   │   ├── index.tsx      # ホームページ
 │   │   └── products.tsx   # プロダクト一覧ページ
+│   ├── types/             # 型定義
+│   │   └── guest-books.ts # ゲストブック関連の型定義
 │   └── utils/             # ユーティリティ関数
+│       ├── format-date.ts # 日付フォーマット関数
 │       └── visitors.ts    # 訪問者カウンター機能
 ├── docs/                  # プロジェクトドキュメント
 │   └── tone-and-manner.md # デザインガイドライン
+├── drizzle/               # データベースマイグレーションファイル
+│   ├── 0000_happy_tag.sql # 初期マイグレーションSQL
+│   └── meta/              # マイグレーションメタデータ
 ├── public/                # 静的アセット
 │   ├── .assetsignore      # アセット除外設定
 │   └── favicon.ico        # ファビコン
+├── drizzle.config.ts      # Drizzle設定（本番環境用）
+├── drizzle.config.local.ts # Drizzle設定（ローカル環境用）
 ├── vite.config.ts         # Vite設定
 └── wrangler.jsonc         # Cloudflare Workers設定
 ```
@@ -98,6 +119,22 @@ bun add -D [パッケージ名]
 bun run dev
 ```
 
+### データベース操作
+
+```bash
+# マイグレーションの生成
+bun run migration:generate
+
+# マイグレーションの実行
+bun run migration
+
+# ローカルデータベースへのマイグレーション適用
+bun run migration:local
+
+# Drizzle Studioの起動（データベース管理UI）
+bun run studio
+```
+
 ### ビルドとプレビュー
 
 ```bash
@@ -119,254 +156,84 @@ bun run deploy
 
 ### 訪問者カウンター
 
-サイトには訪問者カウンター機能が実装されています。これはCloudflare KVを使用して訪問者数を保存・表示します。実装は`app/utils/visitors.ts`にあります：
+サイトには訪問者カウンター機能が実装されています。この機能は以下の仕様に基づいています：
 
-```typescript
-export async function incrementVisitorsCount(c: Context<Env, any, {}>) {
-  let visitorsCount = await c.env.KV.get('VISITORS_COUNT');
-  if (visitorsCount) {
-    const next = Number(visitorsCount) + 1;
-    await c.env.KV.put('VISITORS_COUNT', next.toString());
-    visitorsCount = next.toString();
-  } else {
-    visitorsCount = '1';
-    await c.env.KV.put('VISITORS_COUNT', visitorsCount);
-  }
-  return visitorsCount;
-}
-```
-
-この機能はルートハンドラー（`app/routes/index.tsx`）で呼び出されています：
-
-```typescript
-export default createRoute(async (c) => {
-  await incrementVisitorsCount(c);
-  return c.render(<HomePage c={c} />)
-})
-```
+- **データストレージ**: Cloudflare KVを使用して訪問者数を保存
+- **カウント方法**: ホームページにアクセスするたびにカウンターが1増加
+- **表示形式**: 8桁のゼロ埋め数字（例: 00000123）
+- **キリ番通知**: 特定の数値（キリ番）に達した際に通知メッセージを表示
+- **実装場所**: 
+  - カウント処理: `app/utils/visitors.ts`
+  - 表示: `app/components/organisms/Menu.tsx`のサイドバー内
 
 ### ゲストブック
 
-サイトには90年代風のゲストブック機能があり、訪問者がメッセージを残すことができます。この機能は`app/islands/Guestbook.tsx`と`app/islands/GuestbookForm.tsx`で実装されています。ゲストブックはタブ形式で「カキコする」と「メッセージを読む」の2つのセクションに分かれています。
+サイトには90年代風のゲストブック機能があり、訪問者がメッセージを残すことができます。この機能の仕様は以下の通りです：
 
-```typescript
-// Guestbook.tsx
-export default function Guestbook({ className = '' }: GuestbookProps) {
-  const [activeTab, setActiveTab] = useState(0)
-
-  // タブをクリックしたときの処理
-  const handleTabClick = (index: number) => {
-    setActiveTab(index)
-  }
-
-  return (
-    <div className={`guestbook ${className}`}>
-      <div className="guestbook-header">
-        <span className="guestbook-icon">📝</span>
-        掲示板
-        <span className="guestbook-icon">📝</span>
-      </div>
-      
-      <div className="guestbook-tabs">
-        <Tab 
-          label="カキコする"
-          isActive={activeTab === 0}
-          onClick={() => handleTabClick(0)}
-        />
-        <Tab 
-          label="メッセージを読む"
-          isActive={activeTab === 1}
-          onClick={() => handleTabClick(1)}
-        />
-      </div>
-      
-      <div className="guestbook-content">
-        {activeTab === 0 ? (
-          <GuestbookForm />
-        ) : (
-          <GuestbookList />
-        )}
-      </div>
-    </div>
-  )
-}
-```
+- **データストレージ**: Cloudflare D1（SQLite）データベースを使用
+- **ORM**: Drizzle ORMを使用してデータベース操作を実装
+- **データモデル**: 
+  - ユーザー名（3〜20文字）
+  - メッセージ本文（1〜500文字）
+  - 投稿日時（自動記録）
+- **バリデーション**: Zodを使用したフォーム入力のバリデーション
+- **表示形式**: 投稿者名、日付、メッセージ内容を表示
+- **日付フォーマット**: 日本語形式（YYYY-MM-DD）
+- **実装場所**:
+  - スキーマ定義: `app/database/schema.ts`
+  - 型定義とバリデーション: `app/types/guest-books.ts`
+  - 投稿処理: `app/routes/index.tsx`のPOSTハンドラー
+  - 表示コンポーネント: `app/components/organisms/Guestbook.tsx`
 
 ### マウストレイルエフェクト
 
-サイトには90年代風のマウストレイルエフェクトが実装されています。このエフェクトは`app/routes/_renderer.tsx`内のJavaScriptで実装されており、マウスの動きに合わせて小さな光の粒子が表示されます。
+サイトには90年代風のマウストレイルエフェクトが実装されています。この機能の仕様は以下の通りです：
 
-```javascript
-// Track mouse movement and create trail elements
-document.addEventListener('mousemove', function(e) {
-  // Skip trail creation if mouse is inside container
-  if (isInsideContainer(e)) return;
-  
-  // Throttle the creation of trail elements (every 50ms)
-  if (!this.throttleTimeout) {
-    this.throttleTimeout = setTimeout(() => {
-      createTrailElement(e.clientX, e.clientY);
-      this.throttleTimeout = null;
-    }, 50);
-  }
-});
-```
-
-また、クリック時にも特殊なエフェクトが表示されます：
-
-```javascript
-// Add click effect
-document.addEventListener('click', function(e) {
-  // Skip click effect if inside container
-  if (isInsideContainer(e)) return;
-  
-  // Create multiple particles for click effect
-  for (let i = 0; i < 8; i++) {
-    setTimeout(() => {
-      const trail = document.createElement('div');
-      trail.className = 'cursor-trail';
-      
-      // Random position around click point
-      const angle = Math.random() * Math.PI * 2;
-      const distance = Math.random() * 30;
-      const x = e.clientX + Math.cos(angle) * distance;
-      const y = e.clientY + Math.sin(angle) * distance;
-      
-      trail.style.left = x + 'px';
-      trail.style.top = y + 'px';
-      body.appendChild(trail);
-      
-      setTimeout(() => {
-        trail.remove();
-      }, 1000);
-    }, i * 50);
-  }
-});
-```
+- **実装方法**: CSSアニメーションとJavaScriptイベントリスナーの組み合わせ
+- **エフェクト内容**: 
+  - マウスの動きに合わせて小さな光の粒子が表示される
+  - 粒子は時間経過とともにフェードアウト
+  - クリック時には複数の粒子が放射状に表示される
+- **カスタムカーソル**: 
+  - サイト全体でカスタムカーソル画像を使用
+  - インタラクティブ要素（リンク、ボタンなど）ではポインターカーソルに変更
+- **スタイル**:
+  - 黄色の粒子（#FFFF00）
+  - ピンク色の光彩効果（#FF00FF）
+  - フェードアウトアニメーション（1秒）
+- **実装場所**: `app/style.css`内のCSSルールとJavaScriptコード
 
 ### レスポンシブデザイン
 
-90年代のウェブサイトはレスポンシブではありませんでしたが、このプロジェクトではモバイルデバイスでの表示も考慮しています。CSSメディアクエリを使用して、小さな画面サイズでもコンテンツが適切に表示されるようにしています。
+90年代のウェブサイトはレスポンシブではありませんでしたが、このプロジェクトではモバイルデバイスでの表示も考慮しています。レスポンシブデザインの仕様は以下の通りです：
 
-```css
-/* Responsive styles */
-@media (max-width: 768px) {
-  body {
-    padding: 10px 0;
-  }
-  
-  .container table {
-    width: 100% !important;
-  }
-  
-  .container td {
-    display: block;
-    width: 100% !important;
-    box-sizing: border-box;
-  }
-  
-  .sidebar {
-    margin-bottom: 15px;
-  }
-  
-  .menu-item {
-    padding: 10px 5px;
-    margin: 8px 0;
-  }
-  
-  .section-header, .guestbook-header {
-    padding: 8px 5px;
-  }
-  
-  .form-input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 12px 8px;
-    font-size: 16px; /* Prevents iOS zoom on focus */
-    border-radius: 0; /* Prevents iOS from adding rounded corners */
-    -webkit-appearance: none; /* Removes default iOS styling */
-  }
-  
-  textarea.form-input {
-    min-height: 100px;
-    resize: vertical;
-  }
-  
-  .submit-button {
-    padding: 10px;
-    width: 100%;
-    margin: 15px 0 5px;
-  }
-  
-  h1 {
-    font-size: 1.5em;
-  }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-  body {
-    padding: 5px 0;
-  }
-  
-  h1 {
-    font-size: 1.2em;
-  }
-  
-  .section-content, .guestbook-content {
-    padding: 8px;
-  }
-}
-```
+- **実装方法**: CSSメディアクエリを使用
+- **ブレイクポイント**:
+  - タブレット: 768px以下
+  - モバイル: 480px以下
+- **モバイル対応の主な変更点**:
+  - テーブルレイアウトをブロックレイアウトに変換
+  - フォーム要素のサイズ調整（タッチ操作に最適化）
+  - フォントサイズの調整
+  - 余白の最適化
+  - iOSでのフォーム入力最適化（ズーム防止、角丸の除去）
+- **実装場所**: `app/style.css`内のメディアクエリ
 
 ### 右クリック禁止機能
 
-90年代のウェブサイトでは、コンテンツの保護やユーザー体験の一部として右クリックを無効化することが一般的でした。このサイトでも右クリック禁止機能を実装しており、ユーザーが右クリックを試みると通知が表示されます。
+90年代のウェブサイトでは、コンテンツの保護やユーザー体験の一部として右クリックを無効化することが一般的でした。このサイトでも右クリック禁止機能を実装しています。この機能の仕様は以下の通りです：
 
-この機能は`app/client.ts`で実装されています：
-
-```typescript
-// Function to show notification
-const showNotification = (message: string) => {
-  // Create notification element
-  const notification = document.createElement('div')
-  notification.textContent = message
-  notification.style.position = 'fixed'
-  notification.style.top = '20px'
-  notification.style.left = '50%'
-  notification.style.transform = 'translateX(-50%)'
-  notification.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'
-  notification.style.color = 'white'
-  notification.style.padding = '10px 20px'
-  notification.style.borderRadius = '5px'
-  notification.style.zIndex = '9999'
-  notification.style.fontFamily = 'sans-serif'
-  notification.style.fontSize = '16px'
-  notification.style.fontWeight = 'bold'
-  notification.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'
-  
-  // Add to document
-  document.body.appendChild(notification)
-  
-  // Remove after 3 seconds
-  setTimeout(() => {
-    document.body.removeChild(notification)
-  }, 3000)
-}
-
-// Prevent right-click context menu and show notification
-document.addEventListener('contextmenu', (event) => {
-  event.preventDefault()
-  showNotification('右クリックは無効になっています')
-  return false
-}, false)
-```
-
-この実装により：
-
-1. ユーザーが右クリックすると、デフォルトのコンテキストメニューが表示されなくなります
-2. 代わりに「右クリックは無効になっています」という通知が画面上部に表示されます
-3. 通知は3秒後に自動的に消えます
+- **実装方法**: JavaScriptのcontextmenuイベントリスナーを使用
+- **動作**:
+  1. ユーザーが右クリックすると、デフォルトのコンテキストメニューが表示されなくなる
+  2. 代わりに「右クリックは無効になっています」という通知が画面上部に表示される
+  3. 通知は3秒後に自動的に消える
+- **通知スタイル**:
+  - 半透明の黒背景
+  - 白色テキスト
+  - 角丸の枠
+  - ドロップシャドウ効果
+- **実装場所**: `app/client.ts`
 
 この機能は90年代のウェブサイトの雰囲気を再現するとともに、当時のウェブコンテンツ保護の考え方を反映しています。
 
@@ -397,15 +264,48 @@ document.addEventListener('contextmenu', (event) => {
 - **Templates**: ページのレイアウト構造を定義するコンポーネント（PageLayout）
 - **Pages**: 実際のページコンテンツを表示するコンポーネント（HomePage、AccountsPage、ProductsPageなど）
 
+このパターンにより、コンポーネントの再利用性が高まり、メンテナンスが容易になります。例えば、`Text`コンポーネントは様々な場所で再利用され、一貫したスタイルを提供します。
+
 ## トーンアンドマナー
 
 プロジェクトには`docs/tone-and-manner.md`ファイルが含まれており、サイトのデザイン哲学、ビジュアル要素、コンテンツトーン、ユーザー体験に関する詳細なガイドラインが記載されています。このドキュメントは、サイトの一貫性を保ちながら開発を進めるための参考資料として使用できます。
 
-主なデザイン哲学は以下の通りです：
+### デザイン哲学
 
 - **意図的なレトロ感**: 現代のウェブデザイン慣行に反して、初期のウェブの美学を称えるデザイン
 - **「工事中」の永続性**: 「Always Under Construction」というフレーズで表現される、完成しない魅力
 - **技術的な素朴さ**: 複雑なJavaScriptやCSSエフェクトを最小限に抑え、HTMLの基本に忠実
+
+### ビジュアル要素
+
+- **カラーパレット**: 深い青色の背景、明るい黄色のタイトル、ビビッドなピンク色のセクションヘッダー
+- **タイポグラフィ**: Comic Sans MSなどの「クラシック」なウェブフォント
+- **レイアウト**: 2カラム構造（左ナビゲーション + 右コンテンツ）、テーブルベースのレイアウト
+
+### コンテンツトーン
+
+- **カジュアルで個人的**: 堅苦しさを排除し、個人的な声で語りかける
+- **技術的に正確だが親しみやすい**: 専門知識を示しつつも、親しみやすさを維持
+- **自己言及的なユーモア**: 軽いユーモアを交えた文体
+
+## 環境変数
+
+プロジェクトでは以下の環境変数を使用しています：
+
+- `CLOUDFLARE_ACCOUNT_ID`: CloudflareアカウントのアカウントID
+- `CLOUDFLARE_DATABASE_ID`: Cloudflare D1データベースのID
+- `CLOUDFLARE_API_TOKEN`: CloudflareのAPIトークン
+
+これらの環境変数は`.env`ファイルに設定するか、Cloudflare Workersのシークレットとして設定する必要があります。
+
+## デプロイ
+
+このプロジェクトはCloudflare Workersにデプロイされています。デプロイには以下の手順を実行します：
+
+1. プロジェクトをビルド: `bun run build`
+2. Cloudflare Workersにデプロイ: `bun run deploy`
+
+Cloudflare Workersの設定は`wrangler.jsonc`ファイルで管理されています。このファイルには、KVネームスペースやD1データベースなどのバインディングが含まれています。
 
 ## ライセンス
 

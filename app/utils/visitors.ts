@@ -17,3 +17,13 @@ export async function incrementVisitorsCount(c: Context<Env, any, {}>) {
   }
   return visitorsCount;
 }
+
+/**
+ * Retrieves the current visitors count from KV storage
+ * @param c Hono context
+ * @returns The current visitors count as a string
+ */
+export async function getVisitorsCount(c: Context<Env, any, {}>): Promise<string> {
+  let visitorsCount = await c.env.KV.get('VISITORS_COUNT');
+  return visitorsCount ?? '0';
+}
