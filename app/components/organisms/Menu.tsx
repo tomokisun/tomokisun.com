@@ -16,6 +16,7 @@ export default async function Menu({ c, className = '' }: MenuProps) {
       <MenuItem href="/">ホームページ</MenuItem>
       <MenuItem href="/accounts">リンク集</MenuItem>
       <MenuItem href="/products">プロダクト</MenuItem>
+      <MenuItem href="https://suzuri.jp/tomomisun">オリジナルグッズ</MenuItem>
       <div className="counter">
         <div>訪問者数:</div>
         <div className="counter-number">{visitorsCount.padStart(8, '0')}</div>
