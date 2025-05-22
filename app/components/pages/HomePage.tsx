@@ -9,9 +9,11 @@ import { GuestBookEntity } from '../../types/guest-books'
 type HomePageProps = {
   c: Context<Env, any, {}>
   guestBooks: GuestBookEntity[]
+  captchaQuestion: string
+  sessionId: string
 }
 
-export default function HomePage({ c, guestBooks }: HomePageProps) {
+export default function HomePage({ c, guestBooks, captchaQuestion, sessionId }: HomePageProps) {
   return (
     <PageLayout c={c} title="tomokisunのホームページへようこそ">
       <a name="about"></a>
@@ -40,7 +42,7 @@ export default function HomePage({ c, guestBooks }: HomePageProps) {
       
       <hr className="rainbow" />
       
-      <Guestbook guestBooks={guestBooks} />
+      <Guestbook guestBooks={guestBooks} captchaQuestion={captchaQuestion} sessionId={sessionId} />
     </PageLayout>
   )
 }

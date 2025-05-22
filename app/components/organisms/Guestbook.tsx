@@ -4,10 +4,12 @@ import { GuestBookEntity } from '../../types/guest-books'
 
 type GuestbookProps = {
   guestBooks: GuestBookEntity[]
+  captchaQuestion: string
+  sessionId: string
   className?: string
 }
 
-export default function Guestbook({ guestBooks, className = '' }: GuestbookProps) {
+export default function Guestbook({ guestBooks, captchaQuestion, sessionId, className = '' }: GuestbookProps) {
   return (
     <div className={`guestbook ${className}`}>
       <div className="guestbook-header">
@@ -18,7 +20,7 @@ export default function Guestbook({ guestBooks, className = '' }: GuestbookProps
       
       <div className="guestbook-content">
         <GuestbookList guestBooks={guestBooks} />
-        <GuestbookForm />
+        <GuestbookForm captchaQuestion={captchaQuestion} sessionId={sessionId} />
       </div>
     </div>
   )

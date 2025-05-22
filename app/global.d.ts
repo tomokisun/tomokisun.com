@@ -6,6 +6,9 @@ declare module 'hono' {
     Bindings: {
       KV: KVNamespace,
       DB: D1Database,
+      VISITORS: KVNamespace,
+      CAPTCHA: KVNamespace,
+      RATE_LIMIT: KVNamespace,
     }
   }
 }

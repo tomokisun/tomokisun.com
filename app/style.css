@@ -743,3 +743,41 @@ marquee {
   font-weight: bold;
   letter-spacing: 1px;
 }
+
+/* CAPTCHA styles */
+.captcha-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.captcha-question {
+  background-color: #000000;
+  color: #00FF00;
+  padding: 10px;
+  border: 2px solid #00FF00;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 2px;
+  box-shadow: 2px 2px 0 #008800;
+}
+
+.captcha-input {
+  width: 120px;
+  text-align: center;
+  font-size: 1.2em;
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* Responsive CAPTCHA */
+@media (max-width: 768px) {
+  .captcha-question {
+    font-size: 1em;
+  }
+  
+  .captcha-input {
+    width: 100%;
+  }
+}
