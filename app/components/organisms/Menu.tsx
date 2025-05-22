@@ -11,7 +11,7 @@ type MenuProps = {
 export default async function Menu({ c, className = '' }: MenuProps) {
   const visitorsCount = await getVisitorsCount(c);
   return (
-    <td width={200} valign="top" bgcolor="#CCCCFF" className={`sidebar ${className}`}>
+    <td valign="top" bgcolor="#CCCCFF" className={`sidebar menu-cell ${className}`}>
       <div className="menu-header">メニュー</div>
       <MenuItem href="/">ホームページ</MenuItem>
       <MenuItem href="/accounts">リンク集</MenuItem>

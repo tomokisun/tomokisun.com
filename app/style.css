@@ -95,26 +95,72 @@ body {
   padding: 24px;
   display: flex;
   justify-content: center; /* Center content horizontally */
+  box-sizing: border-box;
 }
 
-/* Responsive styles */
+/* Layout wrapper for responsive adjustments */
+.layout-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Layout table responsive adjustments */
+.layout-table {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Default menu cell width */
+.menu-cell {
+  width: 200px;
+}
+
+/* Default content cell width */
+.content-cell {
+  width: 600px;
+}
+
+/* Responsive styles - Tablet and below */
 @media (max-width: 768px) {
   body {
-    padding: 10px 0;
+    padding: 10px;
   }
   
-  .container table {
-    width: 100% !important;
+  .container {
+    padding: 10px;
   }
   
-  .container td {
+  /* Table layout adjustments */
+  .layout-wrapper {
+    overflow-x: visible;
+  }
+  
+  .layout-table {
+    display: block;
+    border: none !important;
+  }
+  
+  .layout-table tbody,
+  .layout-table tr {
+    display: block;
+  }
+  
+  .layout-table td {
     display: block;
     width: 100% !important;
     box-sizing: border-box;
   }
   
+  /* Main content row - make menu and content stack */
+  .main-content-row td {
+    width: 100% !important;
+  }
+  
+  /* Sidebar/Menu adjustments */
   .sidebar {
     margin-bottom: 15px;
+    width: 100% !important;
   }
   
   .menu-item {
@@ -122,10 +168,42 @@ body {
     margin: 8px 0;
   }
   
-  .section-header, .guestbook-header {
-    padding: 8px 5px;
+  /* Content cell adjustments */
+  .content-cell {
+    width: 100% !important;
+    padding: 0 !important;
   }
   
+  /* Form adjustments */
+  .guestbook-form-table {
+    display: block;
+  }
+  
+  .guestbook-form-table tbody,
+  .guestbook-form-table tr {
+    display: block;
+  }
+  
+  .guestbook-form-table td {
+    display: block;
+    width: 100% !important;
+    padding: 5px 0;
+  }
+  
+  .guestbook-label {
+    text-align: left;
+    width: 100%;
+    padding-right: 0;
+    margin-bottom: 5px;
+  }
+  
+  /* Section adjustments */
+  .section-header, .guestbook-header {
+    padding: 8px 5px;
+    font-size: 1.1em;
+  }
+  
+  /* Form elements */
   .form-input {
     width: 100%;
     box-sizing: border-box;
@@ -145,15 +223,36 @@ body {
     margin: 15px 0 5px;
   }
   
+  /* Heading adjustments */
   h1 {
     font-size: 1.5em;
+  }
+  
+  /* Images responsive */
+  .welcome-gif {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Guestbook entries scroll adjustment */
+  .guestbook-entries {
+    max-height: 300px;
+  }
+  
+  /* Marquee adjustments */
+  .marquee-container {
+    font-size: 0.9em;
   }
 }
 
 /* Small mobile devices */
 @media (max-width: 480px) {
   body {
-    padding: 5px 0;
+    padding: 5px;
+  }
+  
+  .container {
+    padding: 5px;
   }
   
   h1 {
@@ -162,6 +261,75 @@ body {
   
   .section-content, .guestbook-content {
     padding: 8px;
+  }
+  
+  /* Even smaller menu items */
+  .menu-item {
+    padding: 8px 3px;
+    margin: 5px 0;
+    font-size: 0.9em;
+  }
+  
+  /* Smaller headers */
+  .section-header, .guestbook-header {
+    font-size: 1em;
+    padding: 6px 3px;
+  }
+  
+  /* Counter adjustments */
+  .counter {
+    font-size: 0.9em;
+  }
+  
+  .counter-number {
+    font-size: 0.9em;
+    letter-spacing: 1px;
+  }
+  
+  /* Under construction adjustments */
+  .under-construction img {
+    height: 20px;
+  }
+  
+  /* Icon adjustments */
+  .icon {
+    height: 16px;
+  }
+  
+  /* Guestbook icon */
+  .guestbook-icon {
+    font-size: 1.2em;
+  }
+  
+  /* Footer adjustments */
+  .footer {
+    font-size: 0.8em;
+  }
+  
+  /* Webring links */
+  .webring a {
+    display: inline-block;
+    margin: 2px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 320px) {
+  body {
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: 1em;
+  }
+  
+  .blink {
+    font-size: 0.9em;
+  }
+  
+  .new-marker {
+    font-size: 0.7em;
+    padding: 1px 3px;
   }
 }
 
