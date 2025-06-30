@@ -14,7 +14,7 @@
   "private": true,
   "dependencies": {
     "@hono/zod-validator": "^0.5.0",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.0.0",
     "drizzle-orm": "^0.44.0",
     "drizzle-zod": "^0.7.1",
     "hono": "^4.7.5",
