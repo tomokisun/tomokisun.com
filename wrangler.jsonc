@@ -7,9 +7,7 @@
   "assets": {
     "directory": "./dist"
   },
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true
   },
@@ -22,5 +20,17 @@
       "binding": "KV",
       "id": "86c3c993939c4482a4baa954ce84e499"
     }
-  ]
+  ],
+  "env": {
+    "preview": {
+      "name": "tomokisun-com-preview",
+      "workers_dev": true,
+      "kv_namespaces": [
+        {
+          "binding": "KV",
+          "id": "86c3c993939c4482a4baa954ce84e499"
+        }
+      ]
+    }
+  }
 }

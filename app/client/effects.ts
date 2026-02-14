@@ -30,7 +30,7 @@ export function setupRightClickPrevention(): void {
       event.preventDefault()
       showNotification('右クリックは無効になっています')
     },
-    false
+    false,
   )
 }
 
@@ -75,13 +75,14 @@ function removeTrailElement(trail: HTMLDivElement): void {
 function createTrailElement(x: number, y: number): void {
   while (trailElements.length >= MAX_TRAIL_ELEMENTS) {
     const oldest = trailElements[0]
+    if (!oldest) break
     removeTrailElement(oldest)
   }
 
   const trail = document.createElement('div')
   trail.className = 'cursor-trail'
-  trail.style.left = x + 'px'
-  trail.style.top = y + 'px'
+  trail.style.left = `${x}px`
+  trail.style.top = `${y}px`
   document.body.appendChild(trail)
   trailElements.push(trail)
 

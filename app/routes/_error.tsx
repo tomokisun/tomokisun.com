@@ -14,7 +14,7 @@ const handler: ErrorHandler = (e, c) => {
       title="INTERNAL SERVER ERROR"
       message="Sorry, something went wrong on our server."
       marqueeText="Please try again later 😢"
-    />
+    />,
   )
 }
 

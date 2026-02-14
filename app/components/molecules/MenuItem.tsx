@@ -1,4 +1,4 @@
-import { JSX } from 'hono/jsx/jsx-runtime'
+import type { JSX } from 'hono/jsx/jsx-runtime'
 import Link from '../atoms/Link'
 
 type MenuItemProps = {
