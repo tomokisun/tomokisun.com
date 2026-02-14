@@ -982,6 +982,23 @@ body::before {
   animation: twinkle 4s ease-in-out infinite;
 }
 
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: var(--color-retro-navy);
+  color: var(--color-retro-white);
+  padding: 8px 16px;
+  z-index: 10002;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  top: 0;
+  outline: 2px solid var(--color-retro-yellow);
+}
+
 /* Accessibility: Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,
