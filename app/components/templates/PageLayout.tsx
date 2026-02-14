@@ -21,7 +21,7 @@ export default function PageLayout({ c, title, children, className = '' }: PageL
           <Marquee text="最新情報: サイトをリニューアルしました！ 新機能続々追加中！ お楽しみに！" speed="normal" />
         </div>
         <Menu c={c} />
-        <main className="grid-content">
+        <main id="main-content" className="grid-content">
           <div className="content">{children}</div>
         </main>
         <Footer />
