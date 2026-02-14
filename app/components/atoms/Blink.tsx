@@ -1,44 +1,20 @@
-import type { FC } from 'hono/jsx'
+import { JSX } from 'hono/jsx/jsx-runtime'
 
 type BlinkProps = {
-  children: any
+  children: JSX.Element | string
   speed?: 'slow' | 'normal' | 'fast'
   className?: string
 }
 
-const Blink: FC<BlinkProps> = ({
+export default function Blink({
   children,
   speed = 'normal',
   className = ''
-}) => {
-  // スピードに基づくアニメーション時間の設定
-  const duration = {
-    slow: '2s',
-    normal: '1s',
-    fast: '0.5s'
-  }[speed]
-
+}: BlinkProps) {
+  const speedClass = speed !== 'normal' ? `blink--${speed}` : ''
   return (
-    <span
-      className={`blink ${className}`}
-      role="presentation"
-      style={{
-        animation: `blink ${duration} step-end infinite`
-      }}
-    >
+    <span className={`blink ${speedClass} ${className}`} role="presentation">
       {children}
-      <style jsx>{`
-        @keyframes blink {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0;
-          }
-        }
-      `}</style>
     </span>
   )
 }
-
-export default Blink

@@ -5,7 +5,8 @@ const handler: ErrorHandler = (e, c) => {
   if ('getResponse' in e) {
     return e.getResponse()
   }
-  console.error(e.message)
+  const message = e instanceof Error ? e.message : String(e)
+  console.error(message)
   c.status(500)
   return c.render(
     <ErrorPage

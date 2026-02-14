@@ -9,4 +9,4 @@ declare module 'hono' {
   }
 }
 
-export type AppContext = import('hono').Context<import('hono').Env, any, {}>
+export type AppContext = import('hono').Context<import('hono').Env, string, {}>

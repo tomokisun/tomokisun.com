@@ -1,29 +1,12 @@
-import { Context } from 'hono'
-import { Env } from 'hono'
+import type { AppContext } from '../../global'
+import { socialLinks } from '../../data/social-links'
 import PageLayout from '../templates/PageLayout'
 import Section from '../organisms/Section'
 import Link from '../atoms/Link'
-
-type SocialLink = {
-  platform: string
-  url?: string
-  display: string
-}
-
-const socialLinks: SocialLink[] = [
-  { platform: 'Email', url: 'mailto:tomoki69386@gmail.com', display: 'tomoki69386@gmail.com' },
-  { platform: 'Facebook', url: 'https://facebook.com/tomokisun', display: 'tomokisun' },
-  { platform: 'LinkedIn', url: 'https://linkedin.com/in/tomokisun', display: 'tomokisun' },
-  { platform: 'Instagram', url: 'https://instagram.com/tomokisun', display: 'tomokisun' },
-  { platform: 'Twitter', url: 'https://twitter.com/tomokisun', display: 'tomokisun' },
-  { platform: 'Discord', display: 'tomokisun#1557' },
-  { platform: 'Telegram', url: 'https://t.me/tomokisun', display: 'tomokisun' },
-  { platform: 'Bondee', display: 'tomokisun' },
-  { platform: 'ZEPETO', url: 'https://web.zepeto.me/tomokisun', display: 'tomokisun' },
-]
+import Marquee from '../atoms/Marquee'
 
 type AccountsPageProps = {
-  c: Context<Env, any, {}>
+  c: AppContext
 }
 
 export default function AccountsPage({ c }: AccountsPageProps) {
@@ -41,9 +24,7 @@ export default function AccountsPage({ c }: AccountsPageProps) {
             </li>
           ))}
         </ul>
-        <div className="marquee-container">
-          <marquee scrollamount="3" behavior="alternate">ソーシャルメディアでフォローしてね 👀</marquee>
-        </div>
+        <Marquee text="ソーシャルメディアでフォローしてね 👀" speed="normal" direction="left" />
       </Section>
     </PageLayout>
   )

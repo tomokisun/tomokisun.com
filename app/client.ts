@@ -3,16 +3,20 @@ import {
   setupRightClickPrevention,
   setupMouseTrail,
   setupClickEffect,
+  setupWelcomePopup,
+  setupPageTransition,
 } from './client/effects'
 
 // Create the client
 createClient()
 
-// Setup right-click prevention immediately (original was outside DOMContentLoaded)
+// Setup right-click prevention immediately
 setupRightClickPrevention()
 
-// Setup mouse trail and click effects after DOM is ready (original was inside DOMContentLoaded)
+// Setup effects after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   setupMouseTrail()
   setupClickEffect()
+  setupWelcomePopup()
+  setupPageTransition()
 })
