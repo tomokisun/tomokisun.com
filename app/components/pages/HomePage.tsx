@@ -3,17 +3,12 @@ import { Env } from 'hono'
 import PageLayout from '../templates/PageLayout'
 import Section from '../organisms/Section'
 import Text from '../atoms/Text'
-import Guestbook from '../organisms/Guestbook'
-import { GuestBookEntity } from '../../types/guest-books'
 
 type HomePageProps = {
   c: Context<Env, any, {}>
-  guestBooks: GuestBookEntity[]
-  captchaQuestion: string
-  sessionId: string
 }
 
-export default function HomePage({ c, guestBooks, captchaQuestion, sessionId }: HomePageProps) {
+export default function HomePage({ c }: HomePageProps) {
   return (
     <PageLayout c={c} title="tomokisunのホームページへようこそ">
       <a name="about"></a>
@@ -40,9 +35,6 @@ export default function HomePage({ c, guestBooks, captchaQuestion, sessionId }: 
         <Text>立ち上げ期は3人のエンジニアで担当していましたが、その後はiOS、Android、APIサーバーなど、ほぼ一人ですべての開発を担当していました。</Text>
       </Section>
       
-      <hr className="rainbow" />
-      
-      <Guestbook guestBooks={guestBooks} captchaQuestion={captchaQuestion} sessionId={sessionId} />
     </PageLayout>
   )
 }
