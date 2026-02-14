@@ -1,61 +1,52 @@
+// Constants
+const NOTIFICATION_DURATION_MS = 3000
+const TRAIL_FADE_DURATION_MS = 1000
+const TRAIL_THROTTLE_MS = 50
+const CLICK_PARTICLE_COUNT = 8
+const CLICK_PARTICLE_DELAY_MS = 50
+const CLICK_PARTICLE_SPREAD = 30
+const POPUP_FADE_DURATION_MS = 200
+const PAGE_TRANSITION_DURATION_MS = 300
+const MAX_TRAIL_ELEMENTS = 30
+
 // Function to show notification
 const showNotification = (message: string): void => {
-  // Create notification element
   const notification = document.createElement('div')
   notification.textContent = message
-  notification.style.position = 'fixed'
-  notification.style.top = '20px'
-  notification.style.left = '50%'
-  notification.style.transform = 'translateX(-50%)'
-  notification.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'
-  notification.style.color = 'white'
-  notification.style.padding = '10px 20px'
-  notification.style.borderRadius = '5px'
-  notification.style.zIndex = '9999'
-  notification.style.fontFamily = 'sans-serif'
-  notification.style.fontSize = '16px'
-  notification.style.fontWeight = 'bold'
-  notification.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'
+  notification.className = 'notification-toast'
 
-  // Add to document
   document.body.appendChild(notification)
 
-  // Remove after 3 seconds
   setTimeout(() => {
-    document.body.removeChild(notification)
-  }, 3000)
+    notification.remove()
+  }, NOTIFICATION_DURATION_MS)
 }
 
 // Prevent right-click context menu and show notification
 export function setupRightClickPrevention(): void {
   document.addEventListener(
     'contextmenu',
-    (event) => {
+    (event: MouseEvent) => {
       event.preventDefault()
       showNotification('右クリックは無効になっています')
-      return false
     },
     false
   )
 }
 
-// Check if mouse is inside a table within container
+// Check if mouse is inside the layout grid within container
 function isInsideContainer(e: MouseEvent, container: Element | null): boolean {
   if (!container) return false
 
-  // Get the element under the cursor
   const elementUnderCursor = document.elementFromPoint(e.clientX, e.clientY)
 
-  // Check if the element is a table or is inside a table
   let currentElement = elementUnderCursor
   while (currentElement) {
-    // If we found a table element that's inside the container
-    if (currentElement.tagName === 'TABLE') {
-      // Check if this table is inside the container
+    if (currentElement.classList.contains('layout-grid')) {
       let parent: Element | null = currentElement
       while (parent) {
         if (parent === container) {
-          return true // It's a table inside the container
+          return true
         }
         parent = parent.parentElement
       }
@@ -63,11 +54,8 @@ function isInsideContainer(e: MouseEvent, container: Element | null): boolean {
     currentElement = currentElement.parentElement
   }
 
-  return false // Not inside a table within container
+  return false
 }
-
-// Maximum number of concurrent trail elements allowed in the DOM
-const MAX_TRAIL_ELEMENTS = 30
 
 // Explicitly managed array of trail element references
 const trailElements: HTMLDivElement[] = []
@@ -85,7 +73,6 @@ function removeTrailElement(trail: HTMLDivElement): void {
 
 // Create cursor trail effect
 function createTrailElement(x: number, y: number): void {
-  // Enforce the maximum limit: remove the oldest element(s) if at capacity
   while (trailElements.length >= MAX_TRAIL_ELEMENTS) {
     const oldest = trailElements[0]
     removeTrailElement(oldest)
@@ -98,30 +85,24 @@ function createTrailElement(x: number, y: number): void {
   document.body.appendChild(trail)
   trailElements.push(trail)
 
-  // Remove the element after animation completes
   setTimeout(() => {
     removeTrailElement(trail)
-  }, 1000)
+  }, TRAIL_FADE_DURATION_MS)
 }
 
 // Mouse trail effect
 export function setupMouseTrail(): void {
   const container = document.querySelector('.container')
-
-  // Throttle state
   let throttleTimeout: ReturnType<typeof setTimeout> | null = null
 
-  // Track mouse movement and create trail elements
-  document.addEventListener('mousemove', function (e: MouseEvent) {
-    // Skip trail creation if mouse is inside container
+  document.addEventListener('mousemove', (e: MouseEvent) => {
     if (isInsideContainer(e, container)) return
 
-    // Throttle the creation of trail elements (every 50ms)
     if (!throttleTimeout) {
       throttleTimeout = setTimeout(() => {
         createTrailElement(e.clientX, e.clientY)
         throttleTimeout = null
-      }, 50)
+      }, TRAIL_THROTTLE_MS)
     }
   })
 }
@@ -130,23 +111,126 @@ export function setupMouseTrail(): void {
 export function setupClickEffect(): void {
   const container = document.querySelector('.container')
 
-  // Add click effect
-  document.addEventListener('click', function (e: MouseEvent) {
-    // Skip click effect if inside container
+  document.addEventListener('click', (e: MouseEvent) => {
     if (isInsideContainer(e, container)) return
 
-    // Create multiple particles for click effect
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < CLICK_PARTICLE_COUNT; i++) {
       setTimeout(() => {
-        // Random position around click point
         const angle = Math.random() * Math.PI * 2
-        const distance = Math.random() * 30
+        const distance = Math.random() * CLICK_PARTICLE_SPREAD
         const x = e.clientX + Math.cos(angle) * distance
         const y = e.clientY + Math.sin(angle) * distance
 
-        // Use the shared createTrailElement which manages the element pool
         createTrailElement(x, y)
-      }, i * 50)
+      }, i * CLICK_PARTICLE_DELAY_MS)
     }
+  })
+}
+
+// Welcome popup (Windows 95 style)
+export function setupWelcomePopup(): void {
+  try {
+    if (sessionStorage.getItem('welcomeShown')) return
+    sessionStorage.setItem('welcomeShown', 'true')
+  } catch {
+    return
+  }
+
+  const overlay = document.createElement('div')
+  overlay.className = 'welcome-popup-overlay'
+  overlay.setAttribute('role', 'dialog')
+  overlay.setAttribute('aria-modal', 'true')
+  overlay.setAttribute('aria-label', 'ウェルカムメッセージ')
+
+  const popup = document.createElement('div')
+  popup.className = 'welcome-popup'
+
+  const titlebar = document.createElement('div')
+  titlebar.className = 'welcome-popup-titlebar'
+
+  const titleText = document.createElement('span')
+  titleText.textContent = 'ようこそ！'
+  titlebar.appendChild(titleText)
+
+  const closeBtn = document.createElement('button')
+  closeBtn.className = 'welcome-popup-close'
+  closeBtn.setAttribute('aria-label', 'ウェルカムポップアップを閉じる')
+  closeBtn.textContent = '×'
+  titlebar.appendChild(closeBtn)
+
+  popup.appendChild(titlebar)
+
+  const body = document.createElement('div')
+  body.className = 'welcome-popup-body'
+
+  const icon = document.createElement('div')
+  icon.className = 'welcome-popup-icon'
+  icon.textContent = '💻'
+  body.appendChild(icon)
+
+  const welcomeMsg = document.createElement('p')
+  const boldText = document.createElement('b')
+  boldText.textContent = 'tomokisunのホームページへようこそ！'
+  welcomeMsg.appendChild(boldText)
+  body.appendChild(welcomeMsg)
+
+  const browserMsg = document.createElement('p')
+  browserMsg.textContent = 'このサイトはNetscape Navigator 4.0またはInternet Explorer 5.0で最適にご覧いただけます。'
+  body.appendChild(browserMsg)
+
+  const resolution = document.createElement('p')
+  resolution.className = 'welcome-popup-resolution'
+  resolution.textContent = '解像度: 800x600推奨'
+  body.appendChild(resolution)
+
+  const okBtn = document.createElement('button')
+  okBtn.className = 'welcome-popup-ok'
+  okBtn.textContent = 'OK'
+  body.appendChild(okBtn)
+
+  popup.appendChild(body)
+  overlay.appendChild(popup)
+  document.body.appendChild(overlay)
+
+  const closePopup = (): void => {
+    overlay.classList.add('welcome-popup-overlay--closing')
+    setTimeout(() => overlay.remove(), POPUP_FADE_DURATION_MS)
+  }
+
+  closeBtn.addEventListener('click', closePopup)
+  okBtn.addEventListener('click', closePopup)
+  overlay.addEventListener('click', (e: MouseEvent) => {
+    if (e.target === overlay) closePopup()
+  })
+}
+
+// Page transition wipe effect
+export function setupPageTransition(): void {
+  const transitionOverlay = document.createElement('div')
+  transitionOverlay.className = 'page-transition-overlay'
+  document.body.appendChild(transitionOverlay)
+
+  document.addEventListener('click', (e: MouseEvent) => {
+    const target = e.target as HTMLElement
+    const link = target.closest('a')
+    if (!link) return
+
+    const href = link.getAttribute('href')
+    if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:')) return
+
+    e.preventDefault()
+    transitionOverlay.classList.add('active')
+    setTimeout(() => {
+      window.location.href = href
+    }, PAGE_TRANSITION_DURATION_MS)
+  })
+
+  window.addEventListener('pageshow', () => {
+    transitionOverlay.classList.add('active')
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        transitionOverlay.classList.remove('active')
+      })
+    })
   })
 }

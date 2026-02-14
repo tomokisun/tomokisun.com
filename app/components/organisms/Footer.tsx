@@ -10,17 +10,20 @@ export default function Footer({
   className = ''
 }: FooterProps) {
   return (
-    <td colSpan={2} className={`footer text-center bg-[#000000] ${className}`}>
+    <footer className={`grid-footer footer ${className}`}>
       <div>
         © {year} tomokisun
         {' | '}
-        <Link 
-          href="https://github.com/tomokisun/tomokisun.com" 
+        <Link
+          href="https://github.com/tomokisun/tomokisun.com"
           target="_blank"
         >
           GitHub
         </Link>
       </div>
-    </td>
+      <div className="best-viewed-banner">
+        Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0 at 800x600 resolution
+      </div>
+    </footer>
   )
 }

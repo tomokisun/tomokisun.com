@@ -7,20 +7,21 @@ type SectionProps = {
   className?: string
 }
 
-export default function Section({ 
-  id, 
-  title, 
+export default function Section({
+  id,
+  title,
   children,
   className = ''
 }: SectionProps) {
+  const headingId = id ? `${id}-heading` : undefined
   return (
-    <div id={id} className={`section ${className}`}>
-      <div className="section-header">
+    <section id={id} className={`section ${className}`} aria-labelledby={headingId}>
+      <h2 id={headingId} className="section-header">
         {title}
-      </div>
+      </h2>
       <div className="section-content">
         {children}
       </div>
-    </div>
+    </section>
   )
 }

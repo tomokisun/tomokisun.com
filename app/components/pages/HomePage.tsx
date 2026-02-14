@@ -1,20 +1,18 @@
-import { Context } from 'hono'
-import { Env } from 'hono'
+import type { AppContext } from '../../global'
 import PageLayout from '../templates/PageLayout'
 import Section from '../organisms/Section'
 import Text from '../atoms/Text'
 import Marquee from '../atoms/Marquee'
 
 type HomePageProps = {
-  c: Context<Env, any, {}>
+  c: AppContext
 }
 
 export default function HomePage({ c }: HomePageProps) {
   return (
     <PageLayout c={c} title="tomokisunのホームページへようこそ">
-      <a name="about"></a>
       <Section id="about" title="自己紹介">
-        <span className="name">tomokisun</span>
+        <span className="name rainbow-text">tomokisun</span>
         <Text>元々はiOSエンジニアですが、現在はモバイル、ウェブ、バックエンド、ブロックチェーンなど、様々な分野に携わっています。</Text>
         <Text>ただ、インフラ層は得意ではないです（笑）</Text>
         <Marquee text="個人ウェブサイト 👀" speed="normal" direction="left" />
@@ -22,7 +20,6 @@ export default function HomePage({ c }: HomePageProps) {
       
       <hr className="rainbow" />
       
-      <a name="job"></a>
       <Section id="job" title="職歴">
         <Text><Text as="span" blink={true}>ONE, Inc. - now</Text></Text>
         <Text>友人と一緒にこの会社を共同設立しました。</Text>

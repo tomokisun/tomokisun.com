@@ -3,7 +3,7 @@ import { Link, Script } from 'honox/server'
 
 export default jsxRenderer(({ children }) => {
   return (
-    <html>
+    <html lang="ja">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,9 +21,23 @@ export default jsxRenderer(({ children }) => {
         <meta property="og:url" content="https://tomokisun.com" />
         <meta property="og:description" content="Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0." />
         <meta property='twitter:card' content='summary_large_image' />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "tomokisun's homepage",
+          "url": "https://tomokisun.com",
+          "author": {
+            "@type": "Person",
+            "name": "tomokisun",
+            "jobTitle": "Software Engineer",
+            "url": "https://tomokisun.com"
+          },
+          "description": "Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0."
+        })}</script>
       </head>
       <body>
         {children}
+        <div class="crt-overlay"></div>
       </body>
     </html>
   )

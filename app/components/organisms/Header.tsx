@@ -1,24 +1,24 @@
-import { createElement } from 'hono/jsx'
-
 type HeaderProps = {
   title: string
   showUnderConstruction?: boolean
   className?: string
 }
 
-export default function Header({ 
-  title, 
+export default function Header({
+  title,
   showUnderConstruction = true,
   className = ''
 }: HeaderProps) {
   return (
-    <td colSpan={2} className={`text-center bg-[#000000] ${className}`}>
+    <header className={`grid-header ${className}`}>
       <h1 className="blink">{title}</h1>
       {showUnderConstruction && (
         <div className="under-construction">
+          <span className="construction-icon">🚧</span>
           <span>常に工事中</span>
+          <span className="construction-icon">🔨</span>
         </div>
       )}
-    </td>
+    </header>
   )
 }
