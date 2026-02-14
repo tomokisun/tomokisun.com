@@ -24,6 +24,7 @@
   "env": {
     "preview": {
       "name": "tomokisun-com-preview",
+      "workers_dev": true,
       "kv_namespaces": [
         {
           "binding": "KV",

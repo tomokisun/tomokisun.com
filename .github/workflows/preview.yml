@@ -40,9 +40,10 @@ jobs:
           COMMAND_OUTPUT: ${{ steps.deploy.outputs.command-output }}
         run: |
           URL="$DEPLOYMENT_URL"
-          if [ -z "$URL" ]; then
-            # Fallback: try to extract from command output
-            URL=$(echo "$COMMAND_OUTPUT" | grep -oP 'https://[^\s]+\.workers\.dev' | head -1)
+          # Validate URL starts with https://
+          if [[ ! "$URL" =~ ^https:// ]]; then
+            # Fallback: extract workers.dev URL from command output
+            URL=$(echo "$COMMAND_OUTPUT" | grep -oE 'https://[^ ]+\.workers\.dev' | head -1)
           fi
           echo "url=${URL}" >> "$GITHUB_OUTPUT"
           echo "Preview URL: ${URL}"
