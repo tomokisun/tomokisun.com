@@ -25,21 +25,6 @@
     {
       "binding": "VISITORS",
       "id": "86c3c993939c4482a4baa954ce84e499"
-    },
-    {
-      "binding": "CAPTCHA",
-      "id": "86c3c993939c4482a4baa954ce84e499"
-    },
-    {
-      "binding": "RATE_LIMIT",
-      "id": "86c3c993939c4482a4baa954ce84e499"
-    }
-  ],
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "tomokisun-com",
-      "database_id": "4f8a5f88-ece7-4f40-bfb5-14736d475dca",
     }
   ]
 }
