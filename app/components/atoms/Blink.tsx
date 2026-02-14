@@ -1,4 +1,4 @@
-import { FC } from 'hono/jsx'
+import type { FC } from 'hono/jsx'
 
 type BlinkProps = {
   children: any
@@ -6,7 +6,7 @@ type BlinkProps = {
   className?: string
 }
 
-export const Blink: FC<BlinkProps> = ({
+const Blink: FC<BlinkProps> = ({
   children,
   speed = 'normal',
   className = ''
@@ -20,7 +20,8 @@ export const Blink: FC<BlinkProps> = ({
 
   return (
     <span
-      class={`blink ${className}`}
+      className={`blink ${className}`}
+      role="presentation"
       style={{
         animation: `blink ${duration} step-end infinite`
       }}
@@ -39,3 +40,5 @@ export const Blink: FC<BlinkProps> = ({
     </span>
   )
 }
+
+export default Blink

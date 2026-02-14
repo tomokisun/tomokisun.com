@@ -5,7 +5,8 @@ declare module 'hono' {
     Variables: {}
     Bindings: {
       KV: KVNamespace,
-      VISITORS: KVNamespace,
     }
   }
 }
+
+export type AppContext = import('hono').Context<import('hono').Env, any, {}>

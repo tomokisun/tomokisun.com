@@ -4,6 +4,24 @@ import PageLayout from '../templates/PageLayout'
 import Section from '../organisms/Section'
 import Link from '../atoms/Link'
 
+type SocialLink = {
+  platform: string
+  url?: string
+  display: string
+}
+
+const socialLinks: SocialLink[] = [
+  { platform: 'Email', url: 'mailto:tomoki69386@gmail.com', display: 'tomoki69386@gmail.com' },
+  { platform: 'Facebook', url: 'https://facebook.com/tomokisun', display: 'tomokisun' },
+  { platform: 'LinkedIn', url: 'https://linkedin.com/in/tomokisun', display: 'tomokisun' },
+  { platform: 'Instagram', url: 'https://instagram.com/tomokisun', display: 'tomokisun' },
+  { platform: 'Twitter', url: 'https://twitter.com/tomokisun', display: 'tomokisun' },
+  { platform: 'Discord', display: 'tomokisun#1557' },
+  { platform: 'Telegram', url: 'https://t.me/tomokisun', display: 'tomokisun' },
+  { platform: 'Bondee', display: 'tomokisun' },
+  { platform: 'ZEPETO', url: 'https://web.zepeto.me/tomokisun', display: 'tomokisun' },
+]
+
 type AccountsPageProps = {
   c: Context<Env, any, {}>
 }
@@ -13,15 +31,15 @@ export default function AccountsPage({ c }: AccountsPageProps) {
     <PageLayout c={c} title="tomokisunのアカウント一覧">
       <Section id="social" title="ソーシャル">
         <ul>
-          <li>Email: <Link href="mailto:tomoki69386@gmail.com">tomoki69386@gmail.com</Link></li>
-          <li>Facebook: <Link href="https://facebook.com/tomokisun" target="_blank">tomokisun</Link></li>
-          <li>LinkedIn: <Link href="https://linkedin.com/in/tomokisun" target="_blank">tomokisun</Link></li>
-          <li>Instagram: <Link href="https://instagram.com/tomokisun" target="_blank">tomokisun</Link></li>
-          <li>Twitter: <Link href="https://twitter.com/tomokisun" target="_blank">tomokisun</Link></li>
-          <li>Discord: tomokisun#1557</li>
-          <li>Telegram: <Link href="https://t.me/tomokisun" target="_blank">tomokisun</Link></li>
-          <li>Bondee: tomokisun</li>
-          <li>ZEPETO: <Link href="https://web.zepeto.me/tomokisun" target="_blank">tomokisun</Link></li>
+          {socialLinks.map((link) => (
+            <li key={link.platform}>
+              {link.platform}: {link.url ? (
+                <Link href={link.url} target={link.url.startsWith('mailto:') ? undefined : '_blank'}>{link.display}</Link>
+              ) : (
+                link.display
+              )}
+            </li>
+          ))}
         </ul>
         <div className="marquee-container">
           <marquee scrollamount="3" behavior="alternate">ソーシャルメディアでフォローしてね 👀</marquee>

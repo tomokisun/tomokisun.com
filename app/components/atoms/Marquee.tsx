@@ -1,5 +1,3 @@
-import { FC } from 'hono/jsx'
-
 type MarqueeProps = {
   text: string
   speed?: 'slow' | 'normal' | 'fast'
@@ -7,12 +5,12 @@ type MarqueeProps = {
   className?: string
 }
 
-export const Marquee: FC<MarqueeProps> = ({
+export default function Marquee({
   text,
   speed = 'normal',
   direction = 'left',
   className = ''
-}) => {
+}: MarqueeProps) {
   // スピードに基づくアニメーション時間の設定
   const duration = {
     slow: '20s',
@@ -25,7 +23,9 @@ export const Marquee: FC<MarqueeProps> = ({
 
   return (
     <div
-      class={`marquee-container ${className}`}
+      className={`marquee-container ${className}`}
+      role="marquee"
+      aria-label="スクロールテキスト"
       style={{
         overflow: 'hidden',
         whiteSpace: 'nowrap',
@@ -34,7 +34,7 @@ export const Marquee: FC<MarqueeProps> = ({
       }}
     >
       <div
-        class="marquee-content"
+        className="marquee-content"
         style={{
           display: 'inline-block',
           whiteSpace: 'nowrap',

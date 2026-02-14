@@ -14,11 +14,9 @@ export default function Heading({
   className = '',
   blink = false
 }: HeadingProps) {
-  const blinkClass = blink ? 'blink' : '';
-  
   return createElement(
     `h${level}`,
-    { className: `${blinkClass} ${className}`.trim() },
+    { className: [blink && 'blink', className].filter(Boolean).join(' ') || undefined },
     children
   )
 }
