@@ -11,7 +11,10 @@ export default jsxRenderer(({ children }) => {
         <Link href="/app/style.css" rel="stylesheet" />
         <Script src="/app/client.ts" async />
         <title>tomokisun's homepage</title>
-        <meta name="description" content="Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0." />
+        <meta
+          name="description"
+          content="Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0."
+        />
         <meta name="keywords" content="tomokisun, personal, homepage, web, mobile, iOS, engineer, 90s, retro" />
         <meta name="author" content="tomokisun" />
         <meta name="robots" content="index, follow" />
@@ -19,21 +22,27 @@ export default jsxRenderer(({ children }) => {
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/ogp.png" />
         <meta property="og:url" content="https://tomokisun.com" />
-        <meta property="og:description" content="Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0." />
-        <meta property='twitter:card' content='summary_large_image' />
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          "name": "tomokisun's homepage",
-          "url": "https://tomokisun.com",
-          "author": {
-            "@type": "Person",
-            "name": "tomokisun",
-            "jobTitle": "Software Engineer",
-            "url": "https://tomokisun.com"
-          },
-          "description": "Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0."
-        })}</script>
+        <meta
+          property="og:description"
+          content="Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0."
+        />
+        <meta property="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: "tomokisun's homepage",
+            url: 'https://tomokisun.com',
+            author: {
+              '@type': 'Person',
+              name: 'tomokisun',
+              jobTitle: 'Software Engineer',
+              url: 'https://tomokisun.com',
+            },
+            description:
+              "Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0.",
+          })}
+        </script>
       </head>
       <body>
         {children}

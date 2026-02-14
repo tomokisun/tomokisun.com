@@ -3,11 +3,7 @@ import HomePage from '../components/pages/HomePage'
 import { incrementVisitorsCount } from '../utils/visitors'
 
 export default createRoute(async (c) => {
-  await incrementVisitorsCount(c);
+  await incrementVisitorsCount(c)
 
-  return c.render(
-    <HomePage
-      c={c}
-    />
-  )
+  return c.render(<HomePage c={c} />)
 })

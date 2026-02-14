@@ -17,14 +17,14 @@ export default function ErrorPage({ code, title, message, marqueeText }: ErrorPa
         <main className="grid-content">
           <div className="content">
             <section className="section">
-              <h2 className="section-header">
-                {title}
-              </h2>
+              <h2 className="section-header">{title}</h2>
               <div className="section-content">
                 <p>{message}</p>
                 <Marquee text={marqueeText} speed="normal" direction="left" />
                 <p className="error-back-link">
-                  <a href="/" className="home-link">Back to Home</a>
+                  <a href="/" className="home-link">
+                    Back to Home
+                  </a>
                 </p>
               </div>
             </section>

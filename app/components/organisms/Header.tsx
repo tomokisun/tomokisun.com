@@ -4,11 +4,7 @@ type HeaderProps = {
   className?: string
 }
 
-export default function Header({
-  title,
-  showUnderConstruction = true,
-  className = ''
-}: HeaderProps) {
+export default function Header({ title, showUnderConstruction = true, className = '' }: HeaderProps) {
   return (
     <header className={`grid-header ${className}`}>
       <h1 className="blink">{title}</h1>

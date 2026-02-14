@@ -1,9 +1,9 @@
+import type { JSX } from 'hono/jsx/jsx-runtime'
 import type { AppContext } from '../../global'
+import Marquee from '../atoms/Marquee'
+import Footer from '../organisms/Footer'
 import Header from '../organisms/Header'
 import Menu from '../organisms/Menu'
-import Footer from '../organisms/Footer'
-import { JSX } from 'hono/jsx/jsx-runtime'
-import Marquee from '../atoms/Marquee'
 
 type PageLayoutProps = {
   c: AppContext
@@ -12,12 +12,7 @@ type PageLayoutProps = {
   className?: string
 }
 
-export default function PageLayout({
-  c,
-  title,
-  children,
-  className = ''
-}: PageLayoutProps) {
+export default function PageLayout({ c, title, children, className = '' }: PageLayoutProps) {
   return (
     <div className={`container ${className}`}>
       <div className="layout-grid">
@@ -27,9 +22,7 @@ export default function PageLayout({
         </div>
         <Menu c={c} />
         <main className="grid-content">
-          <div className="content">
-            {children}
-          </div>
+          <div className="content">{children}</div>
         </main>
         <Footer />
       </div>

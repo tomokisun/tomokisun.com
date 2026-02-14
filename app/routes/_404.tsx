@@ -9,7 +9,7 @@ const handler: NotFoundHandler = (c) => {
       title="PAGE NOT FOUND"
       message="The page you are looking for doesn't exist or has been moved."
       marqueeText="Where did that page go? 🤔"
-    />
+    />,
   )
 }
 

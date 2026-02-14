@@ -5,19 +5,13 @@ type FooterProps = {
   className?: string
 }
 
-export default function Footer({
-  year = new Date().getFullYear(),
-  className = ''
-}: FooterProps) {
+export default function Footer({ year = new Date().getFullYear(), className = '' }: FooterProps) {
   return (
     <footer className={`grid-footer footer ${className}`}>
       <div>
         © {year} tomokisun
         {' | '}
-        <Link
-          href="https://github.com/tomokisun/tomokisun.com"
-          target="_blank"
-        >
+        <Link href="https://github.com/tomokisun/tomokisun.com" target="_blank">
           GitHub
         </Link>
       </div>

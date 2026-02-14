@@ -1,9 +1,9 @@
-import type { AppContext } from '../../global'
 import { socialLinks } from '../../data/social-links'
-import PageLayout from '../templates/PageLayout'
-import Section from '../organisms/Section'
+import type { AppContext } from '../../global'
 import Link from '../atoms/Link'
 import Marquee from '../atoms/Marquee'
+import Section from '../organisms/Section'
+import PageLayout from '../templates/PageLayout'
 
 type AccountsPageProps = {
   c: AppContext
@@ -16,8 +16,11 @@ export default function AccountsPage({ c }: AccountsPageProps) {
         <ul>
           {socialLinks.map((link) => (
             <li key={link.platform}>
-              {link.platform}: {link.url ? (
-                <Link href={link.url} target={link.url.startsWith('mailto:') ? undefined : '_blank'}>{link.display}</Link>
+              {link.platform}:{' '}
+              {link.url ? (
+                <Link href={link.url} target={link.url.startsWith('mailto:') ? undefined : '_blank'}>
+                  {link.display}
+                </Link>
               ) : (
                 link.display
               )}

@@ -5,7 +5,11 @@
     "dev": "vite --host",
     "build": "vite build --mode client && vite build",
     "preview": "wrangler dev",
-    "deploy": "bun run build && wrangler deploy"
+    "deploy": "bun run build && wrangler deploy",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit"
   },
   "private": true,
   "dependencies": {
@@ -13,6 +17,7 @@
     "honox": "^0.1.53"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.3.15",
     "@cloudflare/workers-types": "^4.20260214.0",
     "@hono/vite-build": "^1.9.3",
     "@hono/vite-dev-server": "^0.19.1",

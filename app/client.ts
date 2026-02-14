@@ -1,10 +1,10 @@
 import { createClient } from 'honox/client'
 import {
-  setupRightClickPrevention,
-  setupMouseTrail,
   setupClickEffect,
-  setupWelcomePopup,
+  setupMouseTrail,
   setupPageTransition,
+  setupRightClickPrevention,
+  setupWelcomePopup,
 } from './client/effects'
 
 // Create the client

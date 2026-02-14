@@ -1,10 +1,10 @@
-import type { AppContext } from '../../global'
 import { products } from '../../data/products'
-import PageLayout from '../templates/PageLayout'
-import Section from '../organisms/Section'
-import Text from '../atoms/Text'
-import Link from '../atoms/Link'
+import type { AppContext } from '../../global'
 import Blink from '../atoms/Blink'
+import Link from '../atoms/Link'
+import Text from '../atoms/Text'
+import Section from '../organisms/Section'
+import PageLayout from '../templates/PageLayout'
 
 type ProductsPageProps = {
   c: AppContext
