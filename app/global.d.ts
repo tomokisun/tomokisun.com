@@ -9,6 +9,7 @@ type Head = {
 
 declare module 'hono' {
   interface ContextRenderer {
+    // biome-ignore lint/style/useShorthandFunctionType: interface required for module augmentation (declaration merging)
     (content: string | Promise<string>, head?: Head): Response | Promise<Response>
   }
   interface Env {

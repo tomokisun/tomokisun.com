@@ -7,8 +7,7 @@ const DEFAULT_DESCRIPTION =
   "Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0."
 const OGP_IMAGE = `${SITE_URL}/ogp.png`
 
-const safeJsonLd = (data: object) =>
-  JSON.stringify(data).replace(/</g, '\\u003c')
+const safeJsonLd = (data: object) => JSON.stringify(data).replace(/</g, '\\u003c')
 
 const defaultJsonLd = {
   '@context': 'https://schema.org',
@@ -57,14 +56,8 @@ export default jsxRenderer(({ children, title, description, ogUrl, jsonLd }) => 
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
         <meta name="twitter:image" content={OGP_IMAGE} />
-        <script type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: safeJsonLd(defaultJsonLd) }}
-        />
-        {jsonLd && (
-          <script type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
-          />
-        )}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(defaultJsonLd) }} />
+        {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }} />}
       </head>
       <body>
         <a href="#main-content" class="skip-to-content">
