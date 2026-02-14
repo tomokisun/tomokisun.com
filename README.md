@@ -10,8 +10,6 @@
 - **Tailwind CSS**: ユーティリティファーストのCSSフレームワーク
 - **Cloudflare Workers**: デプロイメントプラットフォーム
 - **Cloudflare KV**: 訪問者カウンターなどのデータ保存に使用
-- **Cloudflare D1**: SQLiteベースのデータベース（ゲストブック機能に使用）
-- **Drizzle ORM**: データベース操作のためのORM
 
 ## 特徴
 
@@ -21,7 +19,6 @@
 - アニメーション要素（点滅するテキスト、マーキー）
 - 訪問者カウンター（Cloudflare KVを使用）
 - 「常に工事中」の通知
-- ゲストブック機能（Cloudflare D1とDrizzle ORMを使用）
 - カスタムマウスカーソルとトレイルエフェクト
 - レスポンシブデザイン（モバイル対応）
 - 虹色の区切り線
@@ -42,18 +39,6 @@ bun run dev
 
 その後、ブラウザでhttp://localhost:5173/を開きます
 
-### データベースのセットアップ
-
-ローカル開発環境でデータベースを使用するには：
-
-```bash
-# ローカルデータベースのマイグレーション実行
-bun run migration:local
-
-# Drizzle Studioの起動（データベース管理UI）
-bun run studio
-```
-
 ## プロジェクト構造
 
 ```
@@ -69,8 +54,6 @@ tomokisun.com/
 │   │   ├── organisms/     # 複雑なUIコンポーネント
 │   │   ├── pages/         # ページコンポーネント
 │   │   └── templates/     # テンプレートコンポーネント
-│   ├── database/          # データベース関連
-│   │   └── schema.ts      # Drizzle ORMスキーマ定義
 │   ├── routes/            # ページルート
 │   │   ├── _404.tsx       # 404エラーページ
 │   │   ├── _error.tsx     # エラーページ
@@ -78,21 +61,14 @@ tomokisun.com/
 │   │   ├── accounts.tsx   # アカウント一覧ページ
 │   │   ├── index.tsx      # ホームページ
 │   │   └── products.tsx   # プロダクト一覧ページ
-│   ├── types/             # 型定義
-│   │   └── guest-books.ts # ゲストブック関連の型定義
 │   └── utils/             # ユーティリティ関数
 │       ├── format-date.ts # 日付フォーマット関数
 │       └── visitors.ts    # 訪問者カウンター機能
 ├── docs/                  # プロジェクトドキュメント
 │   └── tone-and-manner.md # デザインガイドライン
-├── drizzle/               # データベースマイグレーションファイル
-│   ├── 0000_happy_tag.sql # 初期マイグレーションSQL
-│   └── meta/              # マイグレーションメタデータ
 ├── public/                # 静的アセット
 │   ├── .assetsignore      # アセット除外設定
 │   └── favicon.ico        # ファビコン
-├── drizzle.config.ts      # Drizzle設定（本番環境用）
-├── drizzle.config.local.ts # Drizzle設定（ローカル環境用）
 ├── vite.config.ts         # Vite設定
 └── wrangler.jsonc         # Cloudflare Workers設定
 ```
@@ -117,22 +93,6 @@ bun add -D [パッケージ名]
 ```bash
 # 開発サーバーの起動
 bun run dev
-```
-
-### データベース操作
-
-```bash
-# マイグレーションの生成
-bun run migration:generate
-
-# マイグレーションの実行
-bun run migration
-
-# ローカルデータベースへのマイグレーション適用
-bun run migration:local
-
-# Drizzle Studioの起動（データベース管理UI）
-bun run studio
 ```
 
 ### ビルドとプレビュー
@@ -165,25 +125,6 @@ bun run deploy
 - **実装場所**: 
   - カウント処理: `app/utils/visitors.ts`
   - 表示: `app/components/organisms/Menu.tsx`のサイドバー内
-
-### ゲストブック
-
-サイトには90年代風のゲストブック機能があり、訪問者がメッセージを残すことができます。この機能の仕様は以下の通りです：
-
-- **データストレージ**: Cloudflare D1（SQLite）データベースを使用
-- **ORM**: Drizzle ORMを使用してデータベース操作を実装
-- **データモデル**: 
-  - ユーザー名（3〜20文字）
-  - メッセージ本文（1〜500文字）
-  - 投稿日時（自動記録）
-- **バリデーション**: Zodを使用したフォーム入力のバリデーション
-- **表示形式**: 投稿者名、日付、メッセージ内容を表示
-- **日付フォーマット**: 日本語形式（YYYY-MM-DD）
-- **実装場所**:
-  - スキーマ定義: `app/database/schema.ts`
-  - 型定義とバリデーション: `app/types/guest-books.ts`
-  - 投稿処理: `app/routes/index.tsx`のPOSTハンドラー
-  - 表示コンポーネント: `app/components/organisms/Guestbook.tsx`
 
 ### マウストレイルエフェクト
 
@@ -246,21 +187,20 @@ bun run deploy
 3. **点滅するテキスト**：重要な情報を強調するための点滅効果
 4. **訪問者カウンター**：サイトの訪問者数を表示
 5. **工事中**：「常に工事中」の通知
-6. **ゲストブック**：訪問者がメッセージを残すことができる機能
-7. **マーキーテキスト**：スクロールするテキスト効果
-8. **テクスチャ背景**：タイル状の背景パターン
-9. **3Dボタン**：3D効果を作り出すためのベベル加工されたエッジ
-10. **キリ番通知**：訪問者数が特定の数値に達した際の通知
-11. **カスタムマウスカーソル**：独自のカーソルデザイン
-12. **虹色の区切り線**：セクション間の区切りに使用される虹色の水平線
+6. **マーキーテキスト**：スクロールするテキスト効果
+7. **テクスチャ背景**：タイル状の背景パターン
+8. **3Dボタン**：3D効果を作り出すためのベベル加工されたエッジ
+9. **キリ番通知**：訪問者数が特定の数値に達した際の通知
+10. **カスタムマウスカーソル**：独自のカーソルデザイン
+11. **虹色の区切り線**：セクション間の区切りに使用される虹色の水平線
 
 ## コンポーネント構造
 
 このプロジェクトはAtomicデザインパターンに基づいてコンポーネントを構造化しています：
 
 - **Atoms**: 最も基本的なUIコンポーネント（Button、Heading、Input、Link、Text、TextAreaなど）
-- **Molecules**: 複数のAtomsを組み合わせた複合コンポーネント（FormField、GuestbookEntry、MenuItemなど）
-- **Organisms**: 複数のMoleculesを組み合わせた複雑なコンポーネント（Footer、GuestbookList、Header、Menuなど）
+- **Molecules**: 複数のAtomsを組み合わせた複合コンポーネント（FormField、MenuItemなど）
+- **Organisms**: 複数のMoleculesを組み合わせた複雑なコンポーネント（Footer、Header、Menuなど）
 - **Templates**: ページのレイアウト構造を定義するコンポーネント（PageLayout）
 - **Pages**: 実際のページコンテンツを表示するコンポーネント（HomePage、AccountsPage、ProductsPageなど）
 
@@ -288,16 +228,6 @@ bun run deploy
 - **技術的に正確だが親しみやすい**: 専門知識を示しつつも、親しみやすさを維持
 - **自己言及的なユーモア**: 軽いユーモアを交えた文体
 
-## 環境変数
-
-プロジェクトでは以下の環境変数を使用しています：
-
-- `CLOUDFLARE_ACCOUNT_ID`: CloudflareアカウントのアカウントID
-- `CLOUDFLARE_DATABASE_ID`: Cloudflare D1データベースのID
-- `CLOUDFLARE_API_TOKEN`: CloudflareのAPIトークン
-
-これらの環境変数は`.env`ファイルに設定するか、Cloudflare Workersのシークレットとして設定する必要があります。
-
 ## デプロイ
 
 このプロジェクトはCloudflare Workersにデプロイされています。デプロイには以下の手順を実行します：
@@ -305,7 +235,7 @@ bun run deploy
 1. プロジェクトをビルド: `bun run build`
 2. Cloudflare Workersにデプロイ: `bun run deploy`
 
-Cloudflare Workersの設定は`wrangler.jsonc`ファイルで管理されています。このファイルには、KVネームスペースやD1データベースなどのバインディングが含まれています。
+Cloudflare Workersの設定は`wrangler.jsonc`ファイルで管理されています。このファイルには、KVネームスペースなどのバインディングが含まれています。
 
 ## ライセンス
 

@@ -4,7 +4,7 @@ import Header from '../organisms/Header'
 import Menu from '../organisms/Menu'
 import Footer from '../organisms/Footer'
 import { JSX } from 'hono/jsx/jsx-runtime'
-import { Marquee } from '../atoms/Marquee'
+import Marquee from '../atoms/Marquee'
 
 type PageLayoutProps = {
   c: Context<Env, any, {}>

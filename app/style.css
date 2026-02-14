@@ -1,5 +1,21 @@
 @import 'tailwindcss'; /* source('../app') */
 
+/* 90s Theme Color Palette */
+:root {
+  --retro-navy: #000080;
+  --retro-black: #000000;
+  --retro-white: #FFFFFF;
+  --retro-yellow: #FFFF00;
+  --retro-magenta: #FF00FF;
+  --retro-red: #FF0000;
+  --retro-green: #00FF00;
+  --retro-gray: #CCCCCC;
+  --retro-gray-medium: #999999;
+  --retro-lavender: #CCCCFF;
+  --retro-lavender-light: #DDDDFF;
+  --retro-cream: #FFFFEE;
+}
+
 /* 90s Style CSS */
 
 /* Custom cursor styles */
@@ -32,14 +48,14 @@ html {
   position: fixed;
   width: 10px;
   height: 10px;
-  background: #FFFF00;
+  background: var(--retro-yellow);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   opacity: 0;
   transform: translate(-50%, -50%);
   mix-blend-mode: screen;
-  box-shadow: 0 0 10px 2px #FF00FF;
+  box-shadow: 0 0 10px 2px var(--retro-magenta);
   animation: fadeOut 1s linear forwards;
 }
 
@@ -72,8 +88,8 @@ a:hover, button:hover, .menu-item:hover, .submit-button:hover {
 
 body {
   background-image: url('/images/stars.gif');
-  background-color: #000080; /* Navy blue background */
-  color: #000000;
+  background-color: var(--retro-navy); /* Navy blue background */
+  color: var(--retro-black);
   font-family: "Times New Roman", Times, serif;
   margin: 0;
   padding: 20px 0;
@@ -303,20 +319,20 @@ body {
 /* Blinking text effect */
 .blink {
   animation: blinker 1s step-end infinite;
-  color: #FFFF00; /* Yellow text */
+  color: var(--retro-yellow); /* Yellow text */
   font-family: "Comic Sans MS", cursive;
-  text-shadow: 2px 2px #FF0000;
+  text-shadow: 2px 2px var(--retro-red);
   margin: 10px 0;
 }
 
 .new-marker {
-  color: #ff0000;
+  color: var(--retro-red);
   font-weight: bold;
   font-size: 0.8em;
   margin-left: 10px;
   padding: 2px 5px;
-  background-color: #ffff00;
-  border: 1px solid #ff0000;
+  background-color: var(--retro-yellow);
+  border: 1px solid var(--retro-red);
 }
 
 @keyframes blinker {
@@ -328,7 +344,7 @@ body {
 /* Header styles */
 h1 {
   font-family: "Comic Sans MS", cursive;
-  color: #FFFF00; /* Yellow */
+  color: var(--retro-yellow); /* Yellow */
 }
 
 .welcome-gif {
@@ -341,7 +357,7 @@ h1 {
   align-items: center;
   justify-content: center;
   margin: 10px 0;
-  color: #FFFFFF;
+  color: var(--retro-white);
 }
 
 .under-construction img {
@@ -352,27 +368,27 @@ h1 {
 /* Sidebar styles */
 .sidebar {
   background: url('/images/marble.gif');
-  background-color: #CCCCFF; /* Fallback color */
-  background-image: linear-gradient(45deg, #CCCCFF 25%, #DDDDFF 25%, #DDDDFF 50%, #CCCCFF 50%, #CCCCFF 75%, #DDDDFF 75%, #DDDDFF 100%);
+  background-color: var(--retro-lavender); /* Fallback color */
+  background-image: linear-gradient(45deg, var(--retro-lavender) 25%, var(--retro-lavender-light) 25%, var(--retro-lavender-light) 50%, var(--retro-lavender) 50%, var(--retro-lavender) 75%, var(--retro-lavender-light) 75%, var(--retro-lavender-light) 100%);
   background-size: 56.57px 56.57px;
-  border: 2px outset #CCCCCC;
+  border: 2px outset var(--retro-gray);
 }
 
 .menu-header {
-  background-color: #000080; /* Navy blue */
-  color: #FFFFFF;
+  background-color: var(--retro-navy); /* Navy blue */
+  color: var(--retro-white);
   font-weight: bold;
   text-align: center;
   padding: 5px;
   margin-bottom: 10px;
-  border: 2px outset #CCCCCC;
+  border: 2px outset var(--retro-gray);
 }
 
 .menu-item {
   margin: 5px 0;
   padding: 5px;
-  background-color: #CCCCFF;
-  border: 2px outset #CCCCCC;
+  background-color: var(--retro-lavender);
+  border: 2px outset var(--retro-gray);
   text-align: center;
 }
 
@@ -383,7 +399,7 @@ h1 {
 }
 
 .menu-item a:hover {
-  color: #FF00FF; /* Magenta on hover */
+  color: var(--retro-magenta); /* Magenta on hover */
   text-decoration: underline;
 }
 
@@ -394,8 +410,8 @@ h1 {
 }
 
 .counter-number {
-  background-color: #000000;
-  color: #00FF00; /* Green text */
+  background-color: var(--retro-black);
+  color: var(--retro-green); /* Green text */
   padding: 3px;
   font-family: "Courier New", Courier, monospace;
   letter-spacing: 2px;
@@ -404,23 +420,23 @@ h1 {
 
 .kiriban-notice {
   margin-top: 8px;
-  color: #FF0000; /* Red text */
+  color: var(--retro-red); /* Red text */
   font-weight: bold;
   font-size: 0.9em;
   animation: blinker 1s step-end infinite;
-  text-shadow: 1px 1px #FFFF00; /* Yellow shadow for contrast */
-  background-color: #FFFFFF;
+  text-shadow: 1px 1px var(--retro-yellow); /* Yellow shadow for contrast */
+  background-color: var(--retro-white);
   padding: 3px;
-  border: 1px dashed #FF0000;
+  border: 1px dashed var(--retro-red);
 }
 
 /* Content styles */
 .content {
   padding: 10px;
   background: url('/images/paper.gif');
-  background-color: #FFFFEE; /* Fallback color */
-  background-image: linear-gradient(#FFFFEE 2px, transparent 2px),
-    linear-gradient(90deg, #FFFFEE 2px, transparent 2px),
+  background-color: var(--retro-cream); /* Fallback color */
+  background-image: linear-gradient(var(--retro-cream) 2px, transparent 2px),
+    linear-gradient(90deg, var(--retro-cream) 2px, transparent 2px),
     linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
   background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
@@ -432,12 +448,12 @@ h1 {
 }
 
 .section-header {
-  background-color: #FF00FF; /* Magenta */
-  color: #FFFFFF;
+  background-color: var(--retro-magenta); /* Magenta */
+  color: var(--retro-white);
   font-weight: bold;
   padding: 5px;
   text-align: center;
-  border: 2px outset #CCCCCC;
+  border: 2px outset var(--retro-gray);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -450,15 +466,15 @@ h1 {
 
 .section-content {
   padding: 10px;
-  border-left: 2px solid #FF00FF;
-  border-right: 2px solid #FF00FF;
-  border-bottom: 2px solid #FF00FF;
+  border-left: 2px solid var(--retro-magenta);
+  border-right: 2px solid var(--retro-magenta);
+  border-bottom: 2px solid var(--retro-magenta);
 }
 
 .name {
   font-size: 1.2em;
   font-weight: bold;
-  color: #FF0000; /* Red */
+  color: var(--retro-red); /* Red */
 }
 
 .icon {
@@ -475,7 +491,7 @@ h1 {
 
 .form-input {
   margin: 5px 0;
-  border: 2px inset #CCCCCC;
+  border: 2px inset var(--retro-gray);
   background-color: #FFFFCC; /* Light yellow */
   padding: 8px;
   box-sizing: border-box;
@@ -484,8 +500,8 @@ h1 {
 }
 
 .submit-button {
-  background: linear-gradient(to bottom, #CCCCCC, #999999);
-  border: 2px outset #CCCCCC;
+  background: linear-gradient(to bottom, var(--retro-gray), var(--retro-gray-medium));
+  border: 2px outset var(--retro-gray);
   padding: 8px 20px;
   font-weight: bold;
   cursor: pointer;
@@ -496,9 +512,9 @@ h1 {
 }
 
 .submit-button-text {
-  color: #000080;
+  color: var(--retro-navy);
   font-size: 1.1em;
-  text-shadow: 1px 1px 1px #FFFFFF;
+  text-shadow: 1px 1px 1px var(--retro-white);
 }
 
 .submit-button:hover {
@@ -508,14 +524,14 @@ h1 {
 }
 
 .submit-button:active {
-  background: linear-gradient(to bottom, #999999, #CCCCCC);
+  background: linear-gradient(to bottom, var(--retro-gray-medium), var(--retro-gray));
   transform: translateY(1px);
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Footer styles */
 .footer {
-  color: #FFFFFF;
+  color: var(--retro-white);
   padding: 10px;
   font-size: 0.9em;
 }
@@ -531,24 +547,24 @@ h1 {
 }
 
 .webring a:hover {
-  color: #FFFF00; /* Yellow on hover */
+  color: var(--retro-yellow); /* Yellow on hover */
   text-decoration: underline;
 }
 
 /* Marquee styling */
 .marquee-container {
-  background-color: #000000;
-  color: #ffff00; /* 典型的な90年代の黄色テキスト */
+  background-color: var(--retro-black);
+  color: var(--retro-yellow); /* 典型的な90年代の黄色テキスト */
   font-weight: bold;
-  border-top: 2px solid #ff00ff;
-  border-bottom: 2px solid #ff00ff;
+  border-top: 2px solid var(--retro-magenta);
+  border-bottom: 2px solid var(--retro-magenta);
   padding: 2px;
   margin: 10px 0;
 }
 
 marquee {
-  background-color: #000000;
-  color: #00FF00; /* Green text */
+  background-color: var(--retro-black);
+  color: var(--retro-green); /* Green text */
   padding: 5px;
   font-family: "Courier New", Courier, monospace;
   font-weight: bold;

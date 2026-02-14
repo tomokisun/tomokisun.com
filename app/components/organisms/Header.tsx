@@ -12,7 +12,7 @@ export default function Header({
   className = ''
 }: HeaderProps) {
   return (
-    <td colSpan={2} align="center" bgcolor="#000000" className={className}>
+    <td colSpan={2} className={`text-center bg-[#000000] ${className}`}>
       <h1 className="blink">{title}</h1>
       {showUnderConstruction && (
         <div className="under-construction">

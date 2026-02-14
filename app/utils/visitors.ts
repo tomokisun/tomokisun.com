@@ -1,21 +1,23 @@
-import { Context, Env } from 'hono';
+import type { AppContext } from '../global';
+
+const KV_KEY = 'VISITORS_COUNT';
+const DEFAULT_COUNT = '0';
 
 /**
  * Increments the visitors count in KV storage
  * @param c Hono context
  * @returns The updated visitors count as a string
  */
-export async function incrementVisitorsCount(c: Context<Env, any, {}>) {
-  let visitorsCount = await c.env.KV.get('VISITORS_COUNT');
-  if (visitorsCount) {
-    const next = Number(visitorsCount) + 1;
-    await c.env.KV.put('VISITORS_COUNT', next.toString());
-    visitorsCount = next.toString();
-  } else {
-    visitorsCount = '1';
-    await c.env.KV.put('VISITORS_COUNT', visitorsCount);
+export async function incrementVisitorsCount(c: AppContext) {
+  try {
+    const current = await c.env.KV.get(KV_KEY);
+    const next = (Number(current ?? 0) + 1).toString();
+    await c.env.KV.put(KV_KEY, next);
+    return next;
+  } catch (error) {
+    console.error('Failed to increment visitors count:', error);
+    return DEFAULT_COUNT;
   }
-  return visitorsCount;
 }
 
 /**
@@ -23,7 +25,12 @@ export async function incrementVisitorsCount(c: Context<Env, any, {}>) {
  * @param c Hono context
  * @returns The current visitors count as a string
  */
-export async function getVisitorsCount(c: Context<Env, any, {}>): Promise<string> {
-  let visitorsCount = await c.env.KV.get('VISITORS_COUNT');
-  return visitorsCount ?? '0';
+export async function getVisitorsCount(c: AppContext): Promise<string> {
+  try {
+    const visitorsCount = await c.env.KV.get(KV_KEY);
+    return visitorsCount ?? DEFAULT_COUNT;
+  } catch (error) {
+    console.error('Failed to get visitors count:', error);
+    return DEFAULT_COUNT;
+  }
 }

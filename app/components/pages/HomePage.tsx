@@ -3,6 +3,7 @@ import { Env } from 'hono'
 import PageLayout from '../templates/PageLayout'
 import Section from '../organisms/Section'
 import Text from '../atoms/Text'
+import Marquee from '../atoms/Marquee'
 
 type HomePageProps = {
   c: Context<Env, any, {}>
@@ -16,9 +17,7 @@ export default function HomePage({ c }: HomePageProps) {
         <span className="name">tomokisun</span>
         <Text>元々はiOSエンジニアですが、現在はモバイル、ウェブ、バックエンド、ブロックチェーンなど、様々な分野に携わっています。</Text>
         <Text>ただ、インフラ層は得意ではないです（笑）</Text>
-        <div className="marquee-container">
-          <marquee scrollamount="3" behavior="alternate">個人ウェブサイト 👀</marquee>
-        </div>
+        <Marquee text="個人ウェブサイト 👀" speed="normal" direction="left" />
       </Section>
       
       <hr className="rainbow" />

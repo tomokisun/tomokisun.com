@@ -5,18 +5,10 @@
     "dev": "vite --host",
     "build": "vite build --mode client && vite build",
     "preview": "wrangler dev",
-    "deploy": "bun run build && wrangler deploy",
-    "migration": "drizzle-kit migrate",
-    "migration:local": "wrangler d1 execute tomokisun-com --local --file drizzle/0000_happy_tag.sql",
-    "migration:generate": "drizzle-kit generate",
-    "studio": "drizzle-kit studio --port 3000 --verbose --config drizzle.config.local.ts"
+    "deploy": "bun run build && wrangler deploy"
   },
   "private": true,
   "dependencies": {
-    "@hono/zod-validator": "^0.5.0",
-    "dotenv": "^16.6.1",
-    "drizzle-orm": "^0.44.7",
-    "drizzle-zod": "^0.7.1",
     "hono": "^4.11.9",
     "honox": "^0.1.53"
   },
@@ -24,9 +16,7 @@
     "@cloudflare/workers-types": "^4.20260214.0",
     "@hono/vite-build": "^1.9.3",
     "@hono/vite-dev-server": "^0.19.1",
-    "@libsql/client": "^0.15.15",
     "@tailwindcss/vite": "^4.1.18",
-    "drizzle-kit": "^0.31.9",
     "tailwindcss": "^4.1.18",
     "vite": "^6.4.1",
     "wrangler": "^4.65.0"

@@ -5,12 +5,12 @@ type FooterProps = {
   className?: string
 }
 
-export default function Footer({ 
-  year = 2025, 
+export default function Footer({
+  year = new Date().getFullYear(),
   className = ''
 }: FooterProps) {
   return (
-    <td colSpan={2} align="center" bgcolor="#000000" className={`footer ${className}`}>
+    <td colSpan={2} className={`footer text-center bg-[#000000] ${className}`}>
       <div>
         © {year} tomokisun
         {' | '}

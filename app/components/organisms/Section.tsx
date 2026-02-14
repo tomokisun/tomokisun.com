@@ -14,8 +14,7 @@ export default function Section({
   className = ''
 }: SectionProps) {
   return (
-    <div className={`section ${className}`}>
-      {id && <a name={id}></a>}
+    <div id={id} className={`section ${className}`}>
       <div className="section-header">
         {title}
       </div>
