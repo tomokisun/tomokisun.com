@@ -24,8 +24,12 @@
   "env": {
     "preview": {
       "name": "tomokisun-com-preview",
-      // No route/custom_domain — uses workers.dev URL
-      "route": {}
+      "kv_namespaces": [
+        {
+          "binding": "KV",
+          "id": "86c3c993939c4482a4baa954ce84e499"
+        }
+      ]
     }
   }
 }
