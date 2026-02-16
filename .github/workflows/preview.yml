@@ -49,7 +49,7 @@ jobs:
           echo "Preview URL: ${URL}"
 
       - name: Comment Preview URL
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const url = '${{ steps.preview-url.outputs.url }}';
@@ -109,7 +109,7 @@ jobs:
 
       - name: Comment Lighthouse Results
         if: always()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
