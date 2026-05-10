@@ -1,18 +1,19 @@
 import { menuItems } from '../../data/menu-items'
-import type { AppContext } from '../../global'
-import { getVisitorsCount } from '../../utils/visitors'
 import MenuItem from '../molecules/MenuItem'
 
 type MenuProps = {
-  c: AppContext
   className?: string
 }
 
-export default async function Menu({ c, className = '' }: MenuProps) {
-  const visitorsCount = await getVisitorsCount(c)
+export default function Menu({ className = '' }: MenuProps) {
   return (
-    <aside className={`grid-sidebar sidebar ${className}`}>
-      <div className="menu-header">メニュー</div>
+    <aside className={`grid-sidebar ${className}`}>
+      <div className="site-name-card">
+        <div className="site-name">tomokisun</div>
+        <div className="site-members">web ★ mobile ★ ios ★ engineer</div>
+        <div className="site-deco">‥°・★─☆°・★─☆</div>
+        <div className="site-tag">マヂで個人ホムペ</div>
+      </div>
       <nav aria-label="メインメニュー">
         {menuItems.map((item) => (
           <MenuItem key={item.href} href={item.href}>
@@ -20,9 +21,8 @@ export default async function Menu({ c, className = '' }: MenuProps) {
           </MenuItem>
         ))}
       </nav>
-      <div className="counter">
-        <div>訪問者数:</div>
-        <div className="counter-number">{visitorsCount.padStart(8, '0')}</div>
+      <div className="since-stamp">
+        <div className="since-stamp-inner">~ SINCE 2006 ~</div>
       </div>
     </aside>
   )
