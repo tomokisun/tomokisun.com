@@ -1,18 +1,21 @@
 type HeaderProps = {
-  title: string
-  showUnderConstruction?: boolean
+  visitorsCount?: string
   className?: string
 }
 
-export default function Header({ title, showUnderConstruction = true, className = '' }: HeaderProps) {
+export default function Header({ visitorsCount, className = '' }: HeaderProps) {
   return (
     <header className={`grid-header ${className}`}>
-      <h1 className="blink">{title}</h1>
-      {showUnderConstruction && (
-        <div className="under-construction">
-          <span className="construction-icon">🚧</span>
-          <span>常に工事中</span>
-          <span className="construction-icon">🔨</span>
+      <h1 className="site-title">
+        tomokisun<span className="heart">♡</span>homepage
+      </h1>
+      <div className="site-subtitle">
+        ☆<span className="star">─</span>‥… tomokisun ★ web ★ mobile ★ ios …‥<span className="star">─</span>☆
+      </div>
+      <div className="welcome-line">✦ WELCOME ✦</div>
+      {visitorsCount && (
+        <div className="visitor-line">
+          ★ あなたは <span className="visitor-number">{visitorsCount}</span> 人目の訪問者 ★
         </div>
       )}
     </header>

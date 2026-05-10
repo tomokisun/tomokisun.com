@@ -9,14 +9,11 @@ export default function Footer({ year = new Date().getFullYear(), className = ''
   return (
     <footer className={`grid-footer footer ${className}`}>
       <div>
-        © {year} tomokisun
-        {' | '}
+        無料ホムペ作成♪着うたは{' '}
         <Link href="https://github.com/tomokisun/tomokisun.com" target="_blank">
           GitHub
         </Link>
-      </div>
-      <div className="best-viewed-banner">
-        Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0 at 800x600 resolution
+        {' | '}© {year} tomokisun
       </div>
     </footer>
   )

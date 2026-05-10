@@ -1,5 +1,6 @@
 import type { JSX } from 'hono/jsx/jsx-runtime'
 import type { AppContext } from '../../global'
+import { getVisitorsCount } from '../../utils/visitors'
 import Marquee from '../atoms/Marquee'
 import Footer from '../organisms/Footer'
 import Header from '../organisms/Header'
@@ -12,15 +13,16 @@ type PageLayoutProps = {
   className?: string
 }
 
-export default function PageLayout({ c, title, children, className = '' }: PageLayoutProps) {
+export default async function PageLayout({ c, children, className = '' }: PageLayoutProps) {
+  const visitorsCount = await getVisitorsCount(c)
   return (
     <div className={`container ${className}`}>
       <div className="layout-grid">
-        <Header title={title} />
+        <Menu />
+        <Header visitorsCount={visitorsCount.padStart(4, '0')} />
         <div className="grid-marquee">
-          <Marquee text="最新情報: サイトをリニューアルしました！ 新機能続々追加中！ お楽しみに！" speed="normal" />
+          <Marquee text="✿ ようこそ tomokisun のホムペへ ♡ 素通り禁止だヨ ✿" speed="normal" />
         </div>
-        <Menu c={c} />
         <main id="main-content" className="grid-content">
           <div className="content">{children}</div>
         </main>
