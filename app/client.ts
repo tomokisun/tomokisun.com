@@ -1,22 +1,30 @@
 import { createClient } from 'honox/client'
 import {
-  setupClickEffect,
-  setupMouseTrail,
-  setupPageTransition,
-  setupRightClickPrevention,
-  setupWelcomePopup,
-} from './client/effects'
+  restoreWallpaper,
+  setupBootScreen,
+  setupClock,
+  setupContextMenu,
+  setupTerminal,
+  setupTrash,
+  setupWindowManager,
+} from './client/os'
 
-// Create the client
 createClient()
 
-// Setup right-click prevention immediately
-setupRightClickPrevention()
+restoreWallpaper()
 
-// Setup effects after DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  setupMouseTrail()
-  setupClickEffect()
-  setupWelcomePopup()
-  setupPageTransition()
-})
+function init(): void {
+  setupBootScreen()
+  setupWindowManager()
+  setupClock()
+  setupTerminal()
+  setupTrash()
+  setupContextMenu()
+}
+
+// スクリプトはasyncで読み込まれるため、DOMContentLoadedが既に発火済みの場合がある
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init)
+} else {
+  init()
+}

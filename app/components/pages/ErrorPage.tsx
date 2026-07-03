@@ -1,42 +1,35 @@
-import Marquee from '../atoms/Marquee'
-
 type ErrorPageProps = {
   code: number
   title: string
   message: string
-  marqueeText: string
 }
 
-export default function ErrorPage({ code, title, message, marqueeText }: ErrorPageProps) {
+export default function ErrorPage({ code, title, message }: ErrorPageProps) {
   return (
-    <div className="container">
-      <div className="layout-grid layout-grid--single-column">
-        <header className="grid-header">
-          <h1 className="site-title">
-            {code}
-            <span className="heart">♡</span>Error
-          </h1>
-        </header>
-        <main className="grid-content">
-          <div className="content">
-            <section className="section">
-              <h2 className="section-header">{title}</h2>
-              <div className="section-content">
-                <p>{message}</p>
-                <Marquee text={marqueeText} speed="normal" direction="left" />
-                <p className="error-back-link">
-                  <a href="/" className="home-link">
-                    ♡ Back to Home ♡
-                  </a>
-                </p>
+    <div className="os-root">
+      <main id="main-content" className="os-desktop os-desktop--error">
+        <section className="os-window os-window--dialog is-open" aria-label={title}>
+          <header className="os-titlebar tb-pink">
+            <h1 className="os-title">システムエラー</h1>
+            <span className="os-titlebar-stripes" aria-hidden="true"></span>
+          </header>
+          <div className="os-window-body">
+            <div className="error-body">
+              <div className="error-icon" aria-hidden="true">
+                💣
               </div>
-            </section>
+              <div className="error-code">ERROR {code}</div>
+              <p className="error-title">{title}</p>
+              <p className="error-message">{message}</p>
+              <p className="error-hint">再起動でだいたい直ります（このOSも例外ではありません）。</p>
+              <a className="os-button" href="/">
+                再起動する
+              </a>
+            </div>
           </div>
-        </main>
-        <footer className="grid-footer footer">
-          <div>© {new Date().getFullYear()} tomokisun</div>
-        </footer>
-      </div>
+          <footer className="os-statusbar">tomokiOS 1.0 ｜ コアは吐きませんでした</footer>
+        </section>
+      </main>
     </div>
   )
 }

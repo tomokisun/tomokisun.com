@@ -11,9 +11,8 @@ const handler: ErrorHandler = (e, c) => {
   return c.render(
     <ErrorPage
       code={500}
-      title="INTERNAL SERVER ERROR"
-      message="Sorry, something went wrong on our server."
-      marqueeText="Please try again later 😢"
+      title="KERNEL PANIC"
+      message="tomokiOSの内部でエラーが発生しました。カーネル（HonoX）は無事です。"
     />,
   )
 }

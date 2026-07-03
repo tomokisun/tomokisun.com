@@ -4,6 +4,7 @@ export type Product = {
   description: string
   url: string
   isNew?: boolean
+  acquiredBy?: string
 }
 
 export const products: Product[] = [
@@ -36,7 +37,8 @@ export const products: Product[] = [
   },
   {
     id: 'supernft',
-    title: 'Super NFT Products (acq: GMO Pepabo, Inc.)',
+    title: 'Super NFT Products',
+    acquiredBy: 'GMO Pepabo, Inc.',
     description: 'あなたが所有するオリジナルNFT商品を購入できるサービスです。',
     url: 'https://twitter.com/0xsnp',
   },
@@ -48,7 +50,8 @@ export const products: Product[] = [
   },
   {
     id: 'pokerone',
-    title: 'PokerONE (acq: deck, Inc.)',
+    title: 'PokerONE',
+    acquiredBy: 'deck, Inc.',
     description: 'アミューズメントカジノのトーナメントを簡単に検索できるサービスです。',
     url: 'https://twitter.com/pokerone_jp',
   },

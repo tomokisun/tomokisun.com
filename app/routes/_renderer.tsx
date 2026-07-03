@@ -1,10 +1,10 @@
 import { jsxRenderer } from 'hono/jsx-renderer'
 import { Link, Script } from 'honox/server'
 
-const SITE_NAME = "tomokisun's homepage"
+const SITE_NAME = 'tomokiOS'
 const SITE_URL = 'https://tomokisun.com'
 const DEFAULT_DESCRIPTION =
-  "Welcome to tomokisun's personal homepage! Best viewed in Netscape Navigator 4.0 or Internet Explorer 5.0."
+  'tomokisunのホームページ、あらため tomokiOS 1.0。ウィンドウを開いて、ご自由にお使いください。メモリは640KBあれば十分なはず。'
 const OGP_IMAGE = `${SITE_URL}/ogp.png`
 
 const safeJsonLd = (data: object) => JSON.stringify(data).replace(/</g, '\\u003c')
@@ -35,12 +35,12 @@ export default jsxRenderer(({ children, title, description, ogUrl, jsonLd }) => 
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="canonical" href={canonicalUrl} />
-        <meta name="theme-color" content="#000080" />
+        <meta name="theme-color" content="#efedff" />
         <Link href="/app/style.css" rel="stylesheet" />
         <Script src="/app/client.ts" async />
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
-        <meta name="keywords" content="tomokisun, personal, homepage, web, mobile, iOS, engineer, 90s, retro" />
+        <meta name="keywords" content="tomokisun, personal, homepage, web, mobile, iOS, engineer, tomokiOS, desktop" />
         <meta name="author" content="tomokisun" />
         <meta name="robots" content="index, follow" />
         <meta property="og:site_name" content={SITE_NAME} />
@@ -64,7 +64,6 @@ export default jsxRenderer(({ children, title, description, ogUrl, jsonLd }) => 
           メインコンテンツへスキップ
         </a>
         {children}
-        <div class="crt-overlay"></div>
       </body>
     </html>
   )
