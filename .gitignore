@@ -4,6 +4,10 @@ dist/
 # dev
 .hono/
 .wrangler/
+.next/
+.open-next/
+next-env.d.ts
+tsconfig.tsbuildinfo
 .yarn/
 !.yarn/releases
 .vscode/*
