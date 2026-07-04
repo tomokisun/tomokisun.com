@@ -33,6 +33,6 @@
     }
   },
   "files": {
-    "includes": ["**", "!**/dist", "!**/node_modules", "!**/.wrangler", "!**/.hono", "!**/bun.lockb", "!**/public"]
+    "includes": ["**", "!**/dist", "!**/node_modules", "!**/.next", "!**/.open-next", "!**/bun.lockb", "!**/public"]
   }
 }
