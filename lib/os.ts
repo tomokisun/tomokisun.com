@@ -182,7 +182,7 @@ export function setupBootScreen(): void {
 }
 
 // ===== ターミナル =====
-const OPENABLE_WINDOWS = ['profile', 'products', 'social', 'terminal', 'trash', 'about', 'settings'] as const
+const OPENABLE_WINDOWS = ['profile', 'products', 'social', 'blog', 'terminal', 'trash', 'about', 'settings'] as const
 
 function runCommand(input: string): string[] {
   const cmd = input.trim()
@@ -194,6 +194,7 @@ function runCommand(input: string): string[] {
       '  whoami        じぶんをたしかめる',
       '  ls            デスクトップをみる',
       '  ls products   プロダクトいちらん',
+      '  blog          ブログをよむ',
       '  open <なまえ>  ウィンドウをひらく',
       '  neofetch      システム情報',
       '  pwd / date / uptime / clear / exit',
@@ -204,7 +205,18 @@ function runCommand(input: string): string[] {
   if (cmd === 'pwd') return ['/Users/tomokisun/homepage']
   if (cmd === 'date') return [new Date().toLocaleString('ja-JP')]
   if (cmd === 'uptime') return ['SINCE 2006 からずっと稼働中（たまに再起動）']
-  if (cmd === 'ls') return ['プロフィール.txt  Products/  ソーシャル  ゴミ箱  設定  グッズ.url']
+  if (cmd === 'ls') return ['プロフィール.txt  Products/  ソーシャル  blog/  ゴミ箱  設定  グッズ.url']
+  if (cmd === 'ls blog' || cmd === 'ls blog/') {
+    return ['2026-08-28-wablo.md', '（つづきは blog コマンドでどうぞ）']
+  }
+  if (cmd === 'blog') {
+    openWindow('blog')
+    return ['ブログをひらきました', '  2026.08.28  Wablo — 30秒の落書きを送るアプリ']
+  }
+  if (cmd.startsWith('cat')) {
+    if (cmd.includes('wablo')) return ['wablo.md: 30秒では読み終わりません。ブログでどうぞ → /blog/wablo']
+    return ['cat: そのようなファイルはありません（ブログにはあります）']
+  }
   if (cmd === 'ls products' || cmd === 'ls products/') {
     return [
       'NewMatch.app  BeMatch.app  CalculatorMultiple.app  Blackjack.app',
@@ -240,6 +252,7 @@ function runCommand(input: string): string[] {
       profile: 'profile',
       products: 'products',
       social: 'social',
+      blog: 'blog',
       terminal: 'terminal',
       trash: 'trash',
       settings: 'settings',

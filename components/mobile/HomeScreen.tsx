@@ -29,6 +29,7 @@ export default function HomeScreen() {
       <AppIcon label="プロフィール" icon="📝" color="cherry" opens="profile" />
       <AppIcon label="Products" icon="📁" color="melon" opens="products" />
       <AppIcon label="ソーシャル" icon="🌐" color="soda" opens="social" />
+      <AppIcon label="ブログ" icon="📰" color="cherry" opens="blog" />
       <AppIcon label="設定" icon="⚙️" color="cream" opens="settings" />
       <AppIcon label="ゴミ箱" icon="🗑" color="lavender" opens="trash" />
       <AppIcon label="ターミナル" icon="＞_" color="dark" opens="terminal-blocked" />

@@ -1,4 +1,5 @@
 import AppView from './AppView'
+import BlogApp from './apps/BlogApp'
 import ProductsApp from './apps/ProductsApp'
 import ProfileApp from './apps/ProfileApp'
 import SettingsApp from './apps/SettingsApp'
@@ -32,6 +33,9 @@ export default function MobileShell({ visitorsCount }: MobileShellProps) {
       </AppView>
       <AppView id="social" title="ソーシャル" color="soda">
         <SocialApp />
+      </AppView>
+      <AppView id="blog" title="ブログ" color="cherry">
+        <BlogApp />
       </AppView>
       <AppView id="trash" title="ゴミ箱" color="lavender">
         <TrashApp />

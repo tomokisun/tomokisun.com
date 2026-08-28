@@ -15,6 +15,9 @@ export default function MenuBar({ visitorsCount }: MenuBarProps) {
         <button type="button" className="os-mb-item" data-open="terminal">
           ターミナル
         </button>
+        <button type="button" className="os-mb-item" data-open="blog">
+          ブログ
+        </button>
         <button type="button" className="os-mb-item" data-open="settings">
           設定
         </button>

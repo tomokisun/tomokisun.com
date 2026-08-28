@@ -25,6 +25,7 @@ bun run lint         # Biomeでリント
 - `Products` フォルダ - プロダクト一覧（アイコングリッド、各アプリの詳細ウィンドウ付き。買収済みは🔒と「買収済」バッジ）
 - `ソーシャル` - SNSリンク一覧
 - `ターミナル` - クライアントサイドで動く対話型シェル（help/whoami/ls/open等の隠しコマンド）。SPでは開けず専用ダイアログを表示
+- `ブログ` - 記事いちらんウィンドウ（`BlogWindow.tsx`／SPは`BlogApp.tsx`）。記事本体は`/blog/<slug>`の独立ページ（benji.org リスペクトの短文スタイル）
 - `ゴミ箱` - infra.zip（「インフラは苦手」の自虐ネタ。復元は必ず失敗する）
 - `設定` - OS名/ビルド番号/ストレージ容量などのネタを詰めた設定パネル
 - `このOSについて` - MenuBarのロゴ／メニュー項目から開くAboutダイアログ（`AboutWindow.tsx`）
@@ -44,8 +45,9 @@ bun run lint         # Biomeでリント
 - `components/OsClient.tsx` - `initOS()`を呼び出すクライアントエントリ（`'use client'`）
 
 ### ルーティング
-Next.js App Router（`app/`）。ページは`/`のみに統一され、開くウィンドウ／アプリの出し分けは行っていない（旧`/products`, `/accounts`ルートは廃止）：
+Next.js App Router（`app/`）。デスクトップ／ホーム画面は`/`のみに統一され、開くウィンドウ／アプリの出し分けは行っていない（旧`/products`, `/accounts`ルートは廃止）。ブログだけは共有可能なURLを持つ独立ルート：
 - `app/page.tsx` - KVから訪問者数を取得し、Desktop・MobileShell・OsClientを描画。`dynamic = 'force-dynamic'`
+- `app/blog/page.tsx` - ブログいちらん（`data/blog-posts.ts`から生成）。`app/blog/<slug>/page.tsx` - 各記事（例: `/blog/wablo`）。どちらも`components/blog/BlogShell.tsx`（壁紙＋静的ウィンドウ1枚のページchrome、PC/SP共通）でOSの世界観を維持し、JSON-LD（BlogPosting）とOGPを持つ
 - `app/layout.tsx` - メタデータ（OGP/Twitterカード）、JSON-LD（WebSite/Person）、フォント設定
 - `app/not-found.tsx` / `app/error.tsx` - OS風のシステムエラーダイアログ（ERROR 404 / ERROR 500）
 
