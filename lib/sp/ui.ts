@@ -54,9 +54,11 @@ export function showSpDialog(title: string, message: string, opener?: HTMLElemen
 
   const close = () => {
     root.remove()
-    document.removeEventListener('keydown', onKeyDown)
+    document.removeEventListener('keydown', onKeyDown, true)
     opener?.focus()
   }
+  // captureフェーズで登録: Escapeが他のdocumentリスナー（編集モード終了・アプリクローズ等）へ
+  // 波及してダイアログと一緒に閉じてしまうのを防ぐ
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.stopPropagation()
@@ -73,7 +75,7 @@ export function showSpDialog(title: string, message: string, opener?: HTMLElemen
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) close()
   })
-  document.addEventListener('keydown', onKeyDown)
+  document.addEventListener('keydown', onKeyDown, true)
 
   actions.appendChild(ok)
   for (const el of [titleEl, messageEl, actions]) dialog.appendChild(el)

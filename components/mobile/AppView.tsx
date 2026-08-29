@@ -9,7 +9,7 @@ type AppViewProps = {
 
 export default function AppView({ id, title, color, children }: AppViewProps) {
   return (
-    <div className="sp-app-view" data-app={id} role="dialog" aria-modal="true" aria-label={title}>
+    <div className="sp-app-view" data-app={id} role="dialog" aria-label={title}>
       <header className={`sp-app-header tb-${color}`}>
         <button type="button" className="sp-app-back" data-sp-close>
           ◀ ホーム

@@ -4,13 +4,15 @@ import { closeActiveApp } from './apps'
 import { createGesture, springTo } from './gesture'
 import { appIdFromLabel, SP_APPS } from './meta'
 import { pushNotification } from './notify'
-import { getMode, setMode } from './state'
+import { getMode, on, setMode } from './state'
 import { showSpDialog, showToast } from './ui'
 
 const LONG_PRESS_MS = 500
 const PREVIEW_MS = 300
 
 let dragAttempts = 0
+// アイコン→×バッジ（バッジはbutton-in-buttonを避けるため.sp-homeへ兄弟として置く）
+const badges = new Map<HTMLElement, HTMLElement>()
 
 function labelOf(icon: HTMLElement): string {
   return icon.querySelector('.sp-app-icon-label')?.textContent?.trim() ?? ''
@@ -18,13 +20,13 @@ function labelOf(icon: HTMLElement): string {
 
 function removeBadges(): void {
   for (const el of document.querySelectorAll('.sp-icon-remove')) el.remove()
-  document.querySelector('.sp-home-done')?.remove()
+  for (const el of document.querySelectorAll('.sp-home-done')) el.remove()
+  badges.clear()
 }
 
 function exitEdit(): void {
   if (getMode() !== 'edit') return
-  removeBadges()
-  setMode('home')
+  setMode('home') // バッジ掃除はon('mode')リスナーが行う
 }
 
 function refuseRemoval(icon: HTMLElement, badge: HTMLElement): void {
@@ -36,7 +38,8 @@ function refuseRemoval(icon: HTMLElement, badge: HTMLElement): void {
     icon.style.transition = 'transform 260ms var(--sp-ease), opacity 200ms ease'
     icon.style.transform = 'scale(0)'
     icon.style.opacity = '0'
-    icon.querySelector<HTMLElement>('.sp-icon-remove')?.remove()
+    badge.remove()
+    badges.delete(icon)
     setTimeout(() => {
       pushNotification({
         icon: '＞_',
@@ -49,7 +52,7 @@ function refuseRemoval(icon: HTMLElement, badge: HTMLElement): void {
         icon.style.transition = ''
         icon.style.transform = ''
         icon.style.opacity = ''
-        if (getMode() === 'edit' && !icon.querySelector('.sp-icon-remove')) icon.appendChild(makeBadge(icon))
+        if (getMode() === 'edit') attachBadge(icon)
       }, 300)
     }, 5000)
     return
@@ -61,26 +64,39 @@ function refuseRemoval(icon: HTMLElement, badge: HTMLElement): void {
   showSpDialog('削除できません', refusal, badge)
 }
 
-function makeBadge(icon: HTMLElement): HTMLElement {
+function attachBadge(icon: HTMLElement): void {
+  if (badges.has(icon)) return
+  const home = icon.closest<HTMLElement>('.sp-home')
+  if (!home) return
   const badge = document.createElement('button')
   badge.type = 'button'
   badge.className = 'sp-icon-remove'
   badge.setAttribute('aria-label', `${labelOf(icon)}を削除`)
   badge.textContent = '×'
+  // アイコン（button）の中に入れるとbutton-in-buttonで不正になるため、
+  // .sp-home直下に置いてアイコンのレイアウト位置へ絶対配置する
+  badge.style.left = `${icon.offsetLeft - 6}px`
+  badge.style.top = `${icon.offsetTop - 8}px`
   badge.addEventListener('click', (e) => {
     e.stopPropagation()
     e.preventDefault()
     refuseRemoval(icon, badge)
   })
-  return badge
+  home.appendChild(badge)
+  badges.set(icon, badge)
 }
 
 export function enterEdit(): void {
   if (getMode() !== 'home' || !setMode('edit')) return
   navigator.vibrate?.(10)
+  removeBadges() // 万一の残留に備えて冪等に
 
-  document.querySelectorAll<HTMLElement>('.sp-home .sp-app-icon').forEach((icon) => {
-    icon.appendChild(makeBadge(icon))
+  // 編集モードのpadding変化を反映してから位置を測る
+  requestAnimationFrame(() => {
+    if (getMode() !== 'edit') return
+    document.querySelectorAll<HTMLElement>('.sp-home .sp-app-icon').forEach((icon) => {
+      attachBadge(icon)
+    })
   })
 
   const done = document.createElement('button')
@@ -94,22 +110,33 @@ export function enterEdit(): void {
 
 /** 編集モード中: アイコンをつまむと持ち上がるが、離すと必ず元の場所に戻る */
 function setupEditDrag(icon: HTMLElement): void {
+  let cancelSpring: (() => void) | null = null
+
+  const settle = () => {
+    icon.style.transform = ''
+    icon.style.zIndex = ''
+  }
+
   createGesture(icon, {
     axis: 'any',
-    onStart: () => (getMode() === 'edit' ? undefined : false),
+    onStart: () => {
+      if (getMode() !== 'edit') return false
+      cancelSpring?.()
+      cancelSpring = null
+      return undefined
+    },
     onMove: (s) => {
       icon.style.zIndex = '10'
       icon.style.transform = `translate(${s.dx}px, ${s.dy}px) scale(1.1)`
     },
     onEnd: (s, isTap) => {
       if (isTap) {
-        icon.style.transform = ''
-        icon.style.zIndex = ''
+        settle()
         return
       }
       const fromX = s.dx
       const fromY = s.dy
-      springTo({
+      cancelSpring = springTo({
         from: 1,
         to: 0,
         v0: 0,
@@ -117,23 +144,27 @@ function setupEditDrag(icon: HTMLElement): void {
           icon.style.transform = `translate(${fromX * m}px, ${fromY * m}px) scale(${1 + 0.1 * m})`
         },
         onDone: () => {
-          icon.style.transform = ''
-          icon.style.zIndex = ''
+          cancelSpring = null
+          settle()
         },
       })
       dragAttempts += 1
       if (dragAttempts === 3) showToast('並べ替えはv27で対応予定（未定）')
     },
-    onCancel: () => {
-      icon.style.transform = ''
-      icon.style.zIndex = ''
-    },
+    onCancel: settle,
   })
 }
 
 export function setupEdit(): void {
   const home = document.querySelector<HTMLElement>('.sp-home')
   if (!home) return
+
+  // 編集モードのDOM副作用はモード遷移に追従して必ず掃除する
+  // （edit→cc→locked/switcher の経路でもexitEditを経ずにhomeへ戻れるため）
+  on('mode', (payload) => {
+    const { next } = payload as { prev: string; next: string }
+    if (next !== 'edit' && next !== 'cc') removeBadges()
+  })
 
   // 長押し検知（ホーム画面のアイコンのみ）
   let pressTimer = 0
@@ -150,7 +181,8 @@ export function setupEdit(): void {
   }
 
   home.addEventListener('pointerdown', (e) => {
-    if (getMode() !== 'home') return
+    cancelPress() // 2本目の指などで前の押下が残っていても必ず掃除する
+    if (getMode() !== 'home' || !e.isPrimary) return
     const icon = (e.target as HTMLElement).closest<HTMLElement>('.sp-app-icon')
     if (!icon) return
     pressIcon = icon
@@ -175,7 +207,7 @@ export function setupEdit(): void {
   })
 
   home.addEventListener('pointermove', (e) => {
-    if (!pressIcon) return
+    if (!pressIcon || !e.isPrimary) return
     if (Math.hypot(e.clientX - startX, e.clientY - startY) > 8) cancelPress()
   })
   home.addEventListener('pointerup', cancelPress)

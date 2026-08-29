@@ -22,6 +22,25 @@ let gestureTipShown = false
 const viewFor = (id: string) => document.querySelector<HTMLElement>(`.sp-app-view[data-app="${id}"]`)
 const homeEl = () => document.querySelector<HTMLElement>('.sp-home')
 
+// アプリが（開閉アニメ中も含め）画面を占有しているか。ドック退避などのCSSはこの属性から導出する
+// （mode=ccでも背後のアプリは開いたままなので、data-sp-mode="app"だけでは表現できない）
+function setHasApp(on: boolean): void {
+  document.querySelector('.sp-shell')?.toggleAttribute('data-sp-has-app', on)
+}
+
+/** アプリ表示中にアプリ地帯の外（ロック・スイッチャー等）へ抜けるときの共通クリーンアップ */
+export function forceCloseActiveApp(): void {
+  const id = getActiveApp()
+  if (!id) return
+  instantClose(id)
+  setActiveApp(null)
+  const home = homeEl()
+  if (home) {
+    home.style.transition = ''
+    home.style.transform = ''
+  }
+}
+
 function computeFlip(source: DOMRect, target: DOMRect): Flip {
   return {
     dx: source.left + source.width / 2 - (target.left + target.width / 2),
@@ -66,11 +85,12 @@ function instantClose(id: string): void {
   cancelFlight = null
   view.removeAttribute('data-state')
   clearFlightStyles(view)
+  setHasApp(false)
 }
 
 export function openApp(id: string, opener?: HTMLElement | null): void {
   const mode = getMode()
-  if (mode !== 'home' && mode !== 'app' && mode !== 'switcher') return
+  if (mode !== 'home' && mode !== 'app' && mode !== 'switcher' && mode !== 'edit') return
   const view = viewFor(id)
   if (!view || view.dataset.state) return
 
@@ -84,6 +104,7 @@ export function openApp(id: string, opener?: HTMLElement | null): void {
   if (opener) sourceOpeners.set(id, opener)
 
   setActiveApp(id)
+  setHasApp(true)
   if (id !== 'terminal-blocked') pushRecent(id)
   setMode('app')
   emit('app-opened', id)
@@ -147,9 +168,18 @@ function animateClose(id: string, start: FlightStart): void {
   const view = viewFor(id)
   if (!view) return
 
+  // ドラッグ中に別レイヤー（CC等）へモードが移っていたら、閉じアニメは諦めて即時掃除する
+  // （無条件にsetMode('home')するとcc→homeを踏んでCCシートが孤児化する）
+  if (getMode() !== 'app') {
+    instantClose(id)
+    setActiveApp(null)
+    return
+  }
+
   view.dataset.state = 'closing'
   view.style.transition = 'none'
   view.style.willChange = 'transform, opacity'
+  setHasApp(false)
   setMode('home')
   emit('app-closing', id)
 
@@ -229,7 +259,7 @@ function setupGestureBar(view: HTMLElement): void {
   // 指が止まるとpointermoveが来なくなるため、判定はタイマー側で行う。
   const enterSwitcherFromHold = () => {
     holdTimer = 0
-    if (switcherTaken || view.dataset.state !== 'dragging') return
+    if (switcherTaken || view.dataset.state !== 'dragging' || getMode() !== 'app') return
     switcherTaken = true
     restore()
     instantClose(id)
@@ -283,7 +313,6 @@ function setupGestureBar(view: HTMLElement): void {
       }
       bar.classList.remove('is-grabbed')
       const home = homeEl()
-      if (home) home.style.transition = ''
 
       if (isTap) {
         // タップはbuttonのclick（data-sp-close）として通常クローズさせる
@@ -293,7 +322,11 @@ function setupGestureBar(view: HTMLElement): void {
 
       const p = clamp(-s.dy / (0.5 * window.innerHeight), 0, 1)
       if (p > 0.35 || s.vy < -0.5) {
-        if (home) home.style.transform = ''
+        if (home) {
+          // コミット時はCSS transitionに乗せてホームを戻す
+          home.style.transition = ''
+          home.style.transform = ''
+        }
         animateClose(id, {
           x: s.dx * 0.4,
           y: lastDyEff,
@@ -332,7 +365,7 @@ function setupGestureBar(view: HTMLElement): void {
 
 function setupPressFeedback(): void {
   const PRESSABLE =
-    '.sp-app-icon, .os-button, .sp-product-item, .sp-app-back, .sp-cc-tile, .sp-statusbar button, .sp-notification-close'
+    '.sp-app-icon, .sp-widget, .os-button, .sp-product-item, .sp-app-back, .sp-cc-tile, .sp-statusbar button, .sp-notification-close'
   const pressed = new Map<number, HTMLElement>()
 
   document.addEventListener(
@@ -359,6 +392,8 @@ export function setupApps(): void {
     const opener = (e.target as HTMLElement).closest<HTMLElement>('[data-sp-open]')
     if (!opener) return
     e.preventDefault()
+    // ジグル編集中のアイコンタップは起動しない（実機と同じ。通知タップ等はopenApp直呼びで通る）
+    if (getMode() === 'edit') return
     const id = opener.getAttribute('data-sp-open')
     if (id) openApp(id, opener)
   })

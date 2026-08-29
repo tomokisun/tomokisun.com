@@ -1,5 +1,6 @@
 // SP: ロック画面 — 1:1追従スワイプ解除。タップもキーボードも同じ合成スワイプ経路を通す。
 
+import { forceCloseActiveApp } from './apps'
 import { clamp, createGesture, rubber, springTo } from './gesture'
 import { emit, getMode, setMode } from './state'
 
@@ -104,6 +105,8 @@ function syntheticUnlock(): void {
 
 /** コントロールセンターの「画面ロック」タイルから呼ぶ再ロック */
 export function relock(): void {
+  // 背後で開いたままのアプリを掃除してからロックする（解除後にmode=homeと表示が矛盾しないように）
+  forceCloseActiveApp()
   if (!lockscreen || !setMode('locked')) return
   unlocking = false
   lockscreen.hidden = false

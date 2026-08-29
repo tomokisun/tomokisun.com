@@ -21,25 +21,37 @@ function applyDrag(dy: number): void {
   if (!cc || !scrim) return
   const h = sheetHeight()
   const y = clamp(dy, 0, h)
+  cc.style.visibility = 'visible'
   cc.style.transform = `translateY(calc(-100% + ${y}px))`
   scrim.hidden = false
-  scrim.style.opacity = String(0.5 * (y / h))
+  // 全開時のCSS値(opacity:1)と連続になるよう線形。追従中はtransitionを切る
+  scrim.style.transition = 'none'
+  scrim.style.opacity = String(y / h)
 }
 
 function clearInline(): void {
   if (!cc || !scrim) return
   cc.style.transform = ''
+  cc.style.visibility = ''
   cc.style.willChange = ''
   scrim.style.opacity = ''
+  scrim.style.transition = ''
 }
 
 function finishOpen(): void {
   if (!cc || !scrim) return
+  // スプリング中にモードが移っていたら（例: スイッチャー進入）開かずに巻き戻す
+  if (getMode() !== 'cc' && !setMode('cc')) {
+    cc.classList.remove('is-open')
+    scrim.hidden = true
+    clearInline()
+    battery?.setAttribute('aria-expanded', 'false')
+    return
+  }
   cc.classList.add('is-open')
   scrim.hidden = false
   clearInline()
   battery?.setAttribute('aria-expanded', 'true')
-  setMode('cc')
   emit('cc-opened')
   cc.querySelector<HTMLElement>('.sp-cc-tile')?.focus()
 }
@@ -57,9 +69,12 @@ function finishClose(silently = false): void {
   if (!silently) battery?.focus()
 }
 
+const appIsDragging = () => document.querySelector('.sp-app-view[data-state="dragging"]') !== null
+
 function openCC(v0 = 0.8): void {
   const mode = getMode()
   if (mode === 'cc' || (mode !== 'home' && mode !== 'app' && mode !== 'edit')) return
+  if (appIsDragging()) return // アプリをドラッグ中の指がいる間はCCを開かない（モード競合防止）
   if (!cc || !scrim) return
   cancelSpring?.()
   cc.style.willChange = 'transform'
@@ -177,6 +192,7 @@ export function setupControlCenter(): void {
     onStart: () => {
       const mode = getMode()
       if (mode !== 'home' && mode !== 'app' && mode !== 'edit') return false
+      if (appIsDragging()) return false
       cancelSpring?.()
       cancelSpring = null
       if (cc) cc.style.willChange = 'transform'

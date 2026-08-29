@@ -14,7 +14,7 @@ const ALLOWED: Record<SpMode, SpMode[]> = {
   app: ['home', 'switcher', 'cc', 'app'],
   switcher: ['app', 'home'],
   cc: ['locked', 'home', 'app', 'edit', 'switcher'],
-  edit: ['home', 'cc'],
+  edit: ['home', 'cc', 'app'], // edit→appは通知タップ用（ホームアイコンからの起動はapps.ts側で抑止）
 }
 
 let shell: HTMLElement | null = null

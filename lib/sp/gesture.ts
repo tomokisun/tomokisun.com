@@ -55,7 +55,9 @@ export class VelocityTracker {
 /** iOS式ラバーバンド。d=最大変位感覚 */
 export const rubber = (x: number, d: number): number => Math.sign(x) * d * (1 - d / (d + Math.abs(x) * 0.55))
 
-// ドラッグ成立直後のclickを1回だけ吸収する（誤タップ防止）
+// ドラッグ成立直後のclickを1回だけ吸収する（誤タップ防止）。
+// タッチドラッグはclick自体を発生させないことがあるため、
+// 新しいpointerdown（=次のインタラクション開始）が来たら即座に武装解除する。
 function absorbNextClick(): void {
   const absorb = (e: Event) => {
     e.preventDefault()
@@ -64,22 +66,28 @@ function absorbNextClick(): void {
   }
   const cleanup = () => {
     document.removeEventListener('click', absorb, true)
+    document.removeEventListener('pointerdown', cleanup, true)
     clearTimeout(timer)
   }
   document.addEventListener('click', absorb, true)
+  document.addEventListener('pointerdown', cleanup, true)
   const timer = setTimeout(cleanup, 400)
 }
+
+// 同時にエンゲージできるジェスチャーは全画面で1本だけ（2本目の指の並行操作を遮断する）
+let activeGestureOwner: symbol | null = null
 
 export function createGesture(el: HTMLElement, opts: GestureOpts): () => void {
   const slop = opts.slop ?? 8
   const tracker = new VelocityTracker()
+  const owner = Symbol('gesture')
 
   let pointerId: number | null = null
   let startX = 0
   let startY = 0
   let startT = 0
   let engaged = false
-  let dead = false // 軸ロックで負けた／onStartで拒否されたポインタ
+  let dead = false // 軸ロックで負けたポインタ
   let raf = 0
   let latest: GestureState = { dx: 0, dy: 0, vx: 0, vy: 0, moved: false }
 
@@ -90,6 +98,7 @@ export function createGesture(el: HTMLElement, opts: GestureOpts): () => void {
     cancelAnimationFrame(raf)
     raf = 0
     tracker.reset()
+    if (activeGestureOwner === owner) activeGestureOwner = null
   }
 
   const flushMove = () => {
@@ -99,11 +108,11 @@ export function createGesture(el: HTMLElement, opts: GestureOpts): () => void {
 
   const onPointerDown = (e: PointerEvent) => {
     if (pointerId !== null) return
-    if (opts.onStart?.(e) === false) {
-      dead = true
-      pointerId = e.pointerId
-      return
-    }
+    // 他のジェスチャーがポインタを握っている間は開始しない（2本目の指を無視）
+    if (activeGestureOwner !== null) return
+    // onStartが拒否した場合は何も記録しない（pointerIdを占有するとその要素が死ぬ）
+    if (opts.onStart?.(e) === false) return
+    activeGestureOwner = owner
     pointerId = e.pointerId
     startX = e.clientX
     startY = e.clientY
@@ -144,6 +153,12 @@ export function createGesture(el: HTMLElement, opts: GestureOpts): () => void {
 
   const finish = (e: PointerEvent, cancelled: boolean) => {
     if (e.pointerId !== pointerId) return
+    // rAF待ちの最終onMoveを同期フラッシュしてから終了する（呼び出し側の追従状態を最新化）
+    if (raf && engaged && !cancelled) {
+      cancelAnimationFrame(raf)
+      raf = 0
+      opts.onMove?.(latest)
+    }
     const wasEngaged = engaged
     const wasDead = dead
     const { vx, vy } = tracker.velocity()

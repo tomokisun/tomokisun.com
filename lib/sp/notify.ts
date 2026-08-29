@@ -78,7 +78,8 @@ function dismiss(v0: number, fromY = 0): void {
   if (!banner || (state !== 'visible' && state !== 'grabbed')) return
   state = 'leaving'
   stopDismissTimer()
-  const height = banner.offsetHeight + 24
+  // top(40px) + ハードシャドウ(4px)ぶんまで飛ばし切る
+  const height = banner.offsetHeight + 48
   banner.style.transition = 'none'
   cancelSpring?.()
   cancelSpring = springTo({
@@ -105,17 +106,21 @@ export function setupNotify(): void {
   banner = document.querySelector<HTMLElement>('.sp-notification')
   if (!banner) return
 
-  // 既定キュー: ロック解除後30秒で infra.zip 通知
+  // 既定キュー: ロック解除後30秒で infra.zip 通知（1回だけ）
   let scheduled = false
   const scheduleDefault = () => {
     if (scheduled) return
     scheduled = true
+    let delivered = false
     let remaining = 30_000
     let startedAt = performance.now()
     let timer = 0
     const arm = () => {
+      if (delivered) return
       startedAt = performance.now()
       timer = window.setTimeout(() => {
+        delivered = true
+        document.removeEventListener('visibilitychange', onVisibility)
         pushNotification({
           icon: '🗑',
           title: 'ゴミ箱',
@@ -125,14 +130,16 @@ export function setupNotify(): void {
       }, remaining)
     }
     // タブが非表示の間はタイマーを止める（戻ってきた頃に通知が来る演出と一石二鳥）
-    document.addEventListener('visibilitychange', () => {
+    const onVisibility = () => {
+      if (delivered) return
       if (document.hidden) {
         clearTimeout(timer)
         remaining = Math.max(1000, remaining - (performance.now() - startedAt))
       } else {
         arm()
       }
-    })
+    }
+    document.addEventListener('visibilitychange', onVisibility)
     if (!document.hidden) arm()
   }
 

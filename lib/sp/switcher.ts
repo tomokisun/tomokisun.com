@@ -1,7 +1,7 @@
 // SP: Appスイッチャー — scroll-snapの横レール + カード上フリックで終了。
 // ターミナルは常駐する（終了できない。もともと起動していないので）。
 
-import { openApp } from './apps'
+import { forceCloseActiveApp, openApp } from './apps'
 import { createGesture, springTo } from './gesture'
 import { SP_APPS } from './meta'
 import { clearRecents, getMode, getRecents, on, removeRecent, setMode } from './state'
@@ -10,6 +10,9 @@ import { showToast } from './ui'
 let switcher: HTMLElement | null = null
 let rail: HTMLElement | null = null
 let terminalToastShown = false
+// カードごとのジェスチャー破棄関数と進行中スプリングのキャンセル（リーク・奪い合い防止）
+const cardGestureDestroys = new Map<HTMLElement, () => void>()
+const cardSprings = new Map<HTMLElement, () => void>()
 
 function buildCard(id: string, persistent: boolean): HTMLElement {
   const meta = SP_APPS[id]
@@ -70,7 +73,8 @@ function killCard(card: HTMLElement, v0: number): void {
   const id = card.dataset.app ?? ''
   const persistent = card.dataset.persistent === 'true'
   card.style.transition = 'none'
-  springTo({
+  cardSprings.get(card)?.()
+  const cancel = springTo({
     from: 0,
     to: -(window.innerHeight * 0.7),
     v0: Math.min(v0, -0.4),
@@ -79,6 +83,7 @@ function killCard(card: HTMLElement, v0: number): void {
       card.style.opacity = String(Math.max(0, 1 + y / (window.innerHeight * 0.6)))
     },
     onDone: () => {
+      cardSprings.delete(card)
       if (persistent) {
         // ターミナルは殺せない。400ms後にしれっと復活する
         setTimeout(() => {
@@ -94,17 +99,25 @@ function killCard(card: HTMLElement, v0: number): void {
         return
       }
       removeRecent(id)
+      cardGestureDestroys.get(card)?.()
+      cardGestureDestroys.delete(card)
       card.remove()
       updateEmptyState()
+      // フォーカスが消えたカードにあった場合の避難先
+      switcher?.querySelector<HTMLElement>('.sp-switcher-card-open, .sp-switcher-killall')?.focus()
     },
   })
+  cardSprings.set(card, cancel)
 }
 
 function setupCardGesture(card: HTMLElement): void {
-  createGesture(card, {
+  const destroy = createGesture(card, {
     axis: 'y',
     onStart: () => {
       if (getMode() !== 'switcher') return false
+      // 復帰スプリング中の掴み直しを許す（2つの書き手でtransformを奪い合わない）
+      cardSprings.get(card)?.()
+      cardSprings.delete(card)
       card.style.transition = 'none'
       return undefined
     },
@@ -118,7 +131,7 @@ function setupCardGesture(card: HTMLElement): void {
       if (-s.dy > 100 || s.vy < -0.5) {
         killCard(card, s.vy)
       } else {
-        springTo({
+        const cancel = springTo({
           from: Math.min(s.dy, 0),
           to: 0,
           v0: s.vy,
@@ -127,11 +140,13 @@ function setupCardGesture(card: HTMLElement): void {
             card.style.opacity = String(Math.max(0.2, 1 + y / (window.innerHeight * 0.6)))
           },
           onDone: () => {
+            cardSprings.delete(card)
             card.style.transform = ''
             card.style.opacity = ''
             card.style.transition = ''
           },
         })
+        cardSprings.set(card, cancel)
       }
     },
     onCancel: () => {
@@ -140,6 +155,7 @@ function setupCardGesture(card: HTMLElement): void {
       card.style.transition = ''
     },
   })
+  cardGestureDestroys.set(card, destroy)
 }
 
 function updateEmptyState(): void {
@@ -150,6 +166,11 @@ function updateEmptyState(): void {
 
 function show(): void {
   if (!switcher || !rail) return
+  // 前回のカードのジェスチャー（documentリスナー含む）を破棄してから作り直す
+  for (const destroy of cardGestureDestroys.values()) destroy()
+  cardGestureDestroys.clear()
+  for (const cancel of cardSprings.values()) cancel()
+  cardSprings.clear()
   rail.textContent = ''
   for (const id of getRecents()) {
     if (SP_APPS[id]) rail.appendChild(buildCard(id, false))
@@ -158,7 +179,6 @@ function show(): void {
   updateEmptyState()
   switcher.hidden = false
   requestAnimationFrame(() => switcher?.classList.add('is-open'))
-  switcher.querySelector<HTMLElement>('.sp-switcher-card-open')?.focus()
 }
 
 function hide(): void {
@@ -169,14 +189,22 @@ function hide(): void {
 
 function openSwitcher(): void {
   if (getMode() === 'switcher') return
+  // CC経由などで開いたままのアプリが残っていたら掃除してから並べる
+  forceCloseActiveApp()
   show()
-  if (!setMode('switcher')) hide()
+  if (!setMode('switcher')) {
+    hide()
+    return
+  }
+  // フォーカスはinertが外れた後（setMode成功後）に移す
+  switcher?.querySelector<HTMLElement>('.sp-switcher-card-open')?.focus()
 }
 
 function closeToHome(): void {
   if (getMode() !== 'switcher') return
   hide()
   setMode('home')
+  document.querySelector<HTMLElement>('.sp-home .sp-app-icon')?.focus()
 }
 
 export function setupSwitcher(): void {
