@@ -39,7 +39,7 @@ export default function BlogIndexPage() {
       <h1 className="blog-title">ブログ</h1>
       <p className="blog-lead">
         tomokisunです。ふだんは友人と共同創業した ONE, Inc.
-        で、10代向けのアプリを作っています。作ったものの話と、作りながら考えたことを、ここにゆっくり書いていきます。
+        で働きつつ、個人でもアプリを作っています。作ったものの話と、作りながら考えたことを、ここにゆっくり書いていきます。
       </p>
       <ul className="blog-list">
         {blogPosts.map((post) => (
