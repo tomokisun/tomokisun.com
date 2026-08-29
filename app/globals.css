@@ -40,6 +40,9 @@
   --font-chrome: var(--font-dot-gothic, "DotGothic16"), "SF Mono", "Menlo", monospace;
   --font-body: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
   --font-mono: "SF Mono", "Menlo", "Consolas", monospace;
+  /* SP共通イージング＝この世界の物理定数 */
+  --sp-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --sp-dur: 280ms;
 }
 
 /* ===== リセット・ベース ===== */
@@ -57,9 +60,19 @@ body {
   line-height: 1.8;
 }
 
+/* hidden属性は表示系の指定より常に勝つ（ロック画面・CC等はJSがhiddenで制御する） */
+[hidden] {
+  display: none !important;
+}
+
 @media (max-width: 767px) {
   body {
     font-size: 16px;
+  }
+
+  html,
+  body {
+    overscroll-behavior-y: none;
   }
 }
 
@@ -70,7 +83,8 @@ body {
   background-size: 16px 16px;
 }
 
-.sp-lockscreen {
+.sp-lockscreen,
+.sp-shell {
   background-color: var(--wp-base);
   background-image: radial-gradient(var(--wp-dot) 1.5px, transparent 1.5px);
   background-size: 16px 16px;
@@ -92,8 +106,15 @@ body {
 }
 
 [data-wallpaper="yozora"] .os-desktop,
-[data-wallpaper="yozora"] .sp-lockscreen {
+[data-wallpaper="yozora"] .sp-lockscreen,
+[data-wallpaper="yozora"] .sp-shell {
   background-image: radial-gradient(var(--wp-dot) 1px, transparent 1px);
+}
+
+/* 暗色壁紙での可読性 */
+[data-wallpaper="yozora"] .sp-home .sp-app-icon-label,
+[data-wallpaper="yozora"] .sp-lockscreen {
+  color: var(--os-paper);
 }
 
 [data-wallpaper="classic"] {
@@ -1081,12 +1102,34 @@ body {
   font-weight: 700;
 }
 
+.sp-statusbar {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .sp-statusbar-carrier,
 .sp-statusbar-clock,
 .sp-statusbar-battery {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.sp-statusbar button {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.sp-statusbar button.is-pressed {
+  background: rgba(38, 35, 63, 0.12);
 }
 
 .sp-statusbar-clock {
@@ -1218,9 +1261,13 @@ body {
   opacity: 0.35;
 }
 
-/* ===== SP: アプリ全画面 ===== */
+/* ===== SP: アプリ全画面 =====
+   display切替ではなくvisibility切替（スクロール位置とFLIP初期矩形を保持するため）。
+   状態はJSがdata-stateで駆動する: (無属性)=closed / opening / open / dragging / closing
+   禁止: .sp-app-view内にposition:fixedを置かない（transformがcontaining blockを作る）。
+         .sp-shell自体にtransform/filterを掛けない。 */
 .sp-app-view {
-  display: none;
+  display: flex;
   flex-direction: column;
   position: fixed;
   top: 32px;
@@ -1229,15 +1276,29 @@ body {
   left: 0;
   z-index: 900;
   background: var(--os-paper);
+  visibility: hidden;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  overflow: hidden;
 }
 
-.sp-app-view.is-open {
-  display: flex;
-  animation: app-open 0.22s ease;
+.sp-app-view[data-state="opening"],
+.sp-app-view[data-state="open"],
+.sp-app-view[data-state="dragging"],
+.sp-app-view[data-state="closing"] {
+  visibility: visible;
 }
 
-.sp-app-view.is-closing {
-  animation: app-close 0.18s ease forwards;
+/* 飛行中は「板」として見せる（outlineはレイアウトに影響しない） */
+.sp-app-view[data-state="opening"],
+.sp-app-view[data-state="dragging"],
+.sp-app-view[data-state="closing"] {
+  outline: 2px solid var(--os-ink);
+  box-shadow: var(--os-shadow);
+}
+
+.sp-app-view[data-state="open"] {
+  pointer-events: auto;
 }
 
 .sp-app-header {
@@ -1278,7 +1339,70 @@ body {
 .sp-app-body {
   flex: 1;
   overflow: auto;
-  padding: 16px;
+  padding: 16px 16px 52px;
+  overscroll-behavior: contain;
+}
+
+/* ===== SP: ジェスチャーバー（アプリ下端） ===== */
+.sp-gesture-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(28px + env(safe-area-inset-bottom, 0px));
+  background: none;
+  border: none;
+  touch-action: none;
+  cursor: grab;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8px 0 0;
+}
+
+.sp-gesture-bar-pill {
+  width: 120px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--os-ink);
+  opacity: 0.35;
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
+}
+
+.sp-gesture-bar.is-grabbed {
+  cursor: grabbing;
+}
+
+.sp-gesture-bar.is-grabbed .sp-gesture-bar-pill {
+  transform: scaleX(1.15);
+  opacity: 0.6;
+}
+
+/* 初回起動時のジェスチャーチュートリアル */
+.sp-gesture-tip {
+  position: absolute;
+  left: 50%;
+  bottom: 44px;
+  transform: translateX(-50%);
+  max-width: 86%;
+  background: var(--os-ink);
+  color: var(--os-paper);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--font-chrome);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: slide-in-bottom 0.3s var(--sp-ease);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.sp-gesture-tip.is-leaving {
+  opacity: 0;
 }
 
 /* ===== SP: ロック画面 ===== */
@@ -1292,15 +1416,18 @@ body {
   justify-content: center;
   gap: 16px;
   color: var(--os-ink);
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.sp-lockscreen.is-unlocked {
-  opacity: 0;
-  transform: translateY(-100%);
-  pointer-events: none;
+.sp-lock-faceid {
+  font-family: var(--font-chrome);
+  font-size: 12px;
+  background: rgba(253, 251, 241, 0.85);
+  border: var(--os-border);
+  border-radius: 999px;
+  padding: 4px 14px;
 }
 
 .sp-lock-clock {
@@ -1339,17 +1466,33 @@ body {
 }
 
 .sp-lock-hint {
+  appearance: none;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
   position: absolute;
   bottom: 40px;
   font-family: var(--font-chrome);
   font-size: 12px;
   opacity: 0.7;
+  animation: lock-hint-float 2.4s ease-in-out infinite;
+}
+
+@keyframes lock-hint-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
+  }
 }
 
 /* ===== SP: 通知バナー ===== */
 .sp-notification {
   position: fixed;
-  top: 8px;
+  top: 40px;
   left: 8px;
   right: 8px;
   z-index: 1300;
@@ -1362,13 +1505,38 @@ body {
   box-shadow: var(--os-shadow);
   padding: 10px 12px;
   font-size: 12.5px;
-  transform: translateY(-140%);
-  transition: transform 0.3s ease;
+  transform: translateY(-160%);
+  transition: transform var(--sp-dur) var(--sp-ease);
+  touch-action: none;
+  pointer-events: none;
 }
 
 .sp-notification.is-visible {
   transform: translateY(0);
-  animation: slide-in-top 0.3s ease;
+  pointer-events: auto;
+}
+
+.sp-notification-close {
+  appearance: none;
+  flex: none;
+  background: none;
+  border: none;
+  font: inherit;
+  font-family: var(--font-chrome);
+  font-size: 16px;
+  line-height: 1;
+  color: var(--os-ink);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.sp-notification.is-visible .sp-notification-close:focus-visible,
+.sp-notification.is-visible:hover .sp-notification-close,
+.sp-notification.is-visible .sp-notification-close.is-pressed {
+  opacity: 1;
 }
 
 .sp-notification-icon {
@@ -1488,6 +1656,448 @@ body {
   flex: none;
   font-size: 14px;
   color: #6d677f;
+}
+
+/* ===== SP: モード駆動のクローム挙動 =====
+   .sp-shellのdata-sp-mode属性（state.tsが管理）から表示を導出する */
+.sp-home,
+.sp-dock,
+.sp-home-indicator {
+  transition:
+    transform var(--sp-dur) var(--sp-ease),
+    opacity 200ms ease;
+}
+
+[data-sp-mode="app"] .sp-dock,
+[data-sp-mode="app"] .sp-home-indicator {
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+[data-sp-mode="app"] .sp-home-indicator {
+  transform: translate(-50%, 300%);
+}
+
+[data-sp-mode="app"] .sp-home {
+  transform: scale(0.94);
+}
+
+.sp-shell {
+  -webkit-touch-callout: none;
+}
+
+.sp-app-icon {
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== SP: 押し込みフィードバック（:activeはタッチで不安定なのでJSがis-pressedを付ける） ===== */
+.sp-app-icon .sp-app-icon-tile {
+  transition: transform 90ms ease-out;
+}
+
+.sp-app-icon.is-pressed .sp-app-icon-tile {
+  transform: scale(0.88);
+}
+
+.sp-app-icon.is-longpress-preview .sp-app-icon-tile {
+  transform: scale(1.06);
+}
+
+.os-button.is-pressed,
+.sp-app-back.is-pressed {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--os-ink);
+}
+
+.sp-product-item {
+  transition:
+    transform 90ms ease-out,
+    box-shadow 90ms ease-out;
+}
+
+.sp-product-item.is-pressed {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--os-ink);
+}
+
+/* ===== SP: コントロールセンター ===== */
+.sp-cc-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1399;
+  background: rgba(38, 35, 63, 0.5);
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+
+.sp-cc {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1400;
+  transform: translateY(-100%);
+  background: var(--os-chrome);
+  border-bottom: var(--os-border);
+  box-shadow: var(--os-shadow);
+  padding: 16px 16px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-chrome);
+}
+
+.sp-cc.is-open {
+  transform: translateY(0);
+}
+
+.sp-cc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.sp-cc-tile {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  background: var(--os-paper);
+  border: var(--os-border);
+  border-radius: var(--os-radius);
+  box-shadow: var(--os-shadow-sm);
+  padding: 10px 12px;
+  font: inherit;
+  font-family: var(--font-chrome);
+  color: var(--os-ink);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 90ms ease-out,
+    box-shadow 90ms ease-out,
+    background 0.15s ease;
+}
+
+.sp-cc-tile.is-pressed {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--os-ink);
+}
+
+.sp-cc-tile.is-on {
+  background: var(--os-soda);
+}
+
+.sp-cc-tile-main {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sp-cc-tile-sub {
+  font-size: 10px;
+  color: #6d677f;
+}
+
+.sp-cc-tile.is-on .sp-cc-tile-sub {
+  color: var(--os-ink);
+}
+
+.sp-cc-slider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--os-paper);
+  border: var(--os-border);
+  border-radius: var(--os-radius);
+  box-shadow: var(--os-shadow-sm);
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sp-cc-slider-label {
+  flex: none;
+  white-space: nowrap;
+}
+
+.sp-cc-slider input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--os-grape);
+}
+
+.sp-cc-slider-note {
+  flex: none;
+  font-size: 10px;
+  font-weight: 400;
+  color: #6d677f;
+  white-space: nowrap;
+}
+
+.sp-cc-footer {
+  font-size: 10.5px;
+  color: #6d677f;
+  text-align: center;
+}
+
+.sp-cc-grabber {
+  appearance: none;
+  background: none;
+  border: none;
+  height: 24px;
+  margin: 0 auto;
+  padding: 8px 40px 4px;
+  cursor: grab;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sp-cc-grabber span {
+  display: block;
+  width: 80px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--os-ink);
+  opacity: 0.35;
+}
+
+/* ===== SP: 画面フィルター（まぶしさ） ===== */
+.sp-screen-filter {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  pointer-events: none;
+  display: none;
+}
+
+.sp-screen-filter.is-active {
+  display: block;
+  background: rgba(10, 8, 24, calc(1 - var(--sp-brightness, 1)));
+}
+
+/* ===== SP: Appスイッチャー ===== */
+.sp-switcher {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 20px;
+  background: rgba(38, 35, 63, 0.45);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.sp-switcher.is-open {
+  opacity: 1;
+}
+
+.sp-switcher-rail {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 20px 20vw;
+  scrollbar-width: none;
+}
+
+.sp-switcher-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.sp-switcher-card {
+  position: relative;
+  flex: none;
+  width: 62vw;
+  scroll-snap-align: center;
+  touch-action: pan-x;
+}
+
+.sp-switcher-card-open {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  background: var(--os-paper);
+  border: var(--os-border);
+  border-radius: 14px;
+  box-shadow: var(--os-shadow);
+  overflow: hidden;
+  font: inherit;
+  color: var(--os-ink);
+  cursor: pointer;
+}
+
+.sp-switcher-card-band {
+  width: 100%;
+  padding: 6px 10px;
+  border-bottom: var(--os-border);
+  font-family: var(--font-chrome);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.sp-switcher-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34vh;
+}
+
+.sp-switcher-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  font-size: 36px;
+  border: var(--os-border);
+  border-radius: var(--os-radius-app);
+  box-shadow: var(--os-shadow-sm);
+}
+
+.sp-switcher-card-name {
+  width: 100%;
+  padding: 8px 10px 10px;
+  border-top: var(--os-border);
+  font-family: var(--font-chrome);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.sp-switcher-card-sub {
+  margin-left: 6px;
+  font-size: 10px;
+  color: var(--os-cherry);
+}
+
+.sp-switcher-card-kill {
+  appearance: none;
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--os-paper);
+  border: var(--os-border);
+  border-radius: 50%;
+  box-shadow: var(--os-shadow-sm);
+  font-family: var(--font-chrome);
+  font-size: 14px;
+  color: var(--os-ink);
+  cursor: pointer;
+}
+
+.sp-switcher-empty {
+  margin: 0 24px;
+  text-align: center;
+  font-family: var(--font-chrome);
+  font-size: 12px;
+  color: var(--os-paper);
+}
+
+.sp-switcher-killall {
+  align-self: center;
+}
+
+/* ===== SP: ジグル編集モード ===== */
+[data-sp-mode="edit"] .sp-home .sp-app-icon {
+  animation: sp-jiggle 260ms infinite alternate ease-in-out;
+}
+
+[data-sp-mode="edit"] .sp-home .sp-app-icon:nth-child(2n) {
+  animation-delay: 80ms;
+}
+
+[data-sp-mode="edit"] .sp-home .sp-app-icon:nth-child(3n) {
+  animation-delay: 140ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-sp-mode="edit"] .sp-home .sp-app-icon {
+    animation: none !important;
+  }
+}
+
+.sp-app-icon {
+  position: relative;
+}
+
+.sp-icon-remove {
+  appearance: none;
+  position: absolute;
+  top: -8px;
+  left: 2px;
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--os-paper);
+  border: var(--os-border);
+  border-radius: 50%;
+  box-shadow: var(--os-shadow-sm);
+  font-family: var(--font-chrome);
+  font-size: 13px;
+  line-height: 1;
+  color: var(--os-ink);
+  cursor: pointer;
+}
+
+.sp-home-done {
+  position: fixed;
+  top: 44px;
+  right: 12px;
+  z-index: 1100;
+}
+
+/* 完了ボタンと×バッジが重ならないよう、編集中はグリッドを下げる */
+[data-sp-mode="edit"] .sp-home {
+  padding-top: 64px;
+}
+
+/* ===== SP: システムダイアログ（動的生成） ===== */
+.sp-dialog-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+}
+
+.sp-dialog-root .sp-dialog-overlay {
+  flex: 1;
+}
+
+/* 設定アプリのアクション行 */
+.settings-row--action {
+  appearance: none;
+  width: 100%;
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.settings-row--action .settings-row-label {
+  color: var(--os-grape);
 }
 
 /* ===== ブログ ===== */
@@ -1702,25 +2312,23 @@ body {
   }
 }
 
-@keyframes app-open {
+@keyframes slide-in-bottom {
   from {
-    transform: scale(0.6);
+    transform: translate(-50%, 16px);
     opacity: 0;
   }
   to {
-    transform: scale(1);
+    transform: translate(-50%, 0);
     opacity: 1;
   }
 }
 
-@keyframes app-close {
+@keyframes sp-jiggle {
   from {
-    transform: scale(1);
-    opacity: 1;
+    rotate: -1.5deg;
   }
   to {
-    transform: scale(0.92);
-    opacity: 0;
+    rotate: 1.5deg;
   }
 }
 
@@ -1732,7 +2340,14 @@ body {
   .sp-home-indicator,
   .sp-app-view,
   .sp-lockscreen,
-  .sp-notification {
+  .sp-notification,
+  .sp-cc,
+  .sp-cc-scrim,
+  .sp-switcher,
+  .sp-screen-filter,
+  .sp-home-done,
+  .sp-dialog-root,
+  .sp-gesture-tip {
     display: none !important;
   }
 
@@ -1788,6 +2403,12 @@ body {
 @media (max-width: 767px) {
   .os-desktop-shell {
     display: none !important;
+  }
+
+  /* ステータスバー(32px)に被らない位置に出す */
+  .os-toast {
+    top: 44px;
+    max-width: calc(100vw - 24px);
   }
 
   .sp-shell {

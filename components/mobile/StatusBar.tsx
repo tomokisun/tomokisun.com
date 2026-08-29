@@ -1,13 +1,22 @@
 export default function StatusBar() {
   return (
     <div className="sp-statusbar">
-      <span className="sp-statusbar-carrier">ONE 5G</span>
+      <button type="button" className="sp-statusbar-carrier" data-carrier>
+        ONE 5G
+      </button>
       <time className="sp-statusbar-clock" data-clock>
         --:--
       </time>
-      <span className="sp-statusbar-battery" title="640KBあればじゅうぶん">
+      <button
+        type="button"
+        className="sp-statusbar-battery"
+        data-cc-open
+        aria-expanded="false"
+        aria-label="コントロールセンターをひらく"
+        title="640KBあればじゅうぶん"
+      >
         🔋64%
-      </span>
+      </button>
     </div>
   )
 }
