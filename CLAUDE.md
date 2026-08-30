@@ -24,7 +24,7 @@ bun run lint         # Biomeでリント
 - `プロフィール.txt` - 自己紹介と職歴（テキストエディタ風）
 - `Products` フォルダ - プロダクト一覧（アイコングリッド、各アプリの詳細ウィンドウ付き。買収済みは🔒と「買収済」バッジ）
 - `ソーシャル` - SNSリンク一覧
-- `ターミナル` - クライアントサイドで動く対話型シェル（help/whoami/ls/open等の隠しコマンド）。SPでは開けず専用ダイアログを表示
+- `ターミナル` - クライアントサイドで動く対話型シェル（help/whoami/ls/open等の隠しコマンド）。SPでは開けず専用ダイアログを表示（スイッチャーにも「応答なし」で常駐し、killしても復活する）
 - `ブログ` - 記事いちらんウィンドウ（`BlogWindow.tsx`／SPは`BlogApp.tsx`）。記事本体は`/blog/<slug>`の独立ページ（benji.org リスペクトの短文スタイル）
 - `ゴミ箱` - infra.zip（「インフラは苦手」の自虐ネタ。復元は必ず失敗する）
 - `設定` - OS名/ビルド番号/ストレージ容量などのネタを詰めた設定パネル
@@ -38,9 +38,11 @@ bun run lint         # Biomeでリント
   - `Window.tsx` - ウィンドウのchrome（タイトルバー・ボディ・ステータスバー）
   - `windows/` - 各ウィンドウの中身（AboutWindow, ProductsWindow, ProductDetailWindows, ProfileWindow, SettingsWindow, SocialWindow, TerminalWindow, TrashWindow）
 - `components/mobile/` - SP版ホーム画面一式
-  - `MobileShell.tsx` - SP全体の組み立て（StatusBar + HomeScreen + Dock + LockScreen + Notification + 各AppView）
+  - `MobileShell.tsx` - SP全体の組み立て（StatusBar + HomeScreen + Dock + LockScreen + Notification + ControlCenter + AppSwitcher + 各AppView）
   - `LockScreen.tsx` / `HomeScreen.tsx` / `Dock.tsx` / `StatusBar.tsx` / `Notification.tsx` / `TerminalBlockedDialog.tsx`
-  - `AppView.tsx` - アプリのモーダル的な画面chrome
+  - `ControlCenter.tsx` - ステータスバーから引き下ろす1枚シート（壁紙・明るさ・画面ロック・再起動は実動、機内モードと音量はネタ）
+  - `AppSwitcher.tsx` - Appスイッチャーの器（カードは`lib/sp/switcher.ts`が生成。ターミナルは常駐して終了できない）
+  - `AppView.tsx` - アプリのフルスクリーンchrome（ヘッダー + 本文 + 下端ジェスチャーバー）
   - `apps/` - 各アプリの中身（ProductsApp, ProfileApp, SettingsApp, SocialApp, TrashApp）
 - `components/OsClient.tsx` - `initOS()`を呼び出すクライアントエントリ（`'use client'`）
 
@@ -51,11 +53,17 @@ Next.js App Router（`app/`）。デスクトップ／ホーム画面は`/`の�
 - `app/layout.tsx` - メタデータ（OGP/Twitterカード）、JSON-LD（WebSite/Person）、フォント設定
 - `app/not-found.tsx` / `app/error.tsx` - OS風のシステムエラーダイアログ（ERROR 404 / ERROR 500）
 
-### クライアントサイド（lib/os.ts）
-- PC: ウィンドウ管理（ドラッグは768px以上のみ／`setupDrag`）、フォーカス（z-index／`focusWindow`）、開閉（`data-open`/`data-close`属性）、右クリックでOS風コンテキストメニュー（壁紙切替・再起動）
-- 共通: 起動画面（`setupBootScreen`、セッションごとに1回）、メニューバーの時計（`setupClock`）、ターミナル実行（`runCommand`/`setupTerminal`）、ゴミ箱（`setupTrash`）
-- SP: ロック画面（`setupLockScreen`）、アプリ開閉（`setupMobileApps`）、通知（`setupNotification`）
-- 壁紙は`localStorage`（`tomokios-wallpaper`）、起動フラグは`sessionStorage`（`tomokios-booted`）に保存
+### クライアントサイド（lib/os.ts + lib/sp/）
+- PC（lib/os.ts）: ウィンドウ管理（ドラッグは768px以上のみ／`setupDrag`）、フォーカス（z-index／`focusWindow`）、開閉（`data-open`/`data-close`属性）、右クリックでOS風コンテキストメニュー（壁紙切替・再起動）
+- 共通（lib/os.ts）: 起動画面（`setupBootScreen`、セッションごとに1回）、メニューバーの時計（`setupClock`）、ターミナル実行（`runCommand`/`setupTerminal`）、ゴミ箱（`setupTrash`）、壁紙（`cycleWallpaper`/`getWallpaperLabel`はexportされSPからも使う）
+- SP（lib/sp/、`initOS()`が768px未満のときだけ`initSp()`を呼ぶ）:
+  - `gesture.ts` - 共通ジェスチャーエンジン。全ジェスチャーはこれ1本（`createGesture`、Pointer Eventsのみ、rAFスロットリング、軸ロック、速度追跡）。物理は`springTo`（減衰スプリング）と`rubber`（ラバーバンド）。`preventDefault`は書かずCSSの`touch-action`で抑止する
+  - `state.ts` - SP状態機械。`.sp-shell`の`data-sp-mode`属性（locked/home/app/switcher/cc/edit）が唯一の真実。`setMode()`一箇所で遷移し、`inert`の付け外しもここに一元管理。z-index台帳コメントあり
+  - `apps.ts` - アイコン位置からのFLIPズーム起動（visibility切替でスクロール位置保持）、ジェスチャーバーの1:1追従→速度引き継ぎクローズ、ドラッグ途中静止でスイッチャー進入、押し込みフィードバック（`.is-pressed`）
+  - `lock.ts` - スワイプ解除（1:1追従＋パララックス）。タップもキーボードも同じ合成スワイプ経路。CCの「画面ロック」で再ロック可能（`hidden`切替、remove()しない）
+  - `controlCenter.ts` / `notify.ts`（`pushNotification()` API、ロック解除後にタイマー起点）/ `switcher.ts` / `edit.ts`（長押しジグル編集。削除は拒否されるがターミナルだけ消えて5秒後に再インストールされる）
+  - `ui.ts` - `showToast`/`showSpDialog`、`meta.ts` - アプリのメタ情報と削除拒否コピー
+- 壁紙は`localStorage`（`tomokios-wallpaper`）、起動フラグは`sessionStorage`（`tomokios-booted`）に保存。この2キー以外は増やさない（機内モード等はメモリのみ）
 - `components/OsClient.tsx`の`useEffect`から`initOS()`を呼び、上記すべてのセットアップ関数を実行
 
 ### ストレージ
@@ -75,4 +83,6 @@ tomokiOS 26 "Cream Soda" の世界観を維持：
 - UIクロームは等幅フォント、本文はゴシック体（DotGothic16）
 - 遊び心はコピーで出す（「640KBあればじゅうぶん」「素通り禁止」等）。新しい要素にも必ず小ネタを仕込むこと
 - PC（≥768px）はウィンドウ型デスクトップ、SP（<768px）はロック画面＋ホーム画面＋アプリ型UIに完全に出し分ける（`components/desktop/` と `components/mobile/` の二系統）
-- レスポンシブとアクセシビリティ（aria属性、フォーカスリング、prefers-reduced-motion）は維持
+- SPは「本物のスマホOS」の物理を持つ: ジェスチャーは指に1:1追従し、離した瞬間の速度を`springTo`が引き継いで収束する。CSS transitionは非追従のマイクロ演出だけに使い、共通イージングは`--sp-ease`。ジェスチャーには必ずボタン等の代替手段を用意する（ジェスチャーバー自体がbutton、◀ ホーム、Escape等）
+- SPのCSS禁止事項: `.sp-app-view`内に`position:fixed`を置かない（transformがcontaining blockを作る）／`.sp-shell`自体にtransform/filterを掛けない
+- レスポンシブとアクセシビリティ（aria属性、inert、フォーカスリング、prefers-reduced-motion）は維持

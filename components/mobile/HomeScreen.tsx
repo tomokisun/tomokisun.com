@@ -19,13 +19,13 @@ function AppIcon({ label, icon, color, opens }: AppIconProps) {
 export default function HomeScreen() {
   return (
     <div className="sp-home">
-      <div className="sp-widget" data-sp-open="profile">
+      <button type="button" className="sp-widget" data-sp-open="profile" aria-label="プロフィールをひらく">
         <div className="sp-widget-avatar">🍈</div>
         <div className="sp-widget-info">
           <div className="sp-widget-name">tomokisun</div>
           <div className="sp-widget-role">iOS出身のなんでも屋</div>
         </div>
-      </div>
+      </button>
       <AppIcon label="プロフィール" icon="📝" color="cherry" opens="profile" />
       <AppIcon label="Products" icon="📁" color="melon" opens="products" />
       <AppIcon label="ソーシャル" icon="🌐" color="soda" opens="social" />

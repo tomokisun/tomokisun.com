@@ -1,6 +1,8 @@
 // tomokiOS 26 "Cream Soda" クライアントサイドロジック
 // PCモード: ウィンドウ管理・ドラッグ・ターミナル・コンテキストメニュー
-// SPモード: ロック画面・アプリ開閉・通知
+// SPモード: lib/sp/ 配下（ロック画面・アプリ開閉・ジェスチャー・コントロールセンター等）
+
+import { initSp } from './sp'
 
 const BOOT_DURATION_MS = 1800
 const BOOT_FADE_MS = 400
@@ -399,10 +401,23 @@ export function restoreWallpaper(): void {
   } catch {}
 }
 
-function cycleWallpaper(): void {
+export function cycleWallpaper(): void {
   const current = document.documentElement.getAttribute('data-wallpaper') ?? ''
   const index = WALLPAPERS.indexOf(current as (typeof WALLPAPERS)[number])
   applyWallpaper(WALLPAPERS[(index + 1) % WALLPAPERS.length] ?? '')
+}
+
+const WALLPAPER_LABELS: Record<(typeof WALLPAPERS)[number], string> = {
+  '': 'ソーダ',
+  melon: 'メロン',
+  ichigo: 'いちご',
+  yozora: 'よぞら',
+  classic: 'クラシック',
+}
+
+export function getWallpaperLabel(): string {
+  const current = (document.documentElement.getAttribute('data-wallpaper') ?? '') as (typeof WALLPAPERS)[number]
+  return WALLPAPER_LABELS[current] ?? 'ソーダ'
 }
 
 // ===== 右クリックメニュー =====
@@ -466,70 +481,6 @@ export function setupContextMenu(): void {
   })
 }
 
-// ===== SP: ロック画面 =====
-export function setupLockScreen(): void {
-  if (isDesktopViewport()) return
-
-  const lockscreen = document.querySelector<HTMLElement>('.sp-lockscreen')
-  if (!lockscreen) return
-
-  try {
-    if (sessionStorage.getItem(BOOT_SESSION_KEY)) {
-      lockscreen.remove()
-      return
-    }
-    sessionStorage.setItem(BOOT_SESSION_KEY, 'true')
-  } catch {
-    lockscreen.remove()
-    return
-  }
-
-  const unlock = () => {
-    lockscreen.classList.add('is-unlocked')
-    setTimeout(() => lockscreen.remove(), 400)
-  }
-
-  lockscreen.addEventListener('click', unlock)
-  lockscreen.addEventListener('touchend', unlock)
-}
-
-// ===== SP: アプリ開閉 =====
-export function setupMobileApps(): void {
-  if (isDesktopViewport()) return
-
-  document.addEventListener('click', (e) => {
-    const opener = (e.target as HTMLElement).closest<HTMLElement>('[data-sp-open]')
-    if (!opener) return
-    e.preventDefault()
-    const id = opener.getAttribute('data-sp-open')
-    if (!id) return
-
-    const appView = document.querySelector<HTMLElement>(`.sp-app-view[data-app="${id}"]`)
-    if (!appView) return
-    appView.classList.add('is-open')
-  })
-
-  // 戻る
-  document.addEventListener('click', (e) => {
-    const closer = (e.target as HTMLElement).closest<HTMLElement>('[data-sp-close]')
-    if (!closer) return
-    const appView = closer.closest<HTMLElement>('.sp-app-view')
-    if (appView) appView.classList.remove('is-open')
-  })
-}
-
-// ===== SP: 通知バナー =====
-export function setupNotification(): void {
-  if (isDesktopViewport()) return
-
-  setTimeout(() => {
-    const banner = document.querySelector<HTMLElement>('.sp-notification')
-    if (!banner) return
-    banner.classList.add('is-visible')
-    setTimeout(() => banner.classList.remove('is-visible'), 5000)
-  }, 30000)
-}
-
 // ===== タブ離脱検知 =====
 export function setupTabTitle(): void {
   const originalTitle = document.title
@@ -547,8 +498,6 @@ export function initOS(): void {
   setupTerminal()
   setupTrash()
   setupContextMenu()
-  setupLockScreen()
-  setupMobileApps()
-  setupNotification()
   setupTabTitle()
+  if (!isDesktopViewport()) initSp()
 }

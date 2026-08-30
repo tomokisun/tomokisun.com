@@ -20,6 +20,20 @@ export default function SettingsApp() {
         </div>
       </div>
       <div className="settings-group-body">
+        <button type="button" className="settings-row settings-row--action" data-sp-edit-home>
+          <span className="settings-row-label">ホーム画面を編集</span>
+          <span className="settings-row-value">アイコンが震えます</span>
+        </button>
+        <div className="settings-row">
+          <span className="settings-row-label">ハプティクス</span>
+          <span className="settings-row-value">気持ちだけ</span>
+        </div>
+        <div className="settings-row">
+          <span className="settings-row-label">バッテリーの状態</span>
+          <span className="settings-row-value">最大容量 640KB（劣化なし。使っていないので）</span>
+        </div>
+      </div>
+      <div className="settings-group-body">
         <div className="settings-row">
           <span className="settings-row-label">ソフトウェア・アップデート</span>
           <span className="settings-row-value">最新です。というより、これが全部です。</span>

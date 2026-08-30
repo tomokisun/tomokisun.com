@@ -1,3 +1,4 @@
+import AppSwitcher from './AppSwitcher'
 import AppView from './AppView'
 import BlogApp from './apps/BlogApp'
 import ProductsApp from './apps/ProductsApp'
@@ -5,6 +6,7 @@ import ProfileApp from './apps/ProfileApp'
 import SettingsApp from './apps/SettingsApp'
 import SocialApp from './apps/SocialApp'
 import TrashApp from './apps/TrashApp'
+import ControlCenter from './ControlCenter'
 import Dock from './Dock'
 import HomeScreen from './HomeScreen'
 import LockScreen from './LockScreen'
@@ -24,6 +26,9 @@ export default function MobileShell({ visitorsCount }: MobileShellProps) {
       <Dock />
       <LockScreen visitorsCount={visitorsCount} />
       <Notification />
+      <ControlCenter />
+      <AppSwitcher />
+      <div className="sp-screen-filter" aria-hidden="true"></div>
 
       <AppView id="profile" title="プロフィール" color="cherry">
         <ProfileApp />
