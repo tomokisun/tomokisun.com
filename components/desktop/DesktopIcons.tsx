@@ -23,6 +23,8 @@ export default function DesktopIcons() {
       <DesktopIcon label="Products" glyph="📁" tile="melon" opens="products" />
       <DesktopIcon label="ソーシャル" glyph="🌐" tile="soda" opens="social" />
       <DesktopIcon label="ブログ" glyph="📰" tile="cherry" opens="blog" />
+      <DesktopIcon label="メモ帳" glyph="📒" tile="cream" opens="memo" />
+      <DesktopIcon label="電卓" glyph="🧮" tile="soda" opens="calc" />
       <DesktopIcon label="ターミナル" glyph="＞_" tile="dark" opens="terminal" />
       <DesktopIcon label="設定" glyph="⚙️" tile="cream" opens="settings" />
     </nav>

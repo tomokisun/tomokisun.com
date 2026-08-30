@@ -322,6 +322,12 @@ body {
   z-index: 1;
   display: flex;
   flex-direction: column;
+  /* 縦に入りきらない分は2列目へ流す（アイコンが増えても画面外に出さない）。
+     max-widthが無いと折り返し前提の自動幅がデスクトップ全体まで広がってしまう */
+  flex-wrap: wrap;
+  align-content: flex-start;
+  max-height: calc(100% - 40px);
+  max-width: 202px;
   gap: 18px;
 }
 
@@ -774,6 +780,175 @@ body {
   background: var(--os-term-green);
   vertical-align: -2px;
   animation: cursor-blink 1s step-end infinite;
+}
+
+/* ===== 電卓 ===== */
+.calc {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.calc-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 8px 12px 10px;
+  background: #dff0f5;
+  border: var(--os-border);
+  border-radius: 8px;
+  box-shadow: inset 2px 2px 0 rgba(38, 35, 63, 0.12);
+  font-family: var(--font-chrome);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+}
+
+.calc-display-sub {
+  font-size: 11px;
+  color: #59748a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.calc-display-main {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.calc-keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.calc-key {
+  appearance: none;
+  height: 46px;
+  background: var(--os-paper);
+  border: var(--os-border);
+  border-radius: 10px;
+  box-shadow: var(--os-shadow-sm);
+  font-family: var(--font-chrome);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--os-ink);
+  cursor: pointer;
+  transition:
+    transform 90ms ease-out,
+    box-shadow 90ms ease-out,
+    background 0.12s ease;
+}
+
+/* タッチ端末ではホバーが押しっぱなしに見えるためポインタのある環境だけ */
+@media (hover: hover) {
+  .calc-key:hover {
+    background: var(--os-cream);
+  }
+}
+
+.calc-key--fn {
+  background: var(--os-lavender);
+}
+
+.calc-key--op {
+  background: var(--os-soda);
+}
+
+.calc-key--eq {
+  background: var(--os-cherry);
+}
+
+.calc-key--zero {
+  grid-column: span 2;
+}
+
+/* 押し込み（マウス / SPのis-pressed / キーボードのis-keyed で同じ挙動） */
+.calc-key:active,
+.calc-key.is-pressed,
+.calc-key.is-keyed {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--os-ink);
+}
+
+.calc-note {
+  margin: 0;
+  min-height: 2.6em;
+  font-size: 11.5px;
+  color: #6d677f;
+}
+
+/* ===== メモ帳 ===== */
+.memo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.memo-paper {
+  width: 100%;
+  min-height: 190px;
+  padding: 6px 12px;
+  background-color: var(--os-paper);
+  /* 罫線。background-attachment:localで本文といっしょにスクロールする */
+  background-image: repeating-linear-gradient(
+    var(--os-paper) 0px,
+    var(--os-paper) 27px,
+    rgba(38, 35, 63, 0.14) 27px,
+    rgba(38, 35, 63, 0.14) 28px
+  );
+  background-attachment: local;
+  border: var(--os-border);
+  border-radius: 8px;
+  box-shadow: var(--os-shadow-sm);
+  color: var(--os-ink);
+  font-family: var(--font-chrome);
+  font-size: 13px;
+  line-height: 28px;
+  resize: vertical;
+}
+
+.memo-paper::placeholder {
+  color: #9c96ad;
+}
+
+.memo-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.memo-status {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-left: auto;
+  font-family: var(--font-chrome);
+  font-size: 11px;
+  color: #6d677f;
+  font-variant-numeric: tabular-nums;
+}
+
+.memo-state {
+  padding: 1px 6px;
+  border: 1.5px solid rgba(38, 35, 63, 0.25);
+  border-radius: 5px;
+}
+
+.memo-message {
+  margin: 0;
+  min-height: 1.8em;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--os-grape);
 }
 
 /* ===== ゴミ箱 ===== */
@@ -2410,6 +2585,16 @@ body {
     left: 380px;
     width: 400px;
   }
+  .os-window[data-window="memo"] {
+    top: 210px;
+    left: min(500px, calc(100% - 420px));
+    width: 400px;
+  }
+  .os-window[data-window="calc"] {
+    top: 60px;
+    left: min(660px, calc(100% - 300px));
+    width: 268px;
+  }
   .os-window[data-window="settings"] {
     top: 96px;
     left: 260px;
@@ -2461,6 +2646,53 @@ body {
 
   .sp-lockscreen {
     display: flex;
+  }
+
+  /* 指で押すサイズへ（電卓・メモ帳） */
+  .calc-key {
+    height: 54px;
+    font-size: 19px;
+  }
+
+  .calc-display-main {
+    font-size: 34px;
+  }
+
+  .memo-paper {
+    min-height: 240px;
+    font-size: 14px;
+  }
+
+  /* 実機の電卓・メモ帳と同じく、キーと便箋で画面の下まで使い切る */
+  .sp-app-view[data-app="calc"] .sp-app-body,
+  .sp-app-view[data-app="memo"] .sp-app-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sp-app-view[data-app="calc"] .calc,
+  .sp-app-view[data-app="memo"] .memo {
+    flex: 1;
+  }
+
+  /* 小ネタ行は下端（ジェスチャーバー）に飲まれるので表示のすぐ下へ */
+  .sp-app-view[data-app="calc"] .calc-note {
+    order: 1;
+  }
+
+  .sp-app-view[data-app="calc"] .calc-keys {
+    order: 2;
+    flex: 1;
+    grid-auto-rows: minmax(54px, 1fr);
+  }
+
+  .sp-app-view[data-app="calc"] .calc-key {
+    height: auto;
+  }
+
+  .sp-app-view[data-app="memo"] .memo-paper {
+    flex: 1;
+    resize: none;
   }
 }
 

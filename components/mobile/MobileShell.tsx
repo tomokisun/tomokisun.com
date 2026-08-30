@@ -1,3 +1,5 @@
+import CalculatorBody from '../apps/CalculatorBody'
+import NotepadBody from '../apps/NotepadBody'
 import AppSwitcher from './AppSwitcher'
 import AppView from './AppView'
 import BlogApp from './apps/BlogApp'
@@ -41,6 +43,12 @@ export default function MobileShell({ visitorsCount }: MobileShellProps) {
       </AppView>
       <AppView id="blog" title="ブログ" color="cherry">
         <BlogApp />
+      </AppView>
+      <AppView id="memo" title="メモ帳" color="cream">
+        <NotepadBody />
+      </AppView>
+      <AppView id="calc" title="電卓" color="soda">
+        <CalculatorBody />
       </AppView>
       <AppView id="trash" title="ゴミ箱" color="lavender">
         <TrashApp />

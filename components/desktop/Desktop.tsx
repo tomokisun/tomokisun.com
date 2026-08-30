@@ -2,6 +2,8 @@ import DesktopIcons from './DesktopIcons'
 import MenuBar from './MenuBar'
 import AboutWindow from './windows/AboutWindow'
 import BlogWindow from './windows/BlogWindow'
+import CalculatorWindow from './windows/CalculatorWindow'
+import NotepadWindow from './windows/NotepadWindow'
 import ProductDetailWindows from './windows/ProductDetailWindows'
 import ProductsWindow from './windows/ProductsWindow'
 import ProfileWindow from './windows/ProfileWindow'
@@ -25,6 +27,8 @@ export default function Desktop({ visitorsCount }: DesktopProps) {
         <ProductDetailWindows />
         <SocialWindow />
         <BlogWindow />
+        <NotepadWindow />
+        <CalculatorWindow />
         <TerminalWindow />
         <TrashWindow />
         <SettingsWindow />
