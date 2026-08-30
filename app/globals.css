@@ -806,7 +806,8 @@ body {
 
 .calc-display-sub {
   font-size: 11px;
-  color: #59748a;
+  /* 液晶の水色地でも4.5:1を確保する（#59748aだと4.2:1で足りない） */
+  color: #565170;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
