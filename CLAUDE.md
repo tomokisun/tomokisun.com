@@ -26,7 +26,7 @@ bun run lint         # Biomeでリント
 - `ソーシャル` - SNSリンク一覧
 - `メモ帳` / `電卓` - プリセットアプリ。中身は`components/apps/`（PC/SP共通のボディ）、動きは`lib/apps/`。メモ帳の保存はメモリ上だけ（残らないのがネタ）、電卓は四則演算のみで0除算は「むり」、桁があふれると「けたあふれ」
 - `ターミナル` - クライアントサイドで動く対話型シェル（help/whoami/ls/open等の隠しコマンド）。SPでは開けず専用ダイアログを表示（スイッチャーにも「応答なし」で常駐し、killしても復活する）
-- `ブログ` - 記事いちらんウィンドウ（`BlogWindow.tsx`／SPは`BlogApp.tsx`）。記事本体は`/blog/<slug>`の独立ページ（benji.org リスペクトの短文スタイル）
+- `ブログ` - 記事いちらんと記事本文の両方がOSの中で完結する。PCはいちらんウィンドウ（`BlogWindow.tsx`）→ 記事ウィンドウ`blog-<slug>`（`BlogPostWindows.tsx`）、SPはアプリ内の階層ナビ（`BlogApp.tsx` + `lib/sp/blog.ts`。右から入って左端スワイプで戻る）。本文は`components/blog/posts/`の1本をpage/pc/spの3バリアントで共有し、`/blog/<slug>`の独立ページは共有URL・SEO用に残す（benji.org リスペクトの短文スタイル）
 - `ゴミ箱` - infra.zip（「インフラは苦手」の自虐ネタ。復元は必ず失敗する）
 - `設定` - OS名/ビルド番号/ストレージ容量などのネタを詰めた設定パネル
 - `このOSについて` - MenuBarのロゴ／メニュー項目から開くAboutダイアログ（`AboutWindow.tsx`）
@@ -38,20 +38,21 @@ bun run lint         # Biomeでリント
   - `DesktopIcons.tsx` - デスクトップアイコン
   - `MenuBar.tsx` - 上部メニューバー（時計・ログイン中人数表示）
   - `Window.tsx` - ウィンドウのchrome（タイトルバー・ボディ・ステータスバー）
-  - `windows/` - 各ウィンドウの中身（AboutWindow, ProductsWindow, ProductDetailWindows, ProfileWindow, SettingsWindow, SocialWindow, TerminalWindow, TrashWindow）
+  - `windows/` - 各ウィンドウの中身（AboutWindow, BlogWindow, BlogPostWindows, ProductsWindow, ProductDetailWindows, ProfileWindow, SettingsWindow, SocialWindow, TerminalWindow, TrashWindow）
 - `components/mobile/` - SP版ホーム画面一式
   - `MobileShell.tsx` - SP全体の組み立て（StatusBar + HomeScreen + Dock + LockScreen + Notification + ControlCenter + AppSwitcher + 各AppView）
   - `LockScreen.tsx` / `HomeScreen.tsx` / `Dock.tsx` / `StatusBar.tsx` / `Notification.tsx` / `TerminalBlockedDialog.tsx`
   - `ControlCenter.tsx` - ステータスバーから引き下ろす1枚シート（壁紙・明るさ・画面ロック・再起動は実動、機内モードと音量はネタ）
   - `AppSwitcher.tsx` - Appスイッチャーの器（カードは`lib/sp/switcher.ts`が生成。ターミナルは常駐して終了できない）
   - `AppView.tsx` - アプリのフルスクリーンchrome（ヘッダー + 本文 + 下端ジェスチャーバー）
-  - `apps/` - 各アプリの中身（ProductsApp, ProfileApp, SettingsApp, SocialApp, TrashApp）
+  - `apps/` - 各アプリの中身（BlogApp, ProductsApp, ProfileApp, SettingsApp, SocialApp, TrashApp）
+- `components/blog/` - ブログ。`BlogShell.tsx`が独立ページのchrome、`posts/`が記事本文（`parts.tsx`に共有部品、`index.ts`がslug→本文の表）。同じ`/`にPC/SP両方のDOMが並ぶため、脚注のidは`anchorId()`でバリアントごとに分ける
 - `components/OsClient.tsx` - `initOS()`を呼び出すクライアントエントリ（`'use client'`）
 
 ### ルーティング
 Next.js App Router（`app/`）。デスクトップ／ホーム画面は`/`のみに統一され、開くウィンドウ／アプリの出し分けは行っていない（旧`/products`, `/accounts`ルートは廃止）。ブログだけは共有可能なURLを持つ独立ルート：
 - `app/page.tsx` - KVから訪問者数を取得し、Desktop・MobileShell・OsClientを描画。`dynamic = 'force-dynamic'`
-- `app/blog/page.tsx` - ブログいちらん（`data/blog-posts.ts`から生成）。`app/blog/<slug>/page.tsx` - 各記事（例: `/blog/wablo`）。どちらも`components/blog/BlogShell.tsx`（壁紙＋静的ウィンドウ1枚のページchrome、PC/SP共通）でOSの世界観を維持し、JSON-LD（BlogPosting）とOGPを持つ
+- `app/blog/page.tsx` - ブログいちらん（`data/blog-posts.ts`から生成）。`app/blog/<slug>/page.tsx` - 各記事（例: `/blog/wablo`。本文は`components/blog/posts/`から`variant="page"`で描く）。どちらも`components/blog/BlogShell.tsx`（壁紙＋静的ウィンドウ1枚のページchrome、PC/SP共通）でOSの世界観を維持し、JSON-LD（BlogPosting）とOGPを持つ
 - `app/layout.tsx` - メタデータ（OGP/Twitterカード）、JSON-LD（WebSite/Person）、フォント設定
 - `app/not-found.tsx` / `app/error.tsx` - OS風のシステムエラーダイアログ（ERROR 404 / ERROR 500）
 
@@ -65,6 +66,7 @@ Next.js App Router（`app/`）。デスクトップ／ホーム画面は`/`の�
   - `apps.ts` - アイコン位置からのFLIPズーム起動（visibility切替でスクロール位置保持）、ジェスチャーバーの1:1追従→速度引き継ぎクローズ、ドラッグ途中静止でスイッチャー進入、押し込みフィードバック（`.is-pressed`）
   - `lock.ts` - スワイプ解除（1:1追従＋パララックス）。タップもキーボードも同じ合成スワイプ経路。CCの「画面ロック」で再ロック可能（`hidden`切替、remove()しない）
   - `controlCenter.ts` / `notify.ts`（`pushNotification()` API、ロック解除後にタイマー起点）/ `switcher.ts` / `edit.ts`（長押しジグル編集。削除は拒否されるがターミナルだけ消えて5秒後に再インストールされる）
+  - `blog.ts` - ブログアプリの中の階層ナビ（いちらん ⇄ きじ）。押すと右から入り、左端28pxから始めたスワイプ・`‹ いちらん`・Escapeで戻る。アプリを閉じても読みかけの位置は残す
   - `ui.ts` - `showToast`/`showSpDialog`、`meta.ts` - アプリのメタ情報と削除拒否コピー
 - 壁紙は`localStorage`（`tomokios-wallpaper`）、起動フラグは`sessionStorage`（`tomokios-booted`）に保存。この2キー以外は増やさない（機内モード等はメモリのみ）
 - `components/OsClient.tsx`の`useEffect`から`initOS()`を呼び、上記すべてのセットアップ関数を実行

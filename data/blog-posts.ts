@@ -4,6 +4,8 @@ export type BlogPost = {
   date: string // ISO 8601 (YYYY-MM-DD)
   description: string
   icon: string
+  /** ウィンドウ／アプリのステータスバーに出す一言 */
+  statusNote: string
 }
 
 export const blogPosts: BlogPost[] = [
@@ -14,6 +16,7 @@ export const blogPosts: BlogPost[] = [
     description:
       '友だちに30秒の落書きを送るiOSアプリの話。テキストも写真もフィードもなし。へたな絵ほど、よく届きます。',
     icon: '🖍️',
+    statusNote: 'UTF-8 ｜ Markdown ｜ 読了まで: 30秒ではたぶん無理',
   },
 ]
 

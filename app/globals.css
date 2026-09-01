@@ -2373,7 +2373,8 @@ body {
   line-height: 2;
 }
 
-.blog-article h2 {
+.blog-article h2,
+.blog-article h3 {
   margin: 30px 0 10px;
   font-family: var(--font-chrome);
   font-size: 16px;
@@ -2470,6 +2471,112 @@ body {
   .blog-window-body {
     padding: 20px 16px 26px;
   }
+}
+
+/* ===== ブログ: OSの中で読む（PCのウィンドウ / SPのアプリ共通） ===== */
+.blog-doc {
+  font-size: 13.5px;
+}
+
+.blog-doc .blog-title {
+  font-size: 20px;
+}
+
+.blog-doc .blog-date {
+  margin-bottom: 18px;
+}
+
+.blog-doc .blog-lead,
+.blog-doc .blog-article p {
+  line-height: 1.95;
+}
+
+.blog-doc .blog-article h2,
+.blog-doc .blog-article h3 {
+  margin: 24px 0 8px;
+  font-size: 14px;
+}
+
+.blog-doc a {
+  color: var(--os-grape);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* 本文からアプリを開く導線（見た目はリンク、正体はボタン） */
+.blog-inline-open {
+  appearance: none;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: var(--os-grape);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* ===== SP: ブログの階層ナビ（いちらん ⇄ きじ） =====
+   きじペインはいちらんの上に重なる板。位置はJS（lib/sp/blog.ts）がtransformで駆動する。 */
+.sp-app-view[data-app="blog"] .sp-app-body {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sp-blog {
+  position: absolute;
+  inset: 0;
+}
+
+.sp-blog-pane {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--os-paper);
+}
+
+.sp-blog-list {
+  padding: 16px 16px 52px;
+}
+
+/* 縦スクロールは残し、横は戻るジェスチャー専用にする（ブラウザの戻るも横取りしない） */
+.sp-blog-post {
+  z-index: 1;
+  border-left: var(--os-border);
+  touch-action: pan-y;
+}
+
+.sp-blog-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--os-paper);
+  border-bottom: 1.5px dashed rgba(38, 35, 63, 0.25);
+}
+
+.sp-blog-nav-title {
+  font-family: var(--font-chrome);
+  font-size: 12px;
+  color: #6d677f;
+}
+
+.sp-blog-post-body {
+  padding: 14px 16px 60px;
+  font-size: 14px;
+}
+
+.sp-blog-list .sp-product-item {
+  appearance: none;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 /* ===== アニメーション ===== */
@@ -2580,6 +2687,14 @@ body {
     top: 150px;
     left: 210px;
     width: 420px;
+  }
+  /* きじのウィンドウ（blog-<slug>）。長文なので広め・高めに取る */
+  .os-window[data-window^="blog-"] {
+    top: 44px;
+    left: 296px;
+    width: 520px;
+    /* デスクトップ基準だと画面外まで伸びるので、ここだけビューポート基準で頭打ちにする */
+    max-height: calc(100vh - 120px);
   }
   .os-window[data-window="trash"] {
     top: 130px;

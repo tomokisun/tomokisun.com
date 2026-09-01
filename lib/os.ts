@@ -2,6 +2,7 @@
 // PCモード: ウィンドウ管理・ドラッグ・ターミナル・コンテキストメニュー
 // SPモード: lib/sp/ 配下（ロック画面・アプリ開閉・ジェスチャー・コントロールセンター等）
 
+import { blogPosts, formatPostDate } from '@/data/blog-posts'
 import { evaluateExpression, setupCalculators } from './apps/calculator'
 import { setupNotepads } from './apps/notepad'
 import { initSp } from './sp'
@@ -210,6 +211,7 @@ function runCommand(input: string): string[] {
       '  ls            デスクトップをみる',
       '  ls products   プロダクトいちらん',
       '  blog          ブログをよむ',
+      '  blog <なまえ>  きじをひらく（例: blog wablo）',
       '  calc <しき>    かんたんな計算（電卓もあります）',
       '  memo          メモ帳をひらく',
       '  open <なまえ>  ウィンドウをひらく',
@@ -226,11 +228,22 @@ function runCommand(input: string): string[] {
     return ['プロフィール.txt  メモ.txt  Products/  ソーシャル  blog/  電卓.app  ゴミ箱  設定  グッズ.url']
   }
   if (cmd === 'ls blog' || cmd === 'ls blog/') {
-    return ['2026-08-28-wablo.md', '（つづきは blog コマンドでどうぞ）']
+    return [...blogPosts.map((post) => `${post.date}-${post.slug}.md`), '（つづきは blog コマンドでどうぞ）']
   }
   if (cmd === 'blog') {
     openWindow('blog')
-    return ['ブログをひらきました', '  2026.08.28  Wablo — 30秒の落書きを送るアプリ']
+    return [
+      'ブログをひらきました',
+      ...blogPosts.map((post) => `  ${formatPostDate(post.date)}  ${post.title} — ${post.slug}.md`),
+      'きじは `blog <なまえ>` でもひらけます。',
+    ]
+  }
+  if (cmd.startsWith('blog ')) {
+    const slug = cmd.slice(5).trim().toLowerCase().replace(/\.md$/, '')
+    if (blogPosts.some((post) => post.slug === slug) && openWindow(`blog-${slug}`)) {
+      return [`${slug}.md をひらきました`]
+    }
+    return [`blog: ${slug}: そのようなきじはありません（blog でいちらん）`]
   }
   if (cmd === 'memo' || cmd === 'notepad') {
     openWindow('memo')
@@ -242,7 +255,11 @@ function runCommand(input: string): string[] {
   }
   if (cmd.startsWith('calc ')) return evaluateExpression(cmd.slice(5))
   if (cmd.startsWith('cat')) {
-    if (cmd.includes('wablo')) return ['wablo.md: 30秒では読み終わりません。ブログでどうぞ → /blog/wablo']
+    const post = blogPosts.find((entry) => cmd.includes(entry.slug))
+    if (post) {
+      openWindow(`blog-${post.slug}`)
+      return [`${post.slug}.md をひらきました。30秒では読み終わりません。`]
+    }
     if (cmd.includes('メモ') || cmd.includes('memo')) {
       openWindow('memo')
       return ['メモ.txt はメモリ上にしかありません。メモ帳をひらきました。']
@@ -297,6 +314,8 @@ function runCommand(input: string): string[] {
       settings: 'settings',
       about: 'about',
     }
+    // 記事ウィンドウ（blog-<slug>）は data から自動で引けるようにする
+    for (const post of blogPosts) alias[post.slug] = `blog-${post.slug}`
     const id = alias[name] ?? (OPENABLE_WINDOWS.includes(name as (typeof OPENABLE_WINDOWS)[number]) ? name : null)
     if (id && openWindow(id)) return [`${name} をひらきました`]
     return [`open: ${name}: そのようなアプリはありません`]
