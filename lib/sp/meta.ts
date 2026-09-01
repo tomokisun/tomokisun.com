@@ -33,6 +33,18 @@ export const SP_APPS: Record<string, SpAppMeta> = {
     color: 'cherry',
     removeRefusal: 'まだ1記事しかないのに',
   },
+  memo: {
+    label: 'メモ帳',
+    icon: '📒',
+    color: 'cream',
+    removeRefusal: '保存していないメモがあります（これからも保存されません）',
+  },
+  calc: {
+    label: '電卓',
+    icon: '🧮',
+    color: 'soda',
+    removeRefusal: '暗算に自信がないので残しておいてください',
+  },
   settings: {
     label: '設定',
     icon: '⚙️',

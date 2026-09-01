@@ -2,6 +2,8 @@
 // PCモード: ウィンドウ管理・ドラッグ・ターミナル・コンテキストメニュー
 // SPモード: lib/sp/ 配下（ロック画面・アプリ開閉・ジェスチャー・コントロールセンター等）
 
+import { evaluateExpression, setupCalculators } from './apps/calculator'
+import { setupNotepads } from './apps/notepad'
 import { initSp } from './sp'
 
 const BOOT_DURATION_MS = 1800
@@ -184,7 +186,18 @@ export function setupBootScreen(): void {
 }
 
 // ===== ターミナル =====
-const OPENABLE_WINDOWS = ['profile', 'products', 'social', 'blog', 'terminal', 'trash', 'about', 'settings'] as const
+const OPENABLE_WINDOWS = [
+  'profile',
+  'products',
+  'social',
+  'blog',
+  'memo',
+  'calc',
+  'terminal',
+  'trash',
+  'about',
+  'settings',
+] as const
 
 function runCommand(input: string): string[] {
   const cmd = input.trim()
@@ -197,6 +210,8 @@ function runCommand(input: string): string[] {
       '  ls            デスクトップをみる',
       '  ls products   プロダクトいちらん',
       '  blog          ブログをよむ',
+      '  calc <しき>    かんたんな計算（電卓もあります）',
+      '  memo          メモ帳をひらく',
       '  open <なまえ>  ウィンドウをひらく',
       '  neofetch      システム情報',
       '  pwd / date / uptime / clear / exit',
@@ -207,7 +222,9 @@ function runCommand(input: string): string[] {
   if (cmd === 'pwd') return ['/Users/tomokisun/homepage']
   if (cmd === 'date') return [new Date().toLocaleString('ja-JP')]
   if (cmd === 'uptime') return ['SINCE 2006 からずっと稼働中（たまに再起動）']
-  if (cmd === 'ls') return ['プロフィール.txt  Products/  ソーシャル  blog/  ゴミ箱  設定  グッズ.url']
+  if (cmd === 'ls') {
+    return ['プロフィール.txt  メモ.txt  Products/  ソーシャル  blog/  電卓.app  ゴミ箱  設定  グッズ.url']
+  }
   if (cmd === 'ls blog' || cmd === 'ls blog/') {
     return ['2026-08-28-wablo.md', '（つづきは blog コマンドでどうぞ）']
   }
@@ -215,8 +232,21 @@ function runCommand(input: string): string[] {
     openWindow('blog')
     return ['ブログをひらきました', '  2026.08.28  Wablo — 30秒の落書きを送るアプリ']
   }
+  if (cmd === 'memo' || cmd === 'notepad') {
+    openWindow('memo')
+    return ['メモ帳をひらきました。保存はできます（残りません）。']
+  }
+  if (cmd === 'calc' || cmd === 'bc') {
+    openWindow('calc')
+    return ['電卓をひらきました。`calc 640+0` のように式を渡すこともできます。']
+  }
+  if (cmd.startsWith('calc ')) return evaluateExpression(cmd.slice(5))
   if (cmd.startsWith('cat')) {
     if (cmd.includes('wablo')) return ['wablo.md: 30秒では読み終わりません。ブログでどうぞ → /blog/wablo']
+    if (cmd.includes('メモ') || cmd.includes('memo')) {
+      openWindow('memo')
+      return ['メモ.txt はメモリ上にしかありません。メモ帳をひらきました。']
+    }
     return ['cat: そのようなファイルはありません（ブログにはあります）']
   }
   if (cmd === 'ls products' || cmd === 'ls products/') {
@@ -251,6 +281,13 @@ function runCommand(input: string): string[] {
       supernft: 'p-supernft',
       nererun: 'p-nererun',
       pokerone: 'p-pokerone',
+      memo: 'memo',
+      notepad: 'memo',
+      メモ帳: 'memo',
+      メモ: 'memo',
+      calc: 'calc',
+      calculator: 'calc',
+      電卓: 'calc',
       profile: 'profile',
       products: 'products',
       social: 'social',
@@ -496,6 +533,8 @@ export function initOS(): void {
   setupWindowManager()
   setupClock()
   setupTerminal()
+  setupNotepads()
+  setupCalculators()
   setupTrash()
   setupContextMenu()
   setupTabTitle()

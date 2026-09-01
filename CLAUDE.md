@@ -24,6 +24,7 @@ bun run lint         # Biomeでリント
 - `プロフィール.txt` - 自己紹介と職歴（テキストエディタ風）
 - `Products` フォルダ - プロダクト一覧（アイコングリッド、各アプリの詳細ウィンドウ付き。買収済みは🔒と「買収済」バッジ）
 - `ソーシャル` - SNSリンク一覧
+- `メモ帳` / `電卓` - プリセットアプリ。中身は`components/apps/`（PC/SP共通のボディ）、動きは`lib/apps/`。メモ帳の保存はメモリ上だけ（残らないのがネタ）、電卓は四則演算のみで0除算は「むり」、桁があふれると「けたあふれ」
 - `ターミナル` - クライアントサイドで動く対話型シェル（help/whoami/ls/open等の隠しコマンド）。SPでは開けず専用ダイアログを表示（スイッチャーにも「応答なし」で常駐し、killしても復活する）
 - `ブログ` - 記事いちらんウィンドウ（`BlogWindow.tsx`／SPは`BlogApp.tsx`）。記事本体は`/blog/<slug>`の独立ページ（benji.org リスペクトの短文スタイル）
 - `ゴミ箱` - infra.zip（「インフラは苦手」の自虐ネタ。復元は必ず失敗する）
@@ -31,6 +32,7 @@ bun run lint         # Biomeでリント
 - `このOSについて` - MenuBarのロゴ／メニュー項目から開くAboutダイアログ（`AboutWindow.tsx`）
 
 ### コンポーネント構造
+- `components/apps/` - PC/SP共通のアプリ本体（`CalculatorBody`, `NotepadBody`）。PCは`Window`、SPは`AppView`でくるむだけで、中身と`data-*`属性は1箇所にまとめる
 - `components/desktop/` - PC版デスクトップ一式
   - `Desktop.tsx` - デスクトップ全体の組み立て（MenuBar + DesktopIcons + 各Window）
   - `DesktopIcons.tsx` - デスクトップアイコン
@@ -56,6 +58,7 @@ Next.js App Router（`app/`）。デスクトップ／ホーム画面は`/`の�
 ### クライアントサイド（lib/os.ts + lib/sp/）
 - PC（lib/os.ts）: ウィンドウ管理（ドラッグは768px以上のみ／`setupDrag`）、フォーカス（z-index／`focusWindow`）、開閉（`data-open`/`data-close`属性）、右クリックでOS風コンテキストメニュー（壁紙切替・再起動）
 - 共通（lib/os.ts）: 起動画面（`setupBootScreen`、セッションごとに1回）、メニューバーの時計（`setupClock`）、ターミナル実行（`runCommand`/`setupTerminal`）、ゴミ箱（`setupTrash`）、壁紙（`cycleWallpaper`/`getWallpaperLabel`はexportされSPからも使う）
+- プリセットアプリ（lib/apps/）: `calculator.ts`（状態機械`press()`＋`[data-calc]`への配線。ターミナルの`calc <しき>`用に`evaluateExpression`もexport）、`notepad.ts`（`[data-memo]`への配線）。PC・SPの両方のDOMが同時に存在するため`querySelectorAll`で全インスタンスに配線し、状態はインスタンスごとに持つ
 - SP（lib/sp/、`initOS()`が768px未満のときだけ`initSp()`を呼ぶ）:
   - `gesture.ts` - 共通ジェスチャーエンジン。全ジェスチャーはこれ1本（`createGesture`、Pointer Eventsのみ、rAFスロットリング、軸ロック、速度追跡）。物理は`springTo`（減衰スプリング）と`rubber`（ラバーバンド）。`preventDefault`は書かずCSSの`touch-action`で抑止する
   - `state.ts` - SP状態機械。`.sp-shell`の`data-sp-mode`属性（locked/home/app/switcher/cc/edit）が唯一の真実。`setMode()`一箇所で遷移し、`inert`の付け外しもここに一元管理。z-index台帳コメントあり

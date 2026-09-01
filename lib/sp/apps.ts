@@ -365,7 +365,7 @@ function setupGestureBar(view: HTMLElement): void {
 
 function setupPressFeedback(): void {
   const PRESSABLE =
-    '.sp-app-icon, .sp-widget, .os-button, .sp-product-item, .sp-app-back, .sp-cc-tile, .sp-statusbar button, .sp-notification-close'
+    '.sp-app-icon, .sp-widget, .os-button, .sp-product-item, .sp-app-back, .sp-cc-tile, .sp-statusbar button, .sp-notification-close, .calc-key'
   const pressed = new Map<number, HTMLElement>()
 
   document.addEventListener(
