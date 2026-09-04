@@ -218,7 +218,13 @@ export function RemindersBody() {
         <ul className="ak-check-list" data-reminder-list>
           {REMINDERS.map((item) => (
             <li key={item.text} className={`ak-check-item${item.done ? ' is-done' : ''}`}>
-              <button type="button" className="ak-check-box" data-reminder-toggle aria-pressed={item.done}>
+              <button
+                type="button"
+                className="ak-check-box"
+                data-reminder-toggle
+                aria-pressed={item.done}
+                aria-label={`「${item.text}」を${item.done ? '未完了' : '完了'}にする`}
+              >
                 {item.done ? '✓' : ''}
               </button>
               <span className="ak-check-text">

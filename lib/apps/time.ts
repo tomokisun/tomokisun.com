@@ -212,6 +212,7 @@ function setupReminders(): void {
       box.className = 'ak-check-box'
       box.setAttribute('data-reminder-toggle', '')
       box.setAttribute('aria-pressed', 'false')
+      box.setAttribute('aria-label', `「${text}」を完了にする`)
       const wrap = document.createElement('span')
       wrap.className = 'ak-check-text'
       const title = document.createElement('span')
