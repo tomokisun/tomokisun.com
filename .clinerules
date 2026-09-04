@@ -5,9 +5,10 @@
 このプロジェクトでは以下の技術スタックを使用しています：
 
 - **Bun**: JavaScriptランタイムおよびパッケージマネージャー
-- **Vite**: ビルドツールおよび開発サーバー
-- **Hono**: Webフレームワーク
-- **Cloudflare Workers**: デプロイメントプラットフォーム
+- **Next.js（App Router）**: Webフレームワーク
+- **OpenNext（@opennextjs/cloudflare）**: Cloudflare Workers向けアダプタ
+- **Cloudflare Workers / KV**: デプロイメントプラットフォームとストレージ
+- **Biome**: リンタ / フォーマッタ
 
 ## Bunの使用方法
 

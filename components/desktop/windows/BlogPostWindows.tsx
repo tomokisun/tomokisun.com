@@ -22,6 +22,7 @@ export default function BlogPostWindows({ deepLink }: { deepLink?: DeepLink }) {
             color="cream"
             statusBar={post.statusNote}
             open={opened.includes(id)}
+            geometry={{ top: 44, left: 300, width: 540 }}
           >
             <div className="blog-doc">
               <Article variant="pc" />

@@ -13,6 +13,7 @@ export default function ProductDetailWindows() {
           title={`${product.title}.app`}
           color={COLORS[index % COLORS.length]}
           statusBar={product.acquiredBy ? `所有者: ${product.acquiredBy}` : '所有者: tomokisun'}
+          geometry={{ top: 90 + (index % 5) * 26, left: 360 + (index % 4) * 30, width: 400 }}
         >
           <div className="app-detail">
             {product.acquiredBy && <div className="acq-stamp">ACQUIRED → {product.acquiredBy}</div>}

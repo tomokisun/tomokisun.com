@@ -95,7 +95,8 @@ export function enterEdit(): void {
   // 編集モードのpadding変化を反映してから位置を測る
   requestAnimationFrame(() => {
     if (getMode() !== 'edit') return
-    document.querySelectorAll<HTMLElement>('.sp-home .sp-app-icon').forEach((icon) => {
+    // ×バッジはホーム画面のページにだけ付ける（App ライブラリからは消せない＝実機と同じ）
+    document.querySelectorAll<HTMLElement>('.sp-home-page:not(.sp-applib) .sp-app-icon').forEach((icon) => {
       attachBadge(icon)
     })
   })
@@ -214,7 +215,7 @@ export function setupEdit(): void {
   home.addEventListener('pointerup', cancelPress)
   home.addEventListener('pointercancel', cancelPress)
 
-  document.querySelectorAll<HTMLElement>('.sp-home .sp-app-icon').forEach(setupEditDrag)
+  document.querySelectorAll<HTMLElement>('.sp-home-page:not(.sp-applib) .sp-app-icon').forEach(setupEditDrag)
 
   // 背景タップ / Escape で終了
   home.addEventListener('click', (e) => {

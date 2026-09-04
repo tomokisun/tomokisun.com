@@ -88,7 +88,16 @@ function instantClose(id: string): void {
   setHasApp(false)
 }
 
-export function openApp(id: string, opener?: HTMLElement | null): void {
+/**
+ * SPに存在しないアプリの読み替え。
+ * ターミナルはSPには無い（無いことがネタなので）。開こうとしたら専用ダイアログのほうへ送る。
+ */
+function resolveId(id: string): string {
+  return id === 'terminal' ? 'terminal-blocked' : id
+}
+
+export function openApp(rawId: string, opener?: HTMLElement | null): void {
+  const id = resolveId(rawId)
   const mode = getMode()
   if (mode !== 'home' && mode !== 'app' && mode !== 'switcher' && mode !== 'edit') return
   const view = viewFor(id)
