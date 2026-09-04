@@ -4,7 +4,8 @@ type AppViewProps = {
   id: string
   title: string
   color: string
-  children: ReactNode
+  /** 中身を持たないときは、PC側から本体が引っ越してくる器になる（lib/os/adopt.ts） */
+  children?: ReactNode
 }
 
 export default function AppView({ id, title, color, children }: AppViewProps) {
@@ -16,7 +17,9 @@ export default function AppView({ id, title, color, children }: AppViewProps) {
         </button>
         <h2 className="sp-app-title">{title}</h2>
       </header>
-      <div className="sp-app-body">{children}</div>
+      <div className="sp-app-body" data-app-slot={children ? undefined : id}>
+        {children}
+      </div>
       <button type="button" className="sp-gesture-bar" data-sp-close aria-label="ホームへもどる">
         <span className="sp-gesture-bar-pill" aria-hidden="true" />
       </button>

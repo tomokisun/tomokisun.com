@@ -1,5 +1,5 @@
-// tomokiOS SP 共有UI: トースト / システムダイアログ
-// 既存の .os-toast / .sp-dialog スタイルを流用してDOM生成する。
+// tomokiOS 共通UI: トースト / システムダイアログ
+// PC・SPのどちらからも呼ぶ（.os-toast / .sp-dialog のスタイルはCSS側で出し分ける）。
 
 let toastEl: HTMLElement | null = null
 let toastTimer = 0

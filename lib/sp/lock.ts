@@ -129,14 +129,11 @@ export function setupLock(): void {
   lockscreen = document.querySelector<HTMLElement>('.sp-lockscreen')
   if (!lockscreen) return
 
-  if (getMode() !== 'locked') {
-    // 同一セッション2回目以降はロック画面を出さない（現行挙動を踏襲）
-    lockscreen.hidden = true
-  } else {
-    try {
-      sessionStorage.setItem(BOOT_SESSION_KEY, 'true')
-    } catch {}
-  }
+  // 同一セッション2回目以降（とディープリンク着地）はロック画面を出さない
+  if (getMode() !== 'locked') lockscreen.hidden = true
+  try {
+    sessionStorage.setItem(BOOT_SESSION_KEY, 'true')
+  } catch {}
 
   createGesture(lockscreen, {
     axis: 'y',

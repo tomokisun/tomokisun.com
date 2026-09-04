@@ -1,47 +1,58 @@
+import { appBodies } from '@/components/apps'
+import { pcApps, windowGeometry } from '@/data/apps'
+import type { DeepLink } from '@/lib/deeplink'
+import { openWindowIds } from '@/lib/deeplink'
 import DesktopIcons from './DesktopIcons'
+import Dock from './Dock'
+import Launchpad from './Launchpad'
 import MenuBar from './MenuBar'
-import AboutWindow from './windows/AboutWindow'
+import NotificationCenter from './NotificationCenter'
+import Spotlight from './Spotlight'
+import Window from './Window'
 import BlogPostWindows from './windows/BlogPostWindows'
-import BlogWindow from './windows/BlogWindow'
-import CalculatorWindow from './windows/CalculatorWindow'
-import NotepadWindow from './windows/NotepadWindow'
 import ProductDetailWindows from './windows/ProductDetailWindows'
-import ProductsWindow from './windows/ProductsWindow'
-import ProfileWindow from './windows/ProfileWindow'
-import SettingsWindow from './windows/SettingsWindow'
-import SocialWindow from './windows/SocialWindow'
-import TerminalWindow from './windows/TerminalWindow'
-import TrashWindow from './windows/TrashWindow'
 
 type DesktopProps = {
   visitorsCount: string
+  deepLink?: DeepLink
 }
 
-export default function Desktop({ visitorsCount }: DesktopProps) {
+// PC版デスクトップ。ウィンドウは data/apps.ts のレジストリから全部生やす。
+export default function Desktop({ visitorsCount, deepLink }: DesktopProps) {
+  const opened = openWindowIds(deepLink)
   return (
     <div className="os-desktop-shell">
       <MenuBar visitorsCount={visitorsCount} />
       <main id="main-content" className="os-desktop" data-desktop>
         <DesktopIcons />
-        <ProfileWindow />
-        <ProductsWindow />
+        {pcApps.map((app, index) => {
+          const Body = appBodies[app.id]
+          if (!Body) return null
+          const isOpen = opened.includes(app.id) || (app.id === 'profile' && opened.length === 0)
+          return (
+            <Window
+              key={app.id}
+              id={app.id}
+              title={app.windowTitle ?? app.name}
+              color={app.color}
+              statusBar={app.statusBar ?? app.subtitle}
+              geometry={windowGeometry(app, index)}
+              open={isOpen}
+            >
+              <Body platform="pc" />
+            </Window>
+          )
+        })}
         <ProductDetailWindows />
-        <SocialWindow />
-        <BlogWindow />
-        <BlogPostWindows />
-        <NotepadWindow />
-        <CalculatorWindow />
-        <TerminalWindow />
-        <TrashWindow />
-        <SettingsWindow />
-        <AboutWindow />
-        <a className="os-icon os-icon--trash" href="#win-trash" data-open="trash">
-          <span className="os-icon-tile tile-lavender" aria-hidden="true">
-            🗑
-          </span>
-          <span className="os-icon-label">ゴミ箱</span>
-        </a>
+        <BlogPostWindows deepLink={deepLink} />
+        <div className="os-mission" data-mission-view hidden>
+          <span className="os-mission-hint">クリックでそのウィンドウへ ｜ Esc でもどる</span>
+        </div>
       </main>
+      <Dock />
+      <Launchpad />
+      <Spotlight />
+      <NotificationCenter visitorsCount={visitorsCount} />
     </div>
   )
 }

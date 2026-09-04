@@ -2,10 +2,10 @@
 // 壁紙・明るさ・画面ロック・再起動は本当に動く。機内モードと音量は気持ちの問題。
 
 import { cycleWallpaper, getWallpaperLabel } from '../os'
+import { showToast } from '../ui'
 import { clamp, createGesture, springTo } from './gesture'
 import { relock } from './lock'
 import { emit, getMode, getPrevMode, setMode } from './state'
-import { showToast } from './ui'
 
 let cc: HTMLElement | null = null
 let scrim: HTMLElement | null = null

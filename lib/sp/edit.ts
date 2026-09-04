@@ -1,11 +1,11 @@
 // SP: 長押しジグル編集モード — アイコンは震えるが、消せない（ターミナルを除く）。
 
+import { showSpDialog, showToast } from '../ui'
 import { closeActiveApp } from './apps'
 import { createGesture, springTo } from './gesture'
 import { appIdFromLabel, SP_APPS } from './meta'
 import { pushNotification } from './notify'
 import { getMode, on, setMode } from './state'
-import { showSpDialog, showToast } from './ui'
 
 const LONG_PRESS_MS = 500
 const PREVIEW_MS = 300
@@ -66,15 +66,16 @@ function refuseRemoval(icon: HTMLElement, badge: HTMLElement): void {
 
 function attachBadge(icon: HTMLElement): void {
   if (badges.has(icon)) return
-  const home = icon.closest<HTMLElement>('.sp-home')
-  if (!home) return
+  // バッジはアイコンと同じグリッドに置く（ページをめくっても一緒に動くように）
+  const grid = icon.closest<HTMLElement>('.sp-home-grid, .sp-applib-grid, .sp-dock')
+  if (!grid) return
   const badge = document.createElement('button')
   badge.type = 'button'
   badge.className = 'sp-icon-remove'
   badge.setAttribute('aria-label', `${labelOf(icon)}を削除`)
   badge.textContent = '×'
   // アイコン（button）の中に入れるとbutton-in-buttonで不正になるため、
-  // .sp-home直下に置いてアイコンのレイアウト位置へ絶対配置する
+  // グリッド直下に置いてアイコンのレイアウト位置へ絶対配置する
   badge.style.left = `${icon.offsetLeft - 6}px`
   badge.style.top = `${icon.offsetTop - 8}px`
   badge.addEventListener('click', (e) => {
@@ -82,7 +83,7 @@ function attachBadge(icon: HTMLElement): void {
     e.preventDefault()
     refuseRemoval(icon, badge)
   })
-  home.appendChild(badge)
+  grid.appendChild(badge)
   badges.set(icon, badge)
 }
 
@@ -94,7 +95,8 @@ export function enterEdit(): void {
   // 編集モードのpadding変化を反映してから位置を測る
   requestAnimationFrame(() => {
     if (getMode() !== 'edit') return
-    document.querySelectorAll<HTMLElement>('.sp-home .sp-app-icon').forEach((icon) => {
+    // ×バッジはホーム画面のページにだけ付ける（App ライブラリからは消せない＝実機と同じ）
+    document.querySelectorAll<HTMLElement>('.sp-home-page:not(.sp-applib) .sp-app-icon').forEach((icon) => {
       attachBadge(icon)
     })
   })
@@ -213,11 +215,13 @@ export function setupEdit(): void {
   home.addEventListener('pointerup', cancelPress)
   home.addEventListener('pointercancel', cancelPress)
 
-  document.querySelectorAll<HTMLElement>('.sp-home .sp-app-icon').forEach(setupEditDrag)
+  document.querySelectorAll<HTMLElement>('.sp-home-page:not(.sp-applib) .sp-app-icon').forEach(setupEditDrag)
 
   // 背景タップ / Escape で終了
   home.addEventListener('click', (e) => {
-    if (getMode() === 'edit' && e.target === home) exitEdit()
+    if (getMode() !== 'edit') return
+    // アイコン以外（ページの余白）をタップしたら終了
+    if (!(e.target as HTMLElement).closest('.sp-app-icon, .sp-widget, .sp-icon-remove')) exitEdit()
   })
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && getMode() === 'edit') exitEdit()

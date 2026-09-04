@@ -1,11 +1,11 @@
 // SP: Appスイッチャー — scroll-snapの横レール + カード上フリックで終了。
 // ターミナルは常駐する（終了できない。もともと起動していないので）。
 
+import { showToast } from '../ui'
 import { forceCloseActiveApp, openApp } from './apps'
 import { createGesture, springTo } from './gesture'
 import { SP_APPS } from './meta'
 import { clearRecents, getMode, getRecents, on, removeRecent, setMode } from './state'
-import { showToast } from './ui'
 
 let switcher: HTMLElement | null = null
 let rail: HTMLElement | null = null
