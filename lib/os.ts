@@ -5,6 +5,8 @@
 import { blogPosts, formatPostDate } from '@/data/blog-posts'
 import { evaluateExpression, setupCalculators } from './apps/calculator'
 import { setupNotepads } from './apps/notepad'
+import type { DeepLink } from './deeplink'
+import { openWindowIds } from './deeplink'
 import { initSp } from './sp'
 
 const BOOT_DURATION_MS = 1800
@@ -545,8 +547,17 @@ export function setupTabTitle(): void {
   })
 }
 
+// ===== ディープリンク =====
+// URLは「OSを起動して、このアプリをこの状態で開く」ためのもの。ページ遷移はしない。
+function applyDeepLink(link: DeepLink): void {
+  if (!isDesktopViewport()) return // SP側は initSp() が受け持つ
+  for (const id of openWindowIds(link)) openWindow(id)
+}
+
 // ===== メイン初期化 =====
-export function initOS(): void {
+type InitOptions = { deepLink?: DeepLink }
+
+export function initOS({ deepLink }: InitOptions = {}): void {
   restoreWallpaper()
   setupBootScreen()
   setupWindowManager()
@@ -557,5 +568,9 @@ export function initOS(): void {
   setupTrash()
   setupContextMenu()
   setupTabTitle()
-  if (!isDesktopViewport()) initSp()
+  if (isDesktopViewport()) {
+    if (deepLink) applyDeepLink(deepLink)
+  } else {
+    initSp(deepLink)
+  }
 }

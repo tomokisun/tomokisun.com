@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { blogArticles } from '@/components/blog/posts'
 import { blogPosts, formatPostDate } from '@/data/blog-posts'
 
@@ -44,12 +43,9 @@ export default function BlogApp() {
             </header>
             <div className="sp-blog-post-body blog-doc">
               <Article variant="sp" />
-              <nav className="blog-backlinks" aria-label="この記事のリンク">
-                <Link className="os-button" href={`/blog/${post.slug}`}>
-                  🔗 単体ページでひらく
-                </Link>
-              </nav>
-              <p className="blog-window-note">ともだちに送るときは、こちらのURLをどうぞ。</p>
+              <p className="blog-window-note">
+                ともだちに送るときは tomokisun.com/blog/{post.slug} をどうぞ。ひらくと、この画面がそのまま開きます。
+              </p>
             </div>
           </article>
         )

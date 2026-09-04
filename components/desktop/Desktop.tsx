@@ -1,3 +1,5 @@
+import type { DeepLink } from '@/lib/deeplink'
+import { openWindowIds } from '@/lib/deeplink'
 import DesktopIcons from './DesktopIcons'
 import MenuBar from './MenuBar'
 import AboutWindow from './windows/AboutWindow'
@@ -15,9 +17,11 @@ import TrashWindow from './windows/TrashWindow'
 
 type DesktopProps = {
   visitorsCount: string
+  deepLink?: DeepLink
 }
 
-export default function Desktop({ visitorsCount }: DesktopProps) {
+export default function Desktop({ visitorsCount, deepLink }: DesktopProps) {
+  const opened = openWindowIds(deepLink)
   return (
     <div className="os-desktop-shell">
       <MenuBar visitorsCount={visitorsCount} />
@@ -27,8 +31,8 @@ export default function Desktop({ visitorsCount }: DesktopProps) {
         <ProductsWindow />
         <ProductDetailWindows />
         <SocialWindow />
-        <BlogWindow />
-        <BlogPostWindows />
+        <BlogWindow open={opened.includes('blog')} />
+        <BlogPostWindows deepLink={deepLink} />
         <NotepadWindow />
         <CalculatorWindow />
         <TerminalWindow />

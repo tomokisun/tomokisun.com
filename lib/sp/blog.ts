@@ -123,6 +123,11 @@ function setupEdgeGesture(pane: HTMLElement): void {
   })
 }
 
+/** ディープリンク用: ブログアプリの中で、いきなりきじを開く */
+export function openPost(slug: string): void {
+  push(slug, null)
+}
+
 export function setupBlog(): void {
   root = document.querySelector<HTMLElement>('[data-sp-blog]')
   if (!root) return

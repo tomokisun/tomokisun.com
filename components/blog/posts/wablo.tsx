@@ -13,8 +13,8 @@ const PUBLISHED = '2026-08-28'
 
 // 記事本文。独立ページ（/blog/wablo）・PCのウィンドウ・SPのアプリの3か所から同じものを描く。
 export default function WabloArticle({ variant }: BlogArticleProps) {
-  const h1 = titleLevel(variant)
-  const h2 = sectionLevel(variant)
+  const h1 = titleLevel()
+  const h2 = sectionLevel()
 
   return (
     <article className="blog-article">

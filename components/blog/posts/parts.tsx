@@ -1,19 +1,21 @@
-import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-/** 記事本文の描画先。page=独立ページ / pc=デスクトップのウィンドウ / sp=スマホのアプリ */
-export type BlogVariant = 'page' | 'pc' | 'sp'
+/**
+ * 記事本文の描画先。pc=デスクトップのウィンドウ / sp=スマホのアプリ
+ * 「OSの外のページ」は存在しないので、この2つしかない。
+ */
+export type BlogVariant = 'pc' | 'sp'
 
 export type BlogArticleProps = { variant: BlogVariant }
 
 /** `/` ではPC版とSP版のDOMが同時に存在するので、脚注のidは描画先ごとに分ける */
 export function anchorId(variant: BlogVariant, id: string): string {
-  return variant === 'page' ? id : `${variant}-${id}`
+  return `${variant}-${id}`
 }
 
-/** 独立ページの見出しはh1始まり。OS内はページのh1（sr-only）の下にぶら下がるので1段下げる */
-export const titleLevel = (variant: BlogVariant): 1 | 2 => (variant === 'page' ? 1 : 2)
-export const sectionLevel = (variant: BlogVariant): 2 | 3 => (variant === 'page' ? 2 : 3)
+/** 記事はページのh1（sr-only）の下にぶら下がるので、見出しは1段下げる */
+export const titleLevel = (): 2 => 2
+export const sectionLevel = (): 3 => 3
 
 type HeadingProps = { level: 1 | 2 | 3; className?: string; children: ReactNode }
 
@@ -40,9 +42,8 @@ export function FootnoteBack({ variant, n }: BlogArticleProps & { n: number }) {
   )
 }
 
-/** ゴミ箱への導線。ページではデスクトップへ、OS内ではその場でゴミ箱を開く（読書を中断させない） */
+/** ゴミ箱への導線。読書を中断させず、その場でゴミ箱アプリを開く */
 export function TrashLink({ variant }: BlogArticleProps) {
-  if (variant === 'page') return <Link href="/">デスクトップのゴミ箱</Link>
   if (variant === 'pc') {
     return (
       <a href="#win-trash" data-open="trash">
