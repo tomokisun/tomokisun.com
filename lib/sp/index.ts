@@ -2,6 +2,7 @@
 // 呼び出し元（lib/os.ts）で SPビューポートのときだけ呼ばれる。
 
 import { setupApps } from './apps'
+import { setupBlog } from './blog'
 import { setupControlCenter } from './controlCenter'
 import { setupEdit } from './edit'
 import { isBooted, setupLock } from './lock'
@@ -16,6 +17,7 @@ export function initSp(): void {
   initState(shell, isBooted() ? 'home' : 'locked')
   setupLock()
   setupApps()
+  setupBlog()
   setupControlCenter()
   setupNotify()
   setupSwitcher()

@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { blogPosts, formatPostDate } from '@/data/blog-posts'
 import Window from '../Window'
 
@@ -10,7 +9,10 @@ export default function BlogWindow() {
           <li key={post.slug}>
             <time dateTime={post.date}>{formatPostDate(post.date)}</time>
             <div>
-              <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+              {/* 記事はサイトを離れずに別ウィンドウで開く（共有用のURLは記事ウィンドウの下にある） */}
+              <a href={`#win-blog-${post.slug}`} data-open={`blog-${post.slug}`}>
+                {post.title}
+              </a>
               <div className="blog-list-desc">{post.description}</div>
             </div>
           </li>
