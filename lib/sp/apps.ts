@@ -3,9 +3,9 @@
 // - ジェスチャーバー上スワイプ: 1:1追従 → 速度引き継ぎスプリングで閉じる
 // - ドラッグ途中で静止するとAppスイッチャーへ（switcher.tsがemit('open-switcher')を受ける）
 
+import { showToast } from '../ui'
 import { clamp, createGesture, prefersReducedMotion, rubber, springTo } from './gesture'
 import { emit, getActiveApp, getMode, pushRecent, setActiveApp, setMode } from './state'
-import { showToast } from './ui'
 
 const OPEN_MS = 320
 const OPEN_FALLBACK_MS = 450
@@ -387,14 +387,15 @@ function setupPressFeedback(): void {
 }
 
 export function setupApps(): void {
-  // 開く: data-sp-open属性（クリックなのでキーボードもそのまま動く）
+  // 開く: data-sp-open（ホーム画面などOSのクローム）と data-app-open（アプリの中から）。
+  // クリック経由なのでキーボードもそのまま動く。
   document.addEventListener('click', (e) => {
-    const opener = (e.target as HTMLElement).closest<HTMLElement>('[data-sp-open]')
+    const opener = (e.target as HTMLElement).closest<HTMLElement>('[data-sp-open], [data-app-open]')
     if (!opener) return
     e.preventDefault()
     // ジグル編集中のアイコンタップは起動しない（実機と同じ。通知タップ等はopenApp直呼びで通る）
     if (getMode() === 'edit') return
-    const id = opener.getAttribute('data-sp-open')
+    const id = opener.getAttribute('data-sp-open') ?? opener.getAttribute('data-app-open')
     if (id) openApp(id, opener)
   })
 

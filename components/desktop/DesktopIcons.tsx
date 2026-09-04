@@ -1,32 +1,17 @@
-type IconProps = {
-  label: string
-  glyph: string
-  tile: string
-  opens: string
-}
+import { desktopApps } from '@/data/apps'
 
-function DesktopIcon({ label, glyph, tile, opens }: IconProps) {
-  return (
-    <a className="os-icon" href={`#win-${opens}`} data-open={opens}>
-      <span className={`os-icon-tile tile-${tile}`} aria-hidden="true">
-        {glyph}
-      </span>
-      <span className="os-icon-label">{label}</span>
-    </a>
-  )
-}
-
+// デスクトップに出すのは「よく使う数個」だけ。残りはDockとLaunchpadから開く。
 export default function DesktopIcons() {
   return (
     <nav className="os-icons" aria-label="デスクトップ">
-      <DesktopIcon label="プロフィール.txt" glyph="📝" tile="cherry" opens="profile" />
-      <DesktopIcon label="Products" glyph="📁" tile="melon" opens="products" />
-      <DesktopIcon label="ソーシャル" glyph="🌐" tile="soda" opens="social" />
-      <DesktopIcon label="ブログ" glyph="📰" tile="cherry" opens="blog" />
-      <DesktopIcon label="メモ帳" glyph="📒" tile="cream" opens="memo" />
-      <DesktopIcon label="電卓" glyph="🧮" tile="soda" opens="calc" />
-      <DesktopIcon label="ターミナル" glyph="＞_" tile="dark" opens="terminal" />
-      <DesktopIcon label="設定" glyph="⚙️" tile="cream" opens="settings" />
+      {desktopApps.map((app) => (
+        <a key={app.id} className="os-icon" href={`#win-${app.id}`} data-open={app.id}>
+          <span className={`os-icon-tile tile-${app.color}`} aria-hidden="true">
+            {app.icon}
+          </span>
+          <span className="os-icon-label">{app.windowTitle?.endsWith('.txt') ? app.windowTitle : app.name}</span>
+        </a>
+      ))}
     </nav>
   )
 }

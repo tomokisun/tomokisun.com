@@ -1,4 +1,7 @@
-// SPアプリのメタ情報（スイッチャーのカード表示・ジグル編集の削除拒否芸で使う）
+// SPアプリのメタ情報。data/apps.ts から導出し、SP専用の疑似アプリだけ手で足す。
+// （スイッチャーのカード表示・ジグル編集の削除拒否芸で使う）
+
+import { spApps } from '@/data/apps'
 
 export type SpAppMeta = {
   label: string
@@ -8,64 +11,27 @@ export type SpAppMeta = {
   removeRefusal: string
 }
 
-export const SP_APPS: Record<string, SpAppMeta> = {
-  profile: {
-    label: 'プロフィール',
-    icon: '📝',
-    color: 'cherry',
-    removeRefusal: '本人ごと消えるためキャンセルされました',
-  },
-  products: {
-    label: 'Products',
-    icon: '📁',
-    color: 'melon',
-    removeRefusal: 'これで食べているので消せません',
-  },
-  social: {
-    label: 'ソーシャル',
-    icon: '🌐',
-    color: 'soda',
-    removeRefusal: 'つながりは消せません（技術的に）',
-  },
-  blog: {
-    label: 'ブログ',
-    icon: '📰',
-    color: 'cherry',
-    removeRefusal: 'まだ1記事しかないのに',
-  },
-  memo: {
-    label: 'メモ帳',
-    icon: '📒',
-    color: 'cream',
-    removeRefusal: '保存していないメモがあります（これからも保存されません）',
-  },
-  calc: {
-    label: '電卓',
-    icon: '🧮',
-    color: 'soda',
-    removeRefusal: '暗算に自信がないので残しておいてください',
-  },
-  settings: {
-    label: '設定',
-    icon: '⚙️',
-    color: 'cream',
-    removeRefusal: '設定を消すと二度と設定できません',
-  },
-  trash: {
-    label: 'ゴミ箱',
-    icon: '🗑',
-    color: 'lavender',
-    removeRefusal: 'ゴミ箱をゴミ箱に入れることはできません',
-  },
-  'terminal-blocked': {
-    label: 'ターミナル',
-    icon: '＞_',
-    color: 'dark',
-    removeRefusal: '', // ターミナルだけは削除に成功する（そして戻ってくる）
-  },
+const registry: Record<string, SpAppMeta> = {}
+for (const app of spApps) {
+  registry[app.id] = {
+    label: app.name,
+    icon: app.icon,
+    color: app.color,
+    removeRefusal: app.removeRefusal ?? 'このAppは削除できません（なんとなく）',
+  }
 }
 
-/** ホーム画面のラベル文字列 → アプリID（グッズ等の外部リンクはID無し） */
+// ターミナルはSPに存在しない。スイッチャーに「応答なし」で常駐し、削除だけは成功する（そして戻る）
+registry['terminal-blocked'] = {
+  label: 'ターミナル',
+  icon: '＞_',
+  color: 'dark',
+  removeRefusal: '',
+}
+
+export const SP_APPS: Record<string, SpAppMeta> = registry
+
+/** ホーム画面のラベル文字列 → アプリID（外部リンクのアイコンはIDを持たない） */
 export function appIdFromLabel(label: string): string | null {
   for (const [id, meta] of Object.entries(SP_APPS)) {
     if (meta.label === label) return id
