@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.15",
-    "@cloudflare/workers-types": "^4.20260214.0",
+    "@cloudflare/workers-types": "^5.20260911.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
